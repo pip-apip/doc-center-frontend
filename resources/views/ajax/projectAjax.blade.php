@@ -267,12 +267,16 @@
 
     // ================== Document Modal ==================
 
+    let data_doc = [];
+
     $('#docModal').on('hidden.bs.modal', function () {
-        document.getElementById("post-form").reset();
+        document.getElementById("docForm").reset();
         $('.invalid-feedback').remove(); // Remove error messages
         $('.form-control').removeClass('is-invalid');
         $('.form-select').removeClass('is-invalid');
         id_project = 0;
+        data_doc = [];
+        $("#table_doc").empty();
     });
 
     function getCategory(){
@@ -309,6 +313,7 @@
         let project = data_projects.find(project => project.id === id);
         id_project = project.id;
         // console.log(project);
+        getDoc();
 
         $("#project_name_doc").text(project.project_name);
     }
@@ -391,6 +396,42 @@
         });
     }
 
+    $('#category_show').change(function(){
+        let id_category = $(this).val();
+        console.log(id_category);
+        let filteredDoc = data_doc.filter(doc =>
+            doc.admin_doc_category_id == id_category
+        );
+        console.log("Filtered Doc:", filteredDoc);
+        $("#table_doc").empty();
+        if(filteredDoc.length > 0){
+            let rows = "";
+            $.each(filteredDoc, function (index, doc) {
+                rows += `
+                <tr class="mt-2">
+                    <td><a href="${ doc.file }" target="_blank" style="text-decoration: none; color: grey"><i class="fa-solid fa-file-pdf"></i></a></td>
+                    <td width="400px">${doc.title}</td>
+                    <td>
+                        <button type="button" class="btn btn-danger ml-1 btn-sm" onclick="deleteDoc(${doc.id})">
+                            <i class="bx bx-check d-block d-sm-none"></i>
+                            <span class="d-none d-sm-block"><i class="fa-solid fa-trash"></i></span>
+                        </button>
+                    </td>
+                </tr>`;
+            });
+
+            $("#table_doc").html(rows);
+        }else{
+            let rows = "";
+                rows += `
+                <tr class="mt-2">
+                    <td colspan="3" style="text-align: center;"><b>no files have been uploaded yet</b></td>
+                </tr>`;
+
+            $("#table_doc").html(rows);
+        }
+    });
+
     function getDoc(){
         // $('#category_show').onchange(function(){
         //     let id_category = $(this).val();
@@ -406,16 +447,21 @@
             type: "GET",
             dataType: "json",
             success: function (response) {
-                console.log(response.data);
+                // console.log(response.data);
 
-                let id_category = 2;
-                let id_project = 3;
 
-                let filteredData = response.data.filter(doc =>
-                    doc.admin_doc_category_id === id_category && doc.project_id === id_project
-                );
+                // $('#category_show').onchange(function(){
+                    let id_category = 2;
+                    // console.log(id_category);
+                    let filteredData = response.data.filter(doc =>
+                        doc.project_id === id_project
+                    );
 
-                console.log("Filtered Data:", filteredData);
+                    data_doc = filteredData;
+
+                    console.log("Filtered Data:", data_doc);
+                // });
+
 
                 // if (!response || !response.data) {
                 //     console.error("Invalid API response:", response);
@@ -441,6 +487,48 @@
                 // });
 
                 // $("#doc_table").html(rows);
+            }
+        });
+    }
+
+    function deleteDoc(id_doc) {
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: `http://doc-center-backend.test/api/v1/admin-docs/${id_doc}`,
+                    type: 'DELETE',
+                // headers: {
+                //     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                //     // 'Authorization': 'Bearer ' + yourApiToken
+                // },
+                success: function (response) {75
+                    Swal.fire({
+                        position: "center",
+                        icon: "success",
+                        title: "Your Category has been deleted",
+                        showConfirmButton: false,
+                        timer: 1000
+                    }).then(() => {
+                        loadProjects();
+                        // location.reload(); // Refresh after the SweetAlert
+                    });
+                },
+                error: function (xhr) {
+                    console.error('Error:', xhr);
+                    Swal.fire({
+                        title: "Error!",
+                        text: "Something went wrong. Please try again.",
+                        icon: "error"
+                    });
+                }});
             }
         });
     }

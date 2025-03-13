@@ -217,7 +217,7 @@
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title" id="myModalLabel33">Form Document Activity</h4>
+                <h4 class="modal-title" id="myModalLabel33">Document Administration</h4>
                 <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
@@ -247,7 +247,7 @@
                             <input type="file" class="basic-filepond" name="file" required multiple data-max-file-size="2MB">
                         </div>
                         <div class="col-sm-2">
-                            <a href="#" class="btn btn-success" onclick="storeDoc()">
+                            <a href="#" class="btn btn-success" onclick="storeDoc()" style="margin: 0 auto">
                                 <i class="fa-solid fa-plus"></i> Add
                             </a>
                         </div>
@@ -262,7 +262,7 @@
                         <div class="col-sm-3"></div>
                         <div class="col-sm-6">
                             <table id="table_doc">
-                                <tr>
+                                {{-- <tr>
                                     <td><a href="" style="text-decoration: none; color: grey"><i class="fa-solid fa-file-pdf"></i></a></td>
                                     <td width="400px">File.pdf</td>
                                     <td>
@@ -275,7 +275,7 @@
                                             <span class="d-none d-sm-block"><i class="fa-solid fa-trash"></i></span>
                                         </button>
                                     </td>
-                                </tr>
+                                </tr> --}}
                             </table>
                         </div>
                         <div class="col-sm-3"></div>

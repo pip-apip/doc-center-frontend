@@ -134,10 +134,6 @@
                             </div>
                         </div>
                     </div>
-                    <div class="tag-container">
-                        <input type="text" id="tagInput" placeholder="Ketik dan tekan spasi..." />
-                    </div>
-
                 </div>
 
                 <div class="modal-footer">
@@ -222,6 +218,11 @@
                                 <input type="file" class="basic-filepond-activity1">
                             </div>
                         </div>
+                    </div>
+
+
+                    <div class="tag-container">
+                        <input type="text" id="tagInput" placeholder="Ketik dan tekan spasi..." />
                     </div>
 
                 </div>
