@@ -12,6 +12,13 @@
         </div>
         <div class="sidebar-menu">
             <ul class="menu">
+                <li class="sidebar-item {{ $title == 'Home' ? 'active' : ''  }} ">
+                    <a href="{{ route('category') }}" class='sidebar-link'>
+                        <i class="fa-solid fa-house"></i>
+                        <span>Home</span>
+                    </a>
+                </li>
+
                 <li class="sidebar-title">Menu</li>
 
                 <li class="sidebar-item {{ $title == 'Category' ? 'active' : ''  }} ">

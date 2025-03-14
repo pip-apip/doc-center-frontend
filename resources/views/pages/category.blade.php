@@ -168,8 +168,7 @@
                                 data-bs-target="#formEditModal" onclick="setId(${category.id})">
                                 <i class="fa-solid fa-pen"></i>
                             </a>
-                            <a href="#" class="btn btn-sm btn-danger rounded-pill" data-bs-toggle="modal" onclick="deleteProject(${category.id})"
-                                data-bs-target="#docModal">
+                            <a href="#" class="btn btn-sm btn-danger rounded-pill" onclick="deleteProject(${category.id})">
                                 <i class="fa-solid fa-trash"></i>
                             </a>
                         </td>

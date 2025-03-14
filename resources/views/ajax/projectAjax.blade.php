@@ -125,14 +125,10 @@
             document.querySelector('input[name="end_date"]').value = project.end_date;
 
             $('#formTitle').text('Form Edit Project');
-            console.log(" in setId() if")
             document.getElementById("addButton").click();
         } else {
-            console.log(" in setId() else")
             $('#formTitle').text('Form Add Project');
         }
-
-        // document.getElementById("addButton").setAttribute("onclick", "set(0)");
     }
 
     function updateProject(formData){
@@ -424,8 +420,8 @@
         }else{
             let rows = "";
                 rows += `
-                <tr class="mt-2">
-                    <td colspan="3" style="text-align: center;"><b>no files have been uploaded yet</b></td>
+                <tr class="mt-2" style="text-align: center;">
+                    <td style="padding: 0 auto"><b>no files have been uploaded yet</b></td>
                 </tr>`;
 
             $("#table_doc").html(rows);
