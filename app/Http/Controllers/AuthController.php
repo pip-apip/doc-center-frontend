@@ -9,7 +9,12 @@ class AuthController extends Controller
 {
     public function login()
     {
-        return view('auth.login');
+        if(session('user')){
+            // dd(session()->all());
+            // return view('auth.login');
+        }else{
+            return view('auth.login');
+        }
     }
 
     public function doLogin(){
@@ -29,10 +34,12 @@ class AuthController extends Controller
         if ($response->successful()) {
             // Save token in session
             session([
-                'token'     => $response->json('data.access_token'),
-                'name'      => $response->json('data.name'),
-                'username'  => $response->json('data.username'),
-                'refresh_token' => request()->cookie()
+                'user' => [
+                    'token'     => $response->json('data.access_token'),
+                    'name'      => $response->json('data.name'),
+                    'username'  => $response->json('data.username'),
+                    'refresh_token' => request()->cookie()
+                ]
             ]);
             dd(session()->all());
             // return redirect()->route('project');
@@ -75,4 +82,31 @@ class AuthController extends Controller
         $errorMessage = $response->json('message', 'Registration failed. Please try again.');
         return redirect()->back()->withErrors(['error' => $errorMessage])->withInput();
     }
+
+    public function logout(){
+        // Get token from session
+        $token = session('token');
+
+        // Check if token exists
+        if (!$token) {
+            return redirect()->route('login')->with('error', 'You are not logged in.');
+        }
+
+        // Send a POST request to the API with Bearer Token
+        $response = Http::withToken($token)->post('http://doc-center-backend.test/api/v1/auth/logout');
+
+        // Clear session data
+        session()->forget(['token', 'name', 'username', 'refresh_token']);
+        session()->flush();
+
+        // Check API response
+        if ($response->successful()) {
+            return redirect()->route('login')->with('success', 'Logged out successfully.');
+        }
+
+        // Handle errors
+        return redirect()->route('login')->with('error', 'Logout failed. Please try again.');
+    }
+
+
 }

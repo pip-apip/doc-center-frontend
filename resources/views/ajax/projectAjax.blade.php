@@ -4,19 +4,29 @@
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 <!-- filepond -->
-<script src="https://unpkg.com/filepond/dist/filepond.js"></script>
+<script src="https://unpkg.com/filepond@^4/dist/filepond.js"></script>
 
 <script>
-    FilePond.create( document.querySelector('.basic-filepond'), {
+    FilePond.create(document.querySelector('.basic-filepond-activity1'), {
         allowImagePreview: false,
-        allowMultiple: true,
+        allowMultiple: false,
         allowFileEncode: false,
-        required: true,
-        acceptedFileTypes: ['pdf'],
-        fileValidateTypeDetectType: (source, type) => new Promise((resolve, reject) => {
-            // Do custom type detection here and return with promise
-            resolve(type);
-        })
+        required: false
+    });
+    FilePond.create( document.querySelector('.filepond-project'), {
+        // allowImagePreview: false,
+        // allowMultiple: true,
+        // allowFileEncode: false,
+        // required: true,
+        // acceptedFileTypes: ['pdf'],
+        // fileValidateTypeDetectType: (source, type) => new Promise((resolve, reject) => {
+        //     // Do custom type detection here and return with promise
+        //     resolve(type);
+        // })
+        allowImagePreview: false,
+        allowMultiple: false,
+        allowFileEncode: false,
+        required: false
     });
 </script>
 
@@ -27,6 +37,7 @@
         loadProjects();
         getCategory();
         getDoc();
+        getCompany();
     });
 
     $('#formModal').on('hidden.bs.modal', function () {
@@ -35,6 +46,33 @@
         $('.form-control').removeClass('is-invalid');
         id_project = 0;
     });
+
+    function getCompany(){
+        $.ajax({
+            url: "http://doc-center-backend.test/api/v1/companies", // Replace with your API URL
+            type: "GET",
+            dataType: "json",
+            success: function (response) {
+                data_company = response.data;
+                // console.log(data_projects);
+                if (!response || !response.data) {
+                    console.error("Invalid API response:", response);
+                    return;
+                }
+
+                let rows = `<option value="#">Select Company</option>`; // Variable to store generated rows
+
+                $.each(response.data, function (index, company) {
+                    rows += `<option value="${company.id}">${company.name}</option>`;
+                });
+
+                $("#company_id").html(rows);
+            },
+            error: function (xhr, status, error) {
+                console.error("AJAX Error:", status, error);
+            }
+        });
+    }
 
     function loadProjects() {
         $("#table-body").empty();
@@ -57,10 +95,10 @@
                     rows += `
                     <tr>
                         <td>${index + 1}</td>
-                        <td>${project.project_name}</td>
-                        <td>${project.company_name}</td>
-                        <td>${project.director_name}</td>
-                        <td>${project.start_date}</td>
+                        <td>${project.name}</td>
+                        <td>${project.company_id}</td>
+                        <td>` + dateFormat(project.start_date) + `</td>
+                        <td>` + dateFormat(project.end_date) + `</td>
                         <td>
                             <span class="badge ${project.status === 'Active' ? 'bg-success' : 'bg-danger'}">
                                 ${project.status}
@@ -100,9 +138,10 @@
         $("#company_address_detail").text(project.company_address);
         $("#director_name_detail").text(project.director_name);
         $("#director_phone_detail").text(project.director_phone);
-        $("#start_project_detail").text(project.start_date);
-        $("#end_project_detail").text(project.end_date);
-        document.getElementById("editButton").setAttribute("onclick", "setId(" + project.id + ")");
+        $("#start_project_detail").text(dateFormat(project.start_date));
+        $("#end_project_detail").text(dateFormat(project.end_date));
+        $('#editButton').attr("onclick", "setId(" + project.id + ")")
+        // document.getElementById("editButton").setAttribute("onclick", "setId(" + project.id + ")");
     }
 
     function setId(id) {
@@ -114,13 +153,10 @@
         if (id_project > 0) {
             // Load project data
             let project = data_projects.find(project => project.id === id);
-            // console.log(project);
+            console.log(project);
 
-            document.querySelector('input[name="project_name"]').value = project.project_name;
-            document.querySelector('input[name="company_name"]').value = project.company_name;
-            document.querySelector('textarea[name="company_address"]').value = project.company_address;
-            document.querySelector('input[name="director_name"]').value = project.director_name;
-            document.querySelector('input[name="director_phone"]').value = project.director_phone;
+            document.querySelector('input[name="name"]').value = project.name;
+            $('select[name="company_id"]').val(project.company_id).change();
             document.querySelector('input[name="start_date"]').value = project.start_date;
             document.querySelector('input[name="end_date"]').value = project.end_date;
 
@@ -183,9 +219,12 @@
 
     function submitPostForm(formData) {
         console.log("id_project : " + id_project);
+        formData.append("name", $("#project_name").val());
+        formData.append("company_id", $("#company_id").val());
+        console.log($("#company_id").val());
 
         $.ajax({
-            url: '{{ route('project.store') }}',
+            url: 'http://doc-center-backend.test/api/v1/projects',
             type: 'POST',
             data: formData,
             processData: false,
@@ -311,7 +350,7 @@
         // console.log(project);
         getDoc();
 
-        $("#project_name_doc").text(project.project_name);
+        $("#project_name_doc").text(project.name);
     }
 
     function storeDoc(){
@@ -333,7 +372,7 @@
             return;
         }
 
-        let filePondInstance = FilePond.find(document.querySelector('.basic-filepond'));
+        let filePondInstance = FilePond.find(document.querySelector('#fileDocProject'));
         if (filePondInstance) {
             let files = filePondInstance.getFiles();
 
@@ -405,7 +444,7 @@
             $.each(filteredDoc, function (index, doc) {
                 rows += `
                 <tr class="mt-2">
-                    <td><a href="${ doc.file }" target="_blank" style="text-decoration: none; color: grey"><i class="fa-solid fa-file-pdf"></i></a></td>
+                    <td><a onclick="openPDFModal('http://doc-center-backend.test/${ doc.file }')" style="text-decoration: none; color: grey"><i class="fa-solid fa-file-pdf"></i></a></td>
                     <td width="400px">${doc.title}</td>
                     <td>
                         <button type="button" class="btn btn-danger ml-1 btn-sm" onclick="deleteDoc(${doc.id})">
@@ -527,6 +566,32 @@
                 }});
             }
         });
+    }
+
+    function dateFormat(dateString) {
+        let [year, month, day] = dateString.split("-"); // Split by "-"
+
+        // Convert to a valid Date object
+        let date = new Date(year, month - 1, day); // Month is zero-based in JS
+
+        // Format using Indonesian locale
+        let formattedDate = new Intl.DateTimeFormat("id-ID", {
+            day: "2-digit",
+            month: "long",
+            year: "numeric"
+        }).format(date);
+
+        return formattedDate;
+    }
+
+    function openPDFModal(pdfUrl) {
+        document.getElementById('pdfViewer').src = pdfUrl;
+        document.getElementById('modernPDFModal').style.display = "flex";
+    }
+
+    function closePDFModal() {
+        document.getElementById('modernPDFModal').style.display = "none";
+        document.getElementById('pdfViewer').src = ""; // Clear src to stop loading
     }
 </script>
 

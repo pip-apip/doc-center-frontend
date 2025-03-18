@@ -13,7 +13,7 @@
         <div class="sidebar-menu">
             <ul class="menu">
                 <li class="sidebar-item {{ $title == 'Home' ? 'active' : ''  }} ">
-                    <a href="{{ route('category') }}" class='sidebar-link'>
+                    <a href="{{ route('home') }}" class='sidebar-link'>
                         <i class="fa-solid fa-house"></i>
                         <span>Home</span>
                     </a>
@@ -21,11 +21,19 @@
 
                 <li class="sidebar-title">Menu</li>
 
-                <li class="sidebar-item {{ $title == 'Category' ? 'active' : ''  }} ">
-                    <a href="{{ route('category') }}" class='sidebar-link'>
+                <li class="sidebar-item {{ $title == 'categoryAct' || $title == 'categoryAdm' ? 'active' : ''  }} has-sub">
+                    <a href="#" class='sidebar-link'>
                         <i class="fa-solid fa-list"></i>
                         <span>Category</span>
                     </a>
+                    <ul class="submenu {{ $title == 'categoryAct' || $title == 'categoryAdm' ? 'active' : '' }}">
+                        <li class="submenu-item {{ $title == 'categoryAdm' ? 'active' : ''  }}">
+                            <a href="{{ route('categoryAdmin') }}">Administration</a>
+                        </li>
+                        <li class="submenu-item {{ $title == 'categoryAct' ? 'active' : ''  }}">
+                            <a href="{{ route('categoryActivity') }}">Activity</a>
+                        </li>
+                    </ul>
                 </li>
 
                 <li class="sidebar-item {{ $title == 'Company' ? 'active' : ''  }} ">

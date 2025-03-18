@@ -3,6 +3,89 @@
 @section('title', 'Project Page')
 
 @section('content')
+<style>
+.modern-modal {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.3s ease-in-out;
+    padding: 15px;
+}
+
+.modern-modal-content {
+    position: relative;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    padding: 15px;
+    width: 90%;
+    max-width: 800px;
+    max-height: 85vh;
+    text-align: center;
+    animation: fadeIn 0.3s ease-in-out;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+}
+
+/* PDF Viewer */
+#pdfViewer {
+    width: 100%;
+    height: 75vh;
+    border-radius: 8px;
+}
+
+/* Close Button */
+.closePDF {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 28px;
+    color: white;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.closePDF:hover {
+    transform: scale(1.2);
+}
+
+/* 🔥 Responsive for Mobile */
+@media screen and (max-width: 768px) {
+    .modern-modal-content {
+        width: 95%;
+        max-height: 70vh;
+        padding: 10px;
+    }
+
+    #pdfViewer{
+        min-height: 50vh;
+    }
+
+    .closePDF {
+        font-size: 24px;
+        top: 5px;
+        right: 10px;
+    }
+}
+
+/* Fade-in Animation */
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+}
+</style>
+
 <div class="page-title">
     <div class="row">
         <div class="col-12 col-md-6 order-md-1 order-last">
@@ -33,8 +116,8 @@
                         <th>No</th>
                         <th>Project Name</th>
                         <th>Company Name</th>
-                        <th>Director Name</th>
                         <th>Start Project</th>
+                        <th>End Project</th>
                         <th>Status</th>
                         <th>Action</th>
                     </tr>
@@ -50,7 +133,7 @@
 </section>
 
 <div class="modal fade text-left w-100" id="formModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel33"
-    aria-hidden="true">
+    aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -66,41 +149,17 @@
                     <label>Project Name : </label>
                     <div class="form-group">
                         <input type="text" placeholder="Enter the Project Name" class="form-control"
-                            name="project_name">
+                            name="name">
                     </div>
 
+                    <div class="col-sm-12">
+                        <label>Company Name: </label>
+                        <fieldset class="form-group">
+                            <select class="form-select" id="company_id" name="company_id">
+                            </select>
+                        </fieldset>
+                    </div>
                     <div class="row">
-
-                        <div class="col-sm-6">
-                            <label>Company Name: </label>
-                            <div class="form-group">
-                                <input type="text" placeholder="Enter the Company Name" class="form-control"
-                                    name="company_name">
-                            </div>
-
-                            <label>Company Address: </label>
-                            <div class="form-group">
-                                <div class="form-floating">
-                                    <textarea class="form-control" placeholder="Enter the Company Address"
-                                        id="floatingTextarea" name="company_address"></textarea>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-sm-6">
-                            <label>Director Name: </label>
-                            <div class="form-group">
-                                <input type="text" placeholder="Enter the Director Name" class="form-control"
-                                    name="director_name">
-                            </div>
-
-                            <label>Director Phone: </label>
-                            <div class="form-group">
-                                <input type="text" placeholder="Enter the Director Phone" class="form-control"
-                                    name="director_phone">
-                            </div>
-                        </div>
-
                         <div class="col-sm-6">
                             <label>Start Project: </label>
                             <div class="form-group">
@@ -130,7 +189,7 @@
 </div>
 
 <div class="modal fade text-left w-100" id="detailModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel33"
-    aria-hidden="true">
+    aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -213,7 +272,7 @@
 </div>
 
 <div class="modal fade text-left w-100" id="docModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel33"
-    aria-hidden="true">
+    aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -244,9 +303,9 @@
                             </fieldset>
                         </div>
                         <div class="col-sm-6">
-                            <input type="file" class="basic-filepond" name="file" required multiple data-max-file-size="2MB">
+                            <input type="file" class="basic-filepond-activity1" name="file" id="fileDocProject">
                         </div>
-                        <div class="col-sm-2">
+                        <div class="col-sm-2 d-flex justify-content-center align-items-center">
                             <a href="#" class="btn btn-success" onclick="storeDoc()" style="margin: 0 auto">
                                 <i class="fa-solid fa-plus"></i> Add
                             </a>
@@ -290,6 +349,13 @@
             </div> --}}
             </form>
         </div>
+    </div>
+</div>
+
+<div id="modernPDFModal" class="modern-modal" style="display: none">
+    <div class="modern-modal-content">
+        <span class="closePDF" onclick="closePDFModal()">&times;</span>
+        <iframe id="pdfViewer" frameborder="0"></iframe>
     </div>
 </div>
 

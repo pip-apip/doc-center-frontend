@@ -13,7 +13,8 @@
             <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Category</li>
+                    <li class="breadcrumb-item" aria-current="page">Category</li>
+                    <li class="breadcrumb-item active" aria-current="page">Administration</li>
                 </ol>
             </nav>
         </div>
@@ -35,18 +36,17 @@
                         <th width="100">Action</th>
                     </tr>
                 </thead>
-                <tbody id="table-body">
+                <tbody id="table-categoryAdmin">
 
                 </tbody>
 
             </table>
         </div>
     </div>
-
 </section>
 
 <div class="modal fade text-left w-100" id="formAddModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel33"
-    aria-hidden="true">
+    aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -84,7 +84,7 @@
 </div>
 
 <div class="modal fade text-left w-100" id="formEditModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel33"
-    aria-hidden="true">
+    aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -111,7 +111,7 @@
                 </div>
 
                 <div class="modal-footer">
-                    <button class="btn btn-primary ml-1" type="submit" onclick="updateProject()">
+                    <button class="btn btn-primary ml-1" type="submit" onclick="updateCategory()">
                         <i class="bx bx-check d-block d-sm-none"></i>
                         <span class="d-none d-sm-block"><i class="fa-solid fa-floppy-disk"></i> Save</span>
                     </button>
@@ -131,7 +131,12 @@
     let id_project = 0;
     $(document).ready(function () {
         let data_category = [];
-        loadProjects();
+        loadCategoryAdmin();
+    });
+
+    $('#formAddModal').modal({
+        backdrop: 'static',
+        keyboard: false
     });
 
     $('#formAddModal').on('hidden.bs.modal', function () {
@@ -141,8 +146,8 @@
         id_project = 0;
     });
 
-    function loadProjects() {
-        $("#table-body").empty();
+    function loadCategoryAdmin() {
+        $("#table-categoryAdmin").empty();
 
         $.ajax({
             url: "http://doc-center-backend.test/api/v1/admin-doc-categories", // Replace with your API URL
@@ -168,14 +173,14 @@
                                 data-bs-target="#formEditModal" onclick="setId(${category.id})">
                                 <i class="fa-solid fa-pen"></i>
                             </a>
-                            <a href="#" class="btn btn-sm btn-danger rounded-pill" onclick="deleteProject(${category.id})">
+                            <a href="#" class="btn btn-sm btn-danger rounded-pill" onclick="deleteCategory(${category.id})">
                                 <i class="fa-solid fa-trash"></i>
                             </a>
                         </td>
                     </tr>`;
                 });
 
-                $("#table-body").html(rows);
+                $("#table-categoryAdmin").html(rows);
 
                 let table1 = document.querySelector('#table1');
                 let dataTable = new simpleDatatables.DataTable(table1);
@@ -206,7 +211,7 @@
         }
     }
 
-    function updateProject(){
+    function updateCategory(){
         event.preventDefault(); // Prevent default form submission
 
         console.log(id_project)
@@ -252,7 +257,7 @@
                     timer: 1000
                 }).then(() => {
                     $('#closeEditModal').click();
-                    loadProjects();
+                    loadCategoryAdmin();
                     // location.reload(); // Refresh after the SweetAlert
                 });
             },
@@ -314,7 +319,7 @@
                     timer: 1000
                 }).then(() => {
                     $('#closeAddModal').click();
-                    loadProjects();
+                    loadCategoryAdmin();
                     // location.reload(); // Refresh after the SweetAlert
                 });
             },
@@ -359,13 +364,13 @@
         // formData.append('_token', '{{ csrf_token() }}');
 
         if(id_project > 0){
-            updateProject(formData);
+            updateCategory(formData);
         }else{
             submitPostForm(formData);
         }
     });
 
-    function deleteProject(id) {
+    function deleteCategory(id) {
         console.log("ID : "+id)
         Swal.fire({
             title: "Are you sure?",
@@ -389,7 +394,7 @@
                             showConfirmButton: false,
                             timer: 1000
                         }).then(() => {
-                            loadProjects();
+                            loadCategoryAdmin();
                             // location.reload(); // Refresh after the SweetAlert
                         });
                     },
