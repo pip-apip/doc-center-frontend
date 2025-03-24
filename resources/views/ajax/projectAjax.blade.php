@@ -96,7 +96,7 @@
                     <tr>
                         <td>${index + 1}</td>
                         <td>${project.name}</td>
-                        <td>${project.company_id}</td>
+                        <td>${project.company.name}</td>
                         <td>` + dateFormat(project.start_date) + `</td>
                         <td>` + dateFormat(project.end_date) + `</td>
                         <td>
@@ -113,6 +113,9 @@
                                 data-bs-target="#docModal" onclick="showDoc(${project.id})">
                                 <i class="fa-solid fa-file"></i>
                             </a>
+                            <button class="btn btn-sm btn-danger rounded-pill" onclick="activityPage(${project.id})">
+                                <i class="fa-solid fa-chart-line"></i>
+                            </button>
                         </td>
                     </tr>`;
                 });
@@ -128,16 +131,26 @@
         });
     }
 
+    function activityPage(project_id){
+        $.ajax({
+            type: "GET", // or "POST" if needed
+            url: `/activity-project/${project_id}`, // Replace 123 with dynamic ID
+            success: function(response) {
+                window.location.href = `/activity-project/${project_id}`; // Redirect to the page
+            }
+        });
+    }
+
     function detailModal(id) {
         let project = data_projects.find(project => project.id === id);
         id_project = project.id;
-        // console.log(project);
+        console.log('detail',project);
 
-        $("#project_name_detail").text(project.project_name);
-        $("#company_name_detail").text(project.company_name);
-        $("#company_address_detail").text(project.company_address);
-        $("#director_name_detail").text(project.director_name);
-        $("#director_phone_detail").text(project.director_phone);
+        $("#project_name_detail").text(project.name);
+        $("#company_name_detail").text(project.company.name);
+        $("#company_address_detail").text(project.company.address);
+        $("#director_name_detail").text(project.company.director_name);
+        $("#director_phone_detail").text(project.company.director_phone);
         $("#start_project_detail").text(dateFormat(project.start_date));
         $("#end_project_detail").text(dateFormat(project.end_date));
         $('#editButton').attr("onclick", "setId(" + project.id + ")")
@@ -230,8 +243,19 @@
             processData: false,
             contentType: false,
             success: function (response) {
-                alert('Project saved successfully!');
-                location.reload();
+                console.log(response)
+                if(response.status === 400) {  // Validation error
+                    let errors = response.errors;
+
+                    $.each(errors, function (key, messages) {
+                        let inputField = $(`[name="${key}"]`);
+                        inputField.addClass("is-invalid")
+                            .after(`<div class="invalid-feedback">${messages[0]}</div>`);
+                    });
+                }else if(response.status === 200){
+                    alert('Project saved successfully!');
+                    location.reload();
+                }
             },
             error: function (xhr) {
                 if (xhr.status === 422) {
@@ -347,7 +371,7 @@
     function showDoc(id) {
         let project = data_projects.find(project => project.id === id);
         id_project = project.id;
-        // console.log(project);
+        console.log('ShowDoc',project);
         getDoc();
 
         $("#project_name_doc").text(project.name);
@@ -435,9 +459,9 @@
         let id_category = $(this).val();
         console.log(id_category);
         let filteredDoc = data_doc.filter(doc =>
-            doc.admin_doc_category_id == id_category
+            doc.admin_doc_category.id == id_category
         );
-        console.log("Filtered Doc:", filteredDoc);
+        console.log("Filtered Doc Category_change:", filteredDoc);
         $("#table_doc").empty();
         if(filteredDoc.length > 0){
             let rows = "";
@@ -482,19 +506,19 @@
             type: "GET",
             dataType: "json",
             success: function (response) {
-                // console.log(response.data);
+                console.log('getDoc',response.data);
 
 
-                // $('#category_show').onchange(function(){
-                    let id_category = 2;
-                    // console.log(id_category);
+                // $('#category_show').change(function(){
+                //     let id_category = $(this).val();
+                //     console.log('Category_selected',id_category);
                     let filteredData = response.data.filter(doc =>
-                        doc.project_id === id_project
+                        doc.project.id === id_project
                     );
 
                     data_doc = filteredData;
 
-                    console.log("Filtered Data:", data_doc);
+                    console.log("Filtered Data (getDoc):", data_doc);
                 // });
 
 

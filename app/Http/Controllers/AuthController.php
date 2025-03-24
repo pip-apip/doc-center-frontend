@@ -7,14 +7,12 @@ use Illuminate\Support\Facades\Http;
 
 class AuthController extends Controller
 {
-    public function login()
+    public function login(Request $request)
     {
         if(session('user')){
-            // dd(session()->all());
-            // return view('auth.login');
-        }else{
-            return view('auth.login');
+            return redirect()->route('home');
         }
+        return view('auth.login', ['session' => session()->all()]);
     }
 
     public function doLogin(){
@@ -30,19 +28,18 @@ class AuthController extends Controller
             'password'  => $validatedData['password'],
         ]);
 
-        // Check API response
         if ($response->successful()) {
-            // Save token in session
             session([
                 'user' => [
-                    'token'     => $response->json('data.access_token'),
-                    'name'      => $response->json('data.name'),
-                    'username'  => $response->json('data.username'),
-                    'refresh_token' => request()->cookie()
+                    'access_token'  => $response->json('data.access_token'),
+                    'refresh_token' => $response->json('data.refresh_token'),
+                    'name'          => $response->json('data.name'),
+                    'username'      => $response->json('data.username'),
+                    // 'role'          => $response->json('data.role'),
                 ]
             ]);
-            dd(session()->all());
-            // return redirect()->route('project');
+            // dd(session()->all());
+            return redirect()->route('home')->with('success', 'Login successful.');
         }
 
         // Handle errors
@@ -60,8 +57,10 @@ class AuthController extends Controller
         // Validate input
         $validatedData = $request->validate([
             'name'      => 'required|string|max:255',
+            'name'      => 'required|string|max:255',
             'username'  => 'required|string|max:255|unique:users,username',
             'password'  => 'required|string|min:8|confirmed',
+            'role'      => 'required|in:USER,ADMIN,SUPERADMIN',
         ]);
 
         // Send a POST request to external API
@@ -69,13 +68,13 @@ class AuthController extends Controller
             'name'      => $validatedData['name'],
             'username'  => $validatedData['username'],
             'password'  => $validatedData['password'],
+            'role'      => $validatedData['role'],
         ]);
 
         // dd($response->json());
 
-        // Check API response
         if ($response->successful()) {
-            return redirect()->route('login')->with('success', 'Registration successful. Please login.');
+            return redirect()->route('home')->with('message', 'Registration successful.');
         }
 
         // Handle errors (API might return validation errors)
@@ -85,7 +84,7 @@ class AuthController extends Controller
 
     public function logout(){
         // Get token from session
-        $token = session('token');
+        $token = session('user.access_token');
 
         // Check if token exists
         if (!$token) {
@@ -96,7 +95,7 @@ class AuthController extends Controller
         $response = Http::withToken($token)->post('http://doc-center-backend.test/api/v1/auth/logout');
 
         // Clear session data
-        session()->forget(['token', 'name', 'username', 'refresh_token']);
+        session()->forget('user');
         session()->flush();
 
         // Check API response

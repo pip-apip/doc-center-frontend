@@ -134,14 +134,9 @@
         loadCategoryAdmin();
     });
 
-    $('#formAddModal').modal({
-        backdrop: 'static',
-        keyboard: false
-    });
-
     $('#formAddModal').on('hidden.bs.modal', function () {
         document.getElementById("post-form").reset();
-        $('.invalid-feedback').remove(); // Remove error messages
+        $('.invalid-feedback').remove();
         $('.form-control').removeClass('is-invalid');
         id_project = 0;
     });
@@ -150,8 +145,12 @@
         $("#table-categoryAdmin").empty();
 
         $.ajax({
-            url: "http://doc-center-backend.test/api/v1/admin-doc-categories", // Replace with your API URL
+            url: "http://doc-center-backend.test/api/v1/admin-doc-categories",
             type: "GET",
+            headers: {
+                'Accept': 'application/json',
+                'Authorization': 'Bearer ' + @json(session('user.access_token')),
+            },
             dataType: "json",
             success: function (response) {
                 data_category = response.data;
@@ -186,19 +185,22 @@
                 let dataTable = new simpleDatatables.DataTable(table1);
             },
             error: function (xhr, status, error) {
-                console.error("AJAX Error:", status, error);
+                console.log(xhr);
+                if (xhr.status === 401) {
+                    console.log("Token expired. Refreshing token...");
+                    refreshToken(loadCategoryAdmin);
+                } else {
+                    $('#getUser').html("<p style='color: red;'>Gagal mengambil data pengguna.</p>");
+                }
             }
         });
     }
 
     function setId(id) {
-        // document.getElementById("addButton").setAttribute("onclick", "set(" + id + ")");
         id_project = id;
         console.log(id_project)
-        // document.getElementById("addButton").click();
 
         if (id_project > 0) {
-            // Load project data
             let category = data_category.find(category => category.id === id);
             console.log(category);
 
@@ -241,49 +243,43 @@
         $.ajax({
             url: apiUrl, // Use the API URL
             type: 'PATCH',
-            // headers: {
-            //     'Accept': 'application/json', // Specify the response format
-            //     'Authorization': 'Bearer ' + yourApiToken, // Add API token if required
-            // },
+            headers: {
+                'Accept': 'application/json',
+                'Authorization': 'Bearer ' + @json(session('user.access_token')),
+            },
             data: JSON.stringify(jsonData),
             processData: false,
             contentType: 'application/json',
             success: function (response) {
-                Swal.fire({
-                    position: "center",
-                    icon: "success",
-                    title: "Your Category has been edited",
-                    showConfirmButton: false,
-                    timer: 1000
-                }).then(() => {
-                    $('#closeEditModal').click();
-                    loadCategoryAdmin();
-                    // location.reload(); // Refresh after the SweetAlert
-                });
-            },
-            error: function (xhr) {
-                console.log('Error:', xhr);
-                if (xhr.status === 422) {
-                    let errors = xhr.responseJSON.errors;
+                console.log(response);
+                if (response.status === 400) {
+                    let errors = response.errors;
 
                     $('.invalid-feedback').remove();
                     $('.form-control').removeClass('is-invalid');
+
                     $.each(errors, function (key, messages) {
                         let inputField = $(`[name="${key}"]`);
                         inputField.addClass('is-invalid');
                         inputField.after(`<div class="invalid-feedback">${messages[0]}</div>`);
                     });
-                } else if(xhr.status === 400) {  // Validation error
-                    let errors = xhr.responseJSON.errors;
-
-                    $.each(errors, function (key, messages) {
-                        let inputField = $(`[name="${key}"]`);
-                        inputField.addClass("is-invalid")
-                            .after(`<div class="invalid-feedback">${messages[0]}</div>`);
+                } else if (response.status === 200) {
+                    Swal.fire({
+                        position: "center",
+                        icon: "success",
+                        title: `${response.message}`,
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+                        $('#closeEditModal').click();
+                        loadCategoryAdmin();
+                        // location.reload(); // Refresh after the SweetAlert
                     });
-                }else{
-                    console.log(xhr.responseJSON.errors);
                 }
+            },
+            error: function (xhr) {
+                console.log('Error:', xhr);
+                console.log(xhr.responseJSON.errors);
             }
         });
     }
@@ -301,31 +297,17 @@
         $.ajax({
             url: apiUrl, // Use the API URL
             type: 'POST',
-            // headers: {
-            //     'Accept': 'application/json', // Specify the response format
-            //     'Authorization': 'Bearer ' + yourApiToken, // Add API token if required
-            // },
+            headers: {
+                'Accept': 'application/json',
+                'Authorization': 'Bearer ' + @json(session('user.access_token')),
+            },
             data: JSON.stringify(jsonData),
             processData: false,
             contentType: 'application/json',
             success: function (response) {
-                // alert('Project saved successfully!');
-                // location.reload();
-                Swal.fire({
-                    position: "center",
-                    icon: "success",
-                    title: "Your Category has been saved",
-                    showConfirmButton: false,
-                    timer: 1000
-                }).then(() => {
-                    $('#closeAddModal').click();
-                    loadCategoryAdmin();
-                    // location.reload(); // Refresh after the SweetAlert
-                });
-            },
-            error: function (xhr) {
-                if (xhr.status === 422) {
-                    let errors = xhr.responseJSON.errors;
+                console.log(response);
+                if (response.status === 400) {
+                    let errors = response.errors;
 
                     $('.invalid-feedback').remove();
                     $('.form-control').removeClass('is-invalid');
@@ -335,17 +317,24 @@
                         inputField.addClass('is-invalid');
                         inputField.after(`<div class="invalid-feedback">${messages[0]}</div>`);
                     });
-                } else if(xhr.status === 400) {  // Validation error
-                    let errors = xhr.responseJSON.errors;
-
-                    $.each(errors, function (key, messages) {
-                        let inputField = $(`[name="${key}"]`);
-                        inputField.addClass("is-invalid")
-                            .after(`<div class="invalid-feedback">${messages[0]}</div>`);
+                } else if (response.status === 201) {
+                    // alert('Project saved successfully!');
+                    // location.reload();
+                    Swal.fire({
+                        position: "center",
+                        icon: "success",
+                        title: `${response.message}`,
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+                        $('#closeAddModal').click();
+                        loadCategoryAdmin();
+                        // location.reload(); // Refresh after the SweetAlert
                     });
-                }else{
-                    console.log(xhr.responseJSON.errors);
                 }
+            },
+            error: function (xhr) {
+                console.log(xhr.responseJSON.errors);
             }
         });
     }
@@ -386,6 +375,10 @@
                 $.ajax({
                     url: `http://doc-center-backend.test/api/v1/admin-doc-categories/${id}`,
                     type: 'DELETE',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Authorization': 'Bearer ' + @json(session('user.access_token')),
+                    },
                     success: function (response) {75
                         Swal.fire({
                             position: "center",

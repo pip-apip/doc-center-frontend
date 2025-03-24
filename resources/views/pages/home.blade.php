@@ -131,6 +131,10 @@
 
         let content_doc = '';
         $.each(filteredDocs, function (index, doc) {
+            let shortDescription = doc.description.length > 280
+                ? doc.description.substring(0, 280) + " ...."
+                : doc.description;
+                // console.log(doc.description.length)
             content_doc += `
                 <div class="card">
                     <div class="card-body">
@@ -139,10 +143,10 @@
                                 <h4 class="card-title">${doc.title}</h4>
                             </div>
                             <div class="col-5 d-flex justify-content-end">
-                                <small>${doc.date || 'Unknown Date'}</small>
+                                <small>${dateFormat(doc.created_at) || 'Unknown Date'}</small>
                             </div>
                         </div>
-                        <p class="card-text">${doc.description}</p>
+                        <p class="card-text">${shortDescription}</p>
                         <div class="d-flex justify-content-end">
                             <button type="submit" class="btn btn-primary me-1 justify-content-end">Read More...</button>
                         </div>
@@ -256,6 +260,22 @@
         }
         $("#tagInput").val("").focus();
         $("#suggestions").hide();
+    }
+
+    function dateFormat(dateTimeString) {
+        let datePart = dateTimeString.split(" ")[0];
+
+        let [year, month, day] = datePart.split("-");
+
+        let date = new Date(year, month - 1, day);
+
+        let formattedDate = new Intl.DateTimeFormat("id-ID", {
+            day: "2-digit",
+            month: "long",
+            year: "numeric"
+        }).format(date);
+
+        return formattedDate;
     }
 </script>
 

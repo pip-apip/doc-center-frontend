@@ -59,6 +59,51 @@
         </footer> --}}
     </div>
 
+    <script>
+        function refreshToken(){
+            // console.log('session : ',@json(session('user.access_token')));
+            $.ajax({
+                url: 'http://doc-center-backend.test/api/v1/auth/refresh',
+                type: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Authorization': 'Bearer ' + @json(session('user.refresh_token')),
+                },
+                data:{
+                    refresh_token : @json(session('user.refresh_token'))
+                },
+                success: function (response) {
+                    console.log("Token berhasil diperbarui", response);
+
+                    $.ajax({
+                        url: '/save-token',
+                        type: 'POST',
+                        data: {
+                            access_token: response.data.access_token,
+                            _token: "{{ csrf_token() }}" // Pastikan CSRF token dikirim
+                        },
+                        success: function () {
+                            console.log("Access token berhasil disimpan di session Laravel.");
+
+                            if (typeof callback === "function") {
+                                callback();
+                            }
+                        },
+                        error: function (xhr) {
+                            console.log("Gagal menyimpan access token ke session Laravel", xhr);
+                        }
+                    });
+                },
+                error: function (xhr) {
+                    console.log("Gagal memperbarui token:", xhr);
+                    $('#getUser').html("<p style='color: red;'>Session expired, silakan login ulang.</p>");
+                    // Redirect ke halaman login jika refresh token juga gagal
+                    window.location.href = "/login";
+                }
+            });
+        }
+    </script>
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script src="{{ asset('assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js') }}"></script>

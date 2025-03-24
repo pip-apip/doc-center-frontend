@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="{{ asset('assets/vendors/bootstrap-icons/bootstrap-icons.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/app.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/pages/auth.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 
@@ -79,6 +80,19 @@
                                 This is invalid state.
                             </div> --}}
                         </div>
+                        <div class="form-group position-relative has-icon-left mb-4" style="display: none">
+                            <select class="form-select form-select-lg" id="basicSelect" name="role">
+                                <option value="USER">User</option>
+                                <option value="ADMIN">ADMIN</option>
+                                <option value="SUPERADMIN">SUPERADMIN</option>
+                            </select>
+                            @error('role')
+                                <div class="invalid-feedback">
+                                    <i class="bx bx-radio-circle"></i>
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
                         <button class="btn btn-primary btn-block btn-lg shadow-lg mt-5">Sign Up</button>
                     </form>
                     <div class="text-center mt-5 text-lg fs-4">
@@ -97,5 +111,29 @@
 
     </div>
 </body>
+
+@if(session('success'))
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: `{{ session('success') }}`,
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = "{{ route('login') }}";
+            }
+        });
+    </script>
+@endif
+
+@if ($errors->any())
+    <script>
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: '{{ $errors->first() }}',
+        });
+    </script>
+@endif
 
 </html>

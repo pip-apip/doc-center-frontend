@@ -3,7 +3,7 @@
         <div class="sidebar-header">
             <div class="d-flex justify-content-between">
                 <div class="logo">
-                    <a href="index.html"><img src="assets/images/logo/logo.png" alt="Logo" srcset=""></a>
+                    <a href="index.html"><img src="{{ asset('assets/images/logo/logo.png') }}" alt="Logo" srcset=""></a>
                 </div>
                 <div class="toggler">
                     <a href="#" class="sidebar-hide d-xl-none d-block"><i class="bi bi-x bi-middle"></i></a>
@@ -20,7 +20,7 @@
                 </li>
 
                 <li class="sidebar-title">Menu</li>
-
+                {{-- @if(Auth::user()->role == 'SUPERADMIN') --}}
                 <li class="sidebar-item {{ $title == 'categoryAct' || $title == 'categoryAdm' ? 'active' : ''  }} has-sub">
                     <a href="#" class='sidebar-link'>
                         <i class="fa-solid fa-list"></i>
@@ -35,6 +35,7 @@
                         </li>
                     </ul>
                 </li>
+                {{-- @endif --}}
 
                 <li class="sidebar-item {{ $title == 'Company' ? 'active' : ''  }} ">
                     <a href="{{ route('company') }}" class='sidebar-link'>
@@ -57,6 +58,15 @@
                     </a>
                 </li>
 
+                <li class="sidebar-item ">
+                    <a class="sidebar-link" onclick="document.getElementById('logout-form').submit();">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                        <span>Logout</span>
+                    </a>
+                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                        @csrf
+                    </form>
+                </li>
             </ul>
         </div>
         <button class="sidebar-toggler btn x"><i data-feather="x"></i></button>
