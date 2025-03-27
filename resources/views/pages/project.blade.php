@@ -148,7 +148,7 @@
 
                     <label>Project Name : </label>
                     <div class="form-group">
-                        <input type="text" placeholder="Enter the Project Name" class="form-control"
+                        <input type="text" placeholder="Enter the Project Name" class="form-control" id="project_name"
                             name="name">
                     </div>
 
@@ -194,7 +194,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title" id="myModalLabel33">Detail Project</h4>
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" id="closeDetailModal">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
@@ -359,6 +359,6 @@
     </div>
 </div>
 
-@include('ajax.projectAjax')
+@include('ajax.new_projectAjax')
 
 @endsection

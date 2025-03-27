@@ -1,3 +1,9 @@
+<div id="fullPageLoader" class="full-page-loader">
+    <div class="spinner-border text-light" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
+
 <script src="{{ asset('assets/vendors/simple-datatables/simple-datatables.js') }}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
     integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
@@ -32,6 +38,8 @@
 
 <script>
     let id_project = 0;
+    let backendUrl = 'http://doc-center-backend.test/api/v1/';
+    let access_token = @json(session('user.access_token'));
     $(document).ready(function () {
         let data_projects = [];
         loadProjects();
@@ -44,13 +52,18 @@
         document.getElementById("post-form").reset();
         $('.invalid-feedback').remove(); // Remove error messages
         $('.form-control').removeClass('is-invalid');
+        $('.form-group').removeClass('is-invalid');
         id_project = 0;
     });
 
     function getCompany(){
         $.ajax({
-            url: "http://doc-center-backend.test/api/v1/companies", // Replace with your API URL
+            url: backendUrl + "companies",
             type: "GET",
+            headers: {
+                'Accept': 'application/json',
+                'Authorization': 'Bearer ' + access_token,
+            },
             dataType: "json",
             success: function (response) {
                 data_company = response.data;
@@ -69,74 +82,99 @@
                 $("#company_id").html(rows);
             },
             error: function (xhr, status, error) {
-                console.error("AJAX Error:", status, error);
+                if (xhr.status === 401) {
+                    console.log("Token expired. Refreshing token...");
+                    // refreshToken();
+                } else {
+                    console.log(xhr);
+                }
             }
         });
     }
 
     function loadProjects() {
+        $('#fullPageLoader').show();
         $("#table-body").empty();
 
         $.ajax({
-            url: "http://doc-center-backend.test/api/v1/projects", // Replace with your API URL
+            url: backendUrl + "projects",
             type: "GET",
+            headers: {
+                'Accept': 'application/json',
+                'Authorization': 'Bearer ' + access_token,
+            },
             dataType: "json",
             success: function (response) {
-                data_projects = response.data;
-                // console.log(data_projects);
-                if (!response || !response.data) {
-                    console.error("Invalid API response:", response);
-                    return;
+                if(response.status === 200){
+                    data_projects = response.data;
+                    // console.log(data_projects);
+                    if (!response || !response.data) {
+                        console.error("Invalid API response:", response);
+                        return;
+                    }
+
+                    let rows = ""; // Variable to store generated rows
+
+                    $.each(response.data, function (index, project) {
+                        rows += `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td>${project.name}</td>
+                            <td>${project.company.name}</td>
+                            <td>` + dateFormat(project.start_date) + `</td>
+                            <td>` + dateFormat(project.end_date) + `</td>
+                            <td>
+                                <span class="badge ${project.status === 'Active' ? 'bg-success' : 'bg-danger'}">
+                                    ${project.status}
+                                </span>
+                            </td>
+                            <td>
+                                <a href="#" class="btn btn-sm btn-warning rounded-pill" data-bs-toggle="modal"
+                                    data-bs-target="#detailModal" onclick="detailModal(${project.id})">
+                                    <i class="fa-solid fa-ellipsis-vertical"></i>
+                                </a>
+                                <a href="#" class="btn btn-sm btn-info rounded-pill" data-bs-toggle="modal"
+                                    data-bs-target="#docModal" onclick="showDoc(${project.id})">
+                                    <i class="fa-solid fa-file"></i>
+                                </a>
+                                <button class="btn btn-sm btn-danger rounded-pill" onclick="activityPage(${project.id})">
+                                    <i class="fa-solid fa-chart-line"></i>
+                                </button>
+                            </td>
+                        </tr>`;
+                    });
+
+                    $("#table-body").html(rows);
+
+                    let table1 = document.querySelector('#table1');
+                    let dataTable = new simpleDatatables.DataTable(table1);
+                }else{
+                    console.log(response);
                 }
-
-                let rows = ""; // Variable to store generated rows
-
-                $.each(response.data, function (index, project) {
-                    rows += `
-                    <tr>
-                        <td>${index + 1}</td>
-                        <td>${project.name}</td>
-                        <td>${project.company.name}</td>
-                        <td>` + dateFormat(project.start_date) + `</td>
-                        <td>` + dateFormat(project.end_date) + `</td>
-                        <td>
-                            <span class="badge ${project.status === 'Active' ? 'bg-success' : 'bg-danger'}">
-                                ${project.status}
-                            </span>
-                        </td>
-                        <td>
-                            <a href="#" class="btn btn-sm btn-warning rounded-pill" data-bs-toggle="modal"
-                                data-bs-target="#detailModal" onclick="detailModal(${project.id})">
-                                <i class="fa-solid fa-ellipsis-vertical"></i>
-                            </a>
-                            <a href="#" class="btn btn-sm btn-info rounded-pill" data-bs-toggle="modal"
-                                data-bs-target="#docModal" onclick="showDoc(${project.id})">
-                                <i class="fa-solid fa-file"></i>
-                            </a>
-                            <button class="btn btn-sm btn-danger rounded-pill" onclick="activityPage(${project.id})">
-                                <i class="fa-solid fa-chart-line"></i>
-                            </button>
-                        </td>
-                    </tr>`;
-                });
-
-                $("#table-body").html(rows);
-
-                let table1 = document.querySelector('#table1');
-                let dataTable = new simpleDatatables.DataTable(table1);
+                $('#fullPageLoader').hide();
             },
             error: function (xhr, status, error) {
-                console.error("AJAX Error:", status, error);
+                // console.log(@json(session('user.access_token')));
+                if (xhr.status === 401) {
+                    console.log("Token expired. Refreshing token...");
+                    refreshToken();
+                } else {
+                    console.log(xhr);
+                }
             }
         });
     }
 
     function activityPage(project_id){
         $.ajax({
-            type: "GET", // or "POST" if needed
-            url: `/activity-project/${project_id}`, // Replace 123 with dynamic ID
+            url: `/activity-project/${project_id}`,
+            type: "GET",
+            headers: {
+                'Accept': 'application/json',
+                'Authorization': 'Bearer ' + access_token,
+            },
             success: function(response) {
-                window.location.href = `/activity-project/${project_id}`; // Redirect to the page
+                window.location.href = `/activity-project/${project_id}`;
             }
         });
     }
@@ -169,7 +207,7 @@
             console.log(project);
 
             document.querySelector('input[name="name"]').value = project.name;
-            $('select[name="company_id"]').val(project.company_id).change();
+            $('select[name="company_id"]').val(project.company.id).change();
             document.querySelector('input[name="start_date"]').value = project.start_date;
             document.querySelector('input[name="end_date"]').value = project.end_date;
 
@@ -181,7 +219,8 @@
     }
 
     function updateProject(formData){
-        let apiUrl = `http://doc-center-backend.test/api/v1/projects/${id_project}`;
+        $('#fullPageLoader').show();
+        let apiUrl = backendUrl + `projects/${id_project}`;
 
         let jsonData = {};
         formData.forEach((value, key) => {
@@ -191,60 +230,15 @@
         $.ajax({
             url: apiUrl, // Use the API URL
             type: 'PATCH',
-            // headers: {
-            //     'Accept': 'application/json', // Specify the response format
-            //     'Authorization': 'Bearer ' + yourApiToken, // Add API token if required
-            // },
+            headers: {
+                'Accept': 'application/json',
+                'Authorization': 'Bearer ' + access_token,
+            },
             data: JSON.stringify(jsonData),
             processData: false,
             contentType: 'application/json',
             success: function (response) {
-                console.log('Response:', response);
-                alert('Project updated successfully!');
-                location.reload();
-            },
-            error: function (xhr) {
-                console.log('Error:', xhr);
-                if (xhr.status === 422) {
-                    let errors = xhr.responseJSON.errors;
-
-                    $('.invalid-feedback').remove();
-                    $('.form-control').removeClass('is-invalid');
-                    $.each(errors, function (key, messages) {
-                        let inputField = $(`[name="${key}"]`);
-                        inputField.addClass('is-invalid');
-                        inputField.after(`<div class="invalid-feedback">${messages[0]}</div>`);
-                    });
-                } else if(xhr.status === 400) {  // Validation error
-                    let errors = xhr.responseJSON.errors;
-
-                    $.each(errors, function (key, messages) {
-                        let inputField = $(`[name="${key}"]`);
-                        inputField.addClass("is-invalid")
-                            .after(`<div class="invalid-feedback">${messages[0]}</div>`);
-                    });
-                }else{
-                    console.log(xhr.responseJSON.errors);
-                }
-            }
-        });
-    }
-
-    function submitPostForm(formData) {
-        console.log("id_project : " + id_project);
-        formData.append("name", $("#project_name").val());
-        formData.append("company_id", $("#company_id").val());
-        console.log($("#company_id").val());
-
-        $.ajax({
-            url: 'http://doc-center-backend.test/api/v1/projects',
-            type: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function (response) {
-                console.log(response)
-                if(response.status === 400) {  // Validation error
+                if(response.status === 400) {
                     let errors = response.errors;
 
                     $.each(errors, function (key, messages) {
@@ -252,33 +246,83 @@
                         inputField.addClass("is-invalid")
                             .after(`<div class="invalid-feedback">${messages[0]}</div>`);
                     });
-                }else if(response.status === 200){
-                    alert('Project saved successfully!');
-                    location.reload();
+                }else if(response.status === 200 || response.status === 201){
+                    $('#fullPageLoader').hide();
+                    Swal.fire({
+                        position: "center",
+                        icon: "success",
+                        title: "Your Project has been Edited",
+                        showConfirmButton: false,
+                        timer: 1000
+                    }).then(() => {
+                        $('#closeFormModal').click();
+                        loadCategoryAdmin();
+                        // location.reload(); // Refresh after the SweetAlert
+                    });
+                }else{
+                    console.log(response)
                 }
             },
             error: function (xhr) {
-                if (xhr.status === 422) {
-                    let errors = xhr.responseJSON.errors;
+                if (xhr.status === 401) {
+                    console.log("Token expired. Refreshing token...");
+                    refreshToken();
+                } else {
+                    console.log(xhr);
+                }
+            }
+        });
+    }
 
-                    $('.invalid-feedback').remove();
-                    $('.form-control').removeClass('is-invalid');
+    function submitPostForm(formData) {
+        $('#fullPageLoader').show();
+        console.log("id_project : " + id_project);
+        formData.append("name", $("#project_name").val());
+        formData.append("company_id", $("#company_id").val());
+        console.log($("#company_id").val());
 
-                    $.each(errors, function (key, messages) {
-                        let inputField = $(`[name="${key}"]`);
-                        inputField.addClass('is-invalid');
-                        inputField.after(`<div class="invalid-feedback">${messages[0]}</div>`);
-                    });
-                } else if(xhr.status === 400) {  // Validation error
-                    let errors = xhr.responseJSON.errors;
+        $.ajax({
+            url: backendUrl + 'projects',
+            type: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Authorization': 'Bearer ' + access_token,
+            },
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                $('#fullPageLoader').hide();
+                if(response.status === 400) {
+                    let errors = response.errors;
 
                     $.each(errors, function (key, messages) {
                         let inputField = $(`[name="${key}"]`);
                         inputField.addClass("is-invalid")
                             .after(`<div class="invalid-feedback">${messages[0]}</div>`);
                     });
+                }else if(response.status === 200 || response.status === 201){
+                    Swal.fire({
+                        position: "center",
+                        icon: "success",
+                        title: "Your Project successfully Created",
+                        showConfirmButton: false,
+                        timer: 1000
+                    }).then(() => {
+                        $('#closeFormModal').click();
+                        loadProjects();
+                        // location.reload(); // Refresh after the SweetAlert
+                    });
                 }else{
-                    console.log(xhr.responseJSON.errors);
+                    console.log(response)
+                }
+            },
+            error: function (xhr) {
+                if (xhr.status === 401) {
+                    console.log("Token expired. Refreshing token...");
+                    refreshToken();
+                } else {
+                    console.log(xhr);
                 }
             }
         });
@@ -305,23 +349,58 @@
     });
 
     function deleteProject() {
-        console.log(id_project);
-        $.ajax({
-            url: `http://doc-center-backend.test/api/v1/projects/${id_project}`,
-            type: 'DELETE',
-            // headers: {
-            //     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            //     // 'Authorization': 'Bearer ' + yourApiToken
-            // },
-            success: function (response) {
-                alert('Project deleted successfully!');
-                location.reload();
-            },
-            error: function (xhr) {
-                console.error('Error:', xhr);
-                alert('Something went wrong. Please try again.');
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                console.log(id_project);
+                $.ajax({
+                    url: backendUrl + `projects/${id_project}`,
+                    type: 'DELETE',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Authorization': 'Bearer ' + access_token,
+                    },
+                    success: function (response) {
+                        if(response.status === 200){
+                            Swal.fire({
+                                position: "center",
+                                icon: "success",
+                                title: "Project Data has been Deleted",
+                                showConfirmButton: false,
+                                timer: 1000
+                            }).then(() => {
+                                $('#closeDetailModal').click();
+                                loadProjects();
+                                // location.reload(); // Refresh after the SweetAlert
+                            });
+                        }else{
+                            console.log(response);
+                        }
+                    },
+                    error: function (xhr) {
+                        if (xhr.status === 401) {
+                        console.log("Token expired. Refreshing token...");
+                        refreshToken();
+                    } else {
+                        console.log(xhr);
+                        Swal.fire({
+                            title: "Error!",
+                            text: "Something went wrong. Please try again.",
+                            icon: "error"
+                        });
+                    }
+                    }
+                });
             }
         });
+
     }
 
     // ================== Document Modal ==================
@@ -343,27 +422,43 @@
         $("#category_show").empty();
 
         $.ajax({
-            url: "http://doc-center-backend.test/api/v1/admin-doc-categories", // Replace with your API URL
+            url: backendUrl + "admin-doc-categories", // Replace with your API URL
             type: "GET",
+            headers: {
+                'Accept': 'application/json',
+                'Authorization': 'Bearer ' + access_token,
+            },
             dataType: "json",
             success: function (response) {
-                // console.log(response);
+                console.log(response);
+                if(response.status === 200){
 
-                if (!response || !response.data) {
-                    console.error("Invalid API response:", response);
-                    return;
+                    if (!response || !response.data) {
+                        console.error("Invalid API response:", response);
+                        return;
+                    }
+
+                    let rows = ""; // Variable to store generated rows
+                    rows += `<option value="#">Select Category</option>`;
+
+                    $.each(response.data, function (index, category) {
+                        rows += `
+                        <option value="${ category.id }">${ category.name }</option>`;
+                    });
+
+                    $("#category_show").html(rows);
+                    $("#category_input").html(rows);
+                }else{
+                    console.log(response);
                 }
-
-                let rows = ""; // Variable to store generated rows
-                rows += `<option value="#">Select Category</option>`;
-
-                $.each(response.data, function (index, category) {
-                    rows += `
-                    <option value="${ category.id }">${ category.name }</option>`;
-                });
-
-                $("#category_input").html(rows);
-                $("#category_show").html(rows);
+            },
+            error: function (xhr, status, error) {
+                if (xhr.status === 401) {
+                    console.log("Token expired. Refreshing token...");
+                    refreshToken();
+                } else {
+                    console.log(xhr);
+                }
             }
         });
     }
@@ -371,13 +466,14 @@
     function showDoc(id) {
         let project = data_projects.find(project => project.id === id);
         id_project = project.id;
-        console.log('ShowDoc',project);
+        // console.log(project);
         getDoc();
 
         $("#project_name_doc").text(project.name);
     }
 
     function storeDoc(){
+        $('#fullPageLoader').show();
         event.preventDefault();
 
         let form = document.getElementById("docForm");
@@ -413,62 +509,70 @@
             return;
         }
 
-        let apiUrl = `http://doc-center-backend.test/api/v1/admin-docs`;
+        let apiUrl = backendUrl + `admin-docs`;
 
         $.ajax({
             url: apiUrl,
             type: 'POST',
             data: formData,
-            // headers: {
-            //     'Accept': 'application/json', // Specify the response format
-            //     'Authorization': 'Bearer ' + yourApiToken, // Add API token if required
-            // },
-            // data: JSON.stringify(jsonData),
+            headers: {
+                'Accept': 'application/json',
+                'Authorization': 'Bearer ' + access_token,
+            },
             processData: false,
             contentType: false,
             success: function (response) {
-                console.log('Response:', response);
-                alert('Document saved successfully!');
-                location.reload();
-            },
-            error: function (xhr) {
-                console.log('Error:', xhr);
-                if (xhr.status === 422) {
-                    let errors = xhr.responseJSON.errors;
-
-                    $('.invalid-feedback').remove();
-                    $('.form-control').removeClass('is-invalid');
-                }else if(xhr.status === 400) {
-                    let errors = xhr.responseJSON.errors;
-                    console.log(errors);
+                if(response.status === 400) {
+                    let errors = response.errors;
 
                     $.each(errors, function (key, messages) {
                         let inputField = $(`[name="${key}"]`);
                         inputField.addClass("is-invalid")
                             .after(`<div class="invalid-feedback">${messages[0]}</div>`);
                     });
+                }else if(response.status === 200 || response.status === 201){
+                    $('#fullPageLoader').hide();
+                    Swal.fire({
+                        position: "center",
+                        icon: "success",
+                        title: "Document Administration successfully Created",
+                        showConfirmButton: false,
+                        timer: 1000
+                    }).then(() => {
+                        $('#closeFormDocModal').click();
+                        loadProjects();
+                        // location.reload(); // Refresh after the SweetAlert
+                    });
                 }else{
-                    console.log(xhr.responseJSON.errors);
+                    console.log(response)
                 }
-
+            },
+            error: function (xhr) {
+                if (xhr.status === 401) {
+                    console.log("Token expired. Refreshing token...");
+                    refreshToken();
+                } else {
+                    console.log(xhr);
+                }
             }
         });
     }
 
     $('#category_show').change(function(){
         let id_category = $(this).val();
+        let url = "https://bepm.hanatekindo.com";
         console.log(id_category);
         let filteredDoc = data_doc.filter(doc =>
             doc.admin_doc_category.id == id_category
         );
-        console.log("Filtered Doc Category_change:", filteredDoc);
+        console.log("Filtered Doc:", filteredDoc);
         $("#table_doc").empty();
         if(filteredDoc.length > 0){
             let rows = "";
             $.each(filteredDoc, function (index, doc) {
                 rows += `
                 <tr class="mt-2">
-                    <td><a onclick="openPDFModal('http://doc-center-backend.test/${ doc.file }')" style="text-decoration: none; color: grey"><i class="fa-solid fa-file-pdf"></i></a></td>
+                    <td><a onclick="openPDFModal('${url}${ doc.file }')" style="text-decoration: none; color: grey"><i class="fa-solid fa-file-pdf"></i></a></td>
                     <td width="400px">${doc.title}</td>
                     <td>
                         <button type="button" class="btn btn-danger ml-1 btn-sm" onclick="deleteDoc(${doc.id})">
@@ -492,60 +596,39 @@
     });
 
     function getDoc(){
-        // $('#category_show').onchange(function(){
-        //     let id_category = $(this).val();
-        //     console.log(id_category);
-        // });
-        // let category = data_category.find(category => category.id === id);
-        // let file = category.find()
-
-        // $("#doc_table").empty();
-
         $.ajax({
-            url: `http://doc-center-backend.test/api/v1/admin-docs`, // Replace with your API URL
+            url: backendUrl + `admin-docs`,
             type: "GET",
+            headers: {
+                'Accept': 'application/json',
+                'Authorization': 'Bearer ' + access_token,
+            },
             dataType: "json",
             success: function (response) {
-                console.log('getDoc',response.data);
+                if(response.status == 200){
+                    console.log(response);
+                    // $('#category_show').onchange(function(){
+                        // let id_category = 2;
+                        // console.log(id_category);
+                        let filteredData = response.data.filter(doc =>
+                            doc.project.id === id_project
+                        );
 
+                        data_doc = filteredData;
 
-                // $('#category_show').change(function(){
-                //     let id_category = $(this).val();
-                //     console.log('Category_selected',id_category);
-                    let filteredData = response.data.filter(doc =>
-                        doc.project.id === id_project
-                    );
-
-                    data_doc = filteredData;
-
-                    console.log("Filtered Data (getDoc):", data_doc);
-                // });
-
-
-                // if (!response || !response.data) {
-                //     console.error("Invalid API response:", response);
-                //     return;
-                // }
-
-                // let rows = "";
-
-                // $.each(response.data, function (index, doc) {
-                //     rows += `
-                //     <tr>
-                //         <td>${index + 1}</td>
-                //         <td>${doc.category_name}</td>
-                //         <td>${doc.file_name}</td>
-                //         <td>${doc.created_at}</td>
-                //         <td>
-                //             <a href="#" class="btn btn-sm btn-warning rounded-pill" data-bs-toggle="modal"
-                //                 data-bs-target="#detailModal" onclick="detailModal(${doc.id})">
-                //                 <i class="fa-solid fa-ellipsis-vertical"></i>
-                //             </a>
-                //         </td>
-                //     </tr>`;
-                // });
-
-                // $("#doc_table").html(rows);
+                        console.log("Filtered Data:", data_doc);
+                    // });
+                }else{
+                    console.log(response);
+                }
+            },
+            error: function (xhr) {
+                if (xhr.status === 401) {
+                    console.log("Token expired. Refreshing token...");
+                    refreshToken();
+                } else {
+                    console.log(xhr);
+                }
             }
         });
     }
@@ -562,31 +645,40 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: `http://doc-center-backend.test/api/v1/admin-docs/${id_doc}`,
+                    url: backendUrl + `admin-docs/${id_doc}`,
                     type: 'DELETE',
-                // headers: {
-                //     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                //     // 'Authorization': 'Bearer ' + yourApiToken
-                // },
-                success: function (response) {75
-                    Swal.fire({
-                        position: "center",
-                        icon: "success",
-                        title: "Your Category has been deleted",
-                        showConfirmButton: false,
-                        timer: 1000
-                    }).then(() => {
-                        loadProjects();
-                        // location.reload(); // Refresh after the SweetAlert
-                    });
+                    headers: {
+                        'Accept': 'application/json',
+                        'Authorization': 'Bearer ' + access_token,
+                    },
+                success: function (response) {
+                    if(response.status === 200){
+                        Swal.fire({
+                            position: "center",
+                            icon: "success",
+                            title: "Document Administration has been Deleted",
+                            showConfirmButton: false,
+                            timer: 1000
+                        }).then(() => {
+                            loadProjects();
+                            // location.reload(); // Refresh after the SweetAlert
+                        });
+                    }else{
+                        console.log(response);
+                    }
                 },
                 error: function (xhr) {
-                    console.error('Error:', xhr);
-                    Swal.fire({
-                        title: "Error!",
-                        text: "Something went wrong. Please try again.",
-                        icon: "error"
-                    });
+                    if (xhr.status === 401) {
+                        console.log("Token expired. Refreshing token...");
+                        refreshToken();
+                    } else {
+                        console.log(xhr);
+                        Swal.fire({
+                            title: "Error!",
+                            text: "Something went wrong. Please try again.",
+                            icon: "error"
+                        });
+                    }
                 }});
             }
         });

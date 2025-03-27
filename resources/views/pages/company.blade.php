@@ -231,6 +231,12 @@
     </div>
 </div>
 
+<div id="fullPageLoader" class="full-page-loader">
+    <div class="spinner-border text-light" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
+
 
 <script src="{{ asset('assets/vendors/simple-datatables/simple-datatables.js') }}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
@@ -257,6 +263,7 @@
 <script>
     let id_company = 0;
     let backendUrl = 'http://doc-center-backend.test/';
+    let access_token = @json(session('user.access_token'));
     $(document).ready(function () {
         let data_company = [];
         loadProjects();
@@ -270,53 +277,68 @@
     });
 
     function loadProjects() {
+        $('#fullPageLoader').show();
         $("#table-body").empty();
 
         $.ajax({
             url: backendUrl + "api/v1/companies",
             type: "GET",
+            headers: {
+                'Accept': 'application/json',
+                'Authorization': 'Bearer ' + access_token,
+            },
             dataType: "json",
             success: function (response) {
-                data_company = response.data;
-                // console.log(data_projects);
-                if (!response || !response.data) {
-                    console.error("Invalid API response:", response);
-                    return;
+                if(response.status === 200){
+                    data_company = response.data;
+                    console.log(response);
+                    if (!response || !response.data) {
+                        console.error("Invalid API response:", response);
+                        return;
+                    }
+
+                    let rows = ""; // Variable to store generated rows
+
+                    $.each(response.data, function (index, company) {
+                        rows += `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td>${company.name ? company.name : "-"}</td>
+                            <td>${company.address ? company.address : "-"}</td>
+                            <td>${company.director_name ? company.director_name : "-"}</td>
+                            <td>${company.director_phone}</td>
+                            <td>
+                                ${company.director_signature ?
+                                `<button class="btn btn-sm btn-info" onclick="openModernModal('${backendUrl + company.director_signature}')"><i class="fa-solid fa-eye"></i> Preview Signature</button>` : `"Don't have Signature Director"`}
+                            </td>
+                            <td>
+                                <a href="#" class="btn btn-sm btn-warning rounded-pill" data-bs-toggle="modal"
+                                    data-bs-target="#formAddModal" onclick="setId(${company.id})">
+                                    <i class="fa-solid fa-pen"></i>
+                                </a>
+                                <a href="#" class="btn btn-sm btn-danger rounded-pill" data-bs-toggle="modal" onclick="deleteCompany(${company.id})">
+                                    <i class="fa-solid fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>`;
+                    });
+
+                    $("#table-body").html(rows);
+
+                    let table1 = document.querySelector('#table1');
+                    let dataTable = new simpleDatatables.DataTable(table1);
+                }else{
+                    console.log(response);
                 }
-
-                let rows = ""; // Variable to store generated rows
-
-                $.each(response.data, function (index, company) {
-                    rows += `
-                    <tr>
-                        <td>${index + 1}</td>
-                        <td>${company.name ? company.name : "-"}</td>
-                        <td>${company.address ? company.address : "-"}</td>
-                        <td>${company.director_name ? company.director_name : "-"}</td>
-                        <td>${company.director_phone}</td>
-                        <td>
-                            ${company.director_signature ?
-                            `<button class="btn btn-sm btn-info" onclick="openModernModal('${backendUrl + company.director_signature}')"><i class="fa-solid fa-eye"></i> Preview Signature</button>` : `"Don't have Signature Director"`}
-                        </td>
-                        <td>
-                            <a href="#" class="btn btn-sm btn-warning rounded-pill" data-bs-toggle="modal"
-                                data-bs-target="#formAddModal" onclick="setId(${company.id})">
-                                <i class="fa-solid fa-pen"></i>
-                            </a>
-                            <a href="#" class="btn btn-sm btn-danger rounded-pill" data-bs-toggle="modal" onclick="deleteCompany(${company.id})">
-                                <i class="fa-solid fa-trash"></i>
-                            </a>
-                        </td>
-                    </tr>`;
-                });
-
-                $("#table-body").html(rows);
-
-                let table1 = document.querySelector('#table1');
-                let dataTable = new simpleDatatables.DataTable(table1);
+                $('#fullPageLoader').hide();
             },
             error: function (xhr, status, error) {
-                console.error("AJAX Error:", status, error);
+                if (xhr.status === 401) {
+                    console.log("Token expired. Refreshing token...");
+                    refreshToken();
+                } else {
+                    console.log(xhr);
+                }
             }
         });
     }
@@ -331,6 +353,7 @@
     }
 
     function updateProject(){
+        $('#fullPageLoader').show();
         event.preventDefault(); // Prevent default form submission
 
         console.log(id_company)
@@ -354,60 +377,59 @@
             jsonData[key] = value;
         });
 
-        let apiUrl = `http://doc-center-backend.test/api/v1/admin-doc-categories/${id_company}`;
+        let apiUrl = `https://bepm.hanatekindo.com/api/v1/admin-doc-categories/${id_company}`;
 
 
         $.ajax({
             url: apiUrl, // Use the API URL
             type: 'PATCH',
-            // headers: {
-            //     'Accept': 'application/json', // Specify the response format
-            //     'Authorization': 'Bearer ' + yourApiToken, // Add API token if required
-            // },
+            headers: {
+                'Accept': 'application/json',
+                'Authorization': 'Bearer ' + access_token,
+            },
             data: JSON.stringify(jsonData),
             processData: false,
             contentType: 'application/json',
             success: function (response) {
-                Swal.fire({
-                    position: "center",
-                    icon: "success",
-                    title: "Your Category has been edited",
-                    showConfirmButton: false,
-                    timer: 1000
-                }).then(() => {
-                    $('#closeEditModal').click();
-                    loadProjects();
-                    // location.reload(); // Refresh after the SweetAlert
-                });
-            },
-            error: function (xhr) {
-                console.log('Error:', xhr.responseJSON.errors.status);
-                if (xhr.status === 422) {
-                    let errors = xhr.responseJSON.errors;
-
-                    $('.invalid-feedback').remove();
-                    $('.form-control').removeClass('is-invalid');
-                    $.each(errors, function (key, messages) {
-                        let inputField = $(`[name="${key}"]`);
-                        inputField.addClass('is-invalid');
-                        inputField.after(`<div class="invalid-feedback">${messages[0]}</div>`);
-                    });
-                } else if(xhr.status === 400) {  // Validation error
-                    let errors = xhr.responseJSON.errors;
+                $('#fullPageLoader').hide();
+                if(response.status === 400) {  // Validation error
+                    let errors = response.errors;
 
                     $.each(errors, function (key, messages) {
                         let inputField = $(`[name="${key}"]`);
                         inputField.addClass("is-invalid")
                             .after(`<div class="invalid-feedback">${messages[0]}</div>`);
                     });
+                }else if(response.status === 200){
+                    $('#fullPageLoader').hide();
+                    Swal.fire({
+                        position: "center",
+                        icon: "success",
+                        title: "Company Data  has been edited",
+                        showConfirmButton: false,
+                        timer: 1000
+                    }).then(() => {
+                        $('#closeEditModal').click();
+                        loadProjects();
+                        // location.reload(); // Refresh after the SweetAlert
+                    });
                 }else{
-                    console.log(xhr.responseJSON.errors);
+                    console.log(response)
+                }
+            },
+            error: function (xhr) {
+                if (xhr.status === 401) {
+                    console.log("Token expired. Refreshing token...");
+                    refreshToken();
+                } else {
+                    console.log(xhr);
                 }
             }
         });
     }
 
     function store(event) {
+        $('#fullPageLoader').show();
         event.preventDefault();
 
         console.log('Storing company details...');
@@ -439,29 +461,46 @@
         $.ajax({
             url: apiUrl,
             type: "POST",
+            headers: {
+                'Accept': 'application/json',
+                'Authorization': 'Bearer ' + access_token,
+            },
             data: formData,
             processData: false,
             contentType: false,
             success: function (response) {
-                console.log("Response:", response);
-                alert("Company created successfully!");
-                location.reload();
-            },
-            error: function (xhr) {
-                console.log("Error:", xhr);
-                if (xhr.status === 422) {
-                    $('.invalid-feedback').remove();
-                    $('.form-control').removeClass('is-invalid');
-                } else if (xhr.status === 400) {
-                    let errors = xhr.responseJSON.errors;
-                    console.log(errors);
+                $('#fullPageLoader').hide();
+                if(response.status === 400) {
+                    let errors = response.errors;
+
                     $.each(errors, function (key, messages) {
                         let inputField = $(`[name="${key}"]`);
                         inputField.addClass("is-invalid")
                             .after(`<div class="invalid-feedback">${messages[0]}</div>`);
                     });
+                }else if(response.status === 200){
+                    $('#fullPageLoader').hide();
+                    Swal.fire({
+                        position: "center",
+                        icon: "success",
+                        title: "Company Data has been edited",
+                        showConfirmButton: false,
+                        timer: 1000
+                    }).then(() => {
+                        $('#closeEditModal').click();
+                        loadProjects();
+                        // location.reload(); // Refresh after the SweetAlert
+                    });
+                }else{
+                    console.log(response)
+                }
+            },
+            error: function (xhr) {
+                if (xhr.status === 401) {
+                    console.log("Token expired. Refreshing token...");
+                    refreshToken();
                 } else {
-                    alert("Something went wrong! Please try again.");
+                    console.log(xhr);
                 }
             }
         });
@@ -479,11 +518,14 @@
             confirmButtonText: "Yes, delete it!"
         }).then((result) => {
             if (result.isConfirmed) {
-                // Make AJAX request only after confirmation
                 $.ajax({
                     url: backendUrl + `api/v1/companies/${id}`,
                     type: 'DELETE',
-                    success: function (response) {75
+                    headers: {
+                        'Accept': 'application/json',
+                        'Authorization': 'Bearer ' + access_token,
+                    },
+                    success: function (response) {
                         Swal.fire({
                             position: "center",
                             icon: "success",
@@ -496,12 +538,17 @@
                         });
                     },
                     error: function (xhr) {
-                        console.error('Error:', xhr);
-                        Swal.fire({
-                            title: "Error!",
-                            text: "Something went wrong. Please try again.",
-                            icon: "error"
-                        });
+                        if (xhr.status === 401) {
+                            console.log("Token expired. Refreshing token...");
+                            refreshToken();
+                        } else {
+                            console.error('Error:', xhr);
+                            Swal.fire({
+                                title: "Error!",
+                                text: "Something went wrong. Please try again.",
+                                icon: "error"
+                            });
+                        }
                     }
                 });
             }
