@@ -15,58 +15,65 @@
                 <li class="sidebar-item {{ $title == 'Home' ? 'active' : ''  }} ">
                     <a href="{{ route('home') }}" class='sidebar-link'>
                         <i class="fa-solid fa-house"></i>
-                        <span>Home</span>
+                        <span>Dashboard</span>
                     </a>
                 </li>
 
                 <li class="sidebar-title">Menu</li>
-                {{-- @if(Auth::user()->role == 'SUPERADMIN') --}}
+
                 <li class="sidebar-item {{ $title == 'categoryAct' || $title == 'categoryAdm' ? 'active' : ''  }} has-sub">
                     <a href="#" class='sidebar-link'>
                         <i class="fa-solid fa-list"></i>
-                        <span>Category</span>
+                        <span>Kategori</span>
                     </a>
                     <ul class="submenu {{ $title == 'categoryAct' || $title == 'categoryAdm' ? 'active' : '' }}">
                         <li class="submenu-item {{ $title == 'categoryAdm' ? 'active' : ''  }}">
-                            <a href="{{ route('categoryAdmin') }}">Administration</a>
+                            <a href="{{ route('categoryAdm.index') }}">Administrasi</a>
                         </li>
                         <li class="submenu-item {{ $title == 'categoryAct' ? 'active' : ''  }}">
-                            <a href="{{ route('categoryActivity') }}">Activity</a>
+                            <a href="{{ route('categoryAct.index') }}">Aktivitas</a>
                         </li>
                     </ul>
                 </li>
-                {{-- @endif --}}
 
-                <li class="sidebar-item {{ $title == 'Company' ? 'active' : ''  }} ">
-                    <a href="{{ route('company') }}" class='sidebar-link'>
+                <li class="sidebar-item {{ $title == 'company' ? 'active' : ''  }} ">
+                    <a href="{{ route('company.index') }}" class='sidebar-link'>
                         <i class="fa-solid fa-building"></i>
-                        <span>Company</span>
+                        <span>Perusahaan</span>
                     </a>
                 </li>
 
-                <li class="sidebar-item {{ $title == 'Project' ? 'active' : ''  }} ">
-                    <a href="{{ route('project') }}" class='sidebar-link'>
+                <li class="sidebar-item {{ $title == 'project' ? 'active' : ''  }} ">
+                    <a href="{{ route('project.index') }}" class='sidebar-link'>
                         <i class="bi bi-grid-fill"></i>
-                        <span>Project</span>
+                        <span>Projek</span>
                     </a>
                 </li>
 
-                <li class="sidebar-item {{ $title == 'Activity' ? 'active' : ''  }} ">
-                    <a href="{{ route('activity') }}" class='sidebar-link'>
+                <li class="sidebar-item {{ $title == 'activity' ? 'active' : ''  }} ">
+                    <a href="{{ route('activity.index') }}" class='sidebar-link'>
                         <i class="fa-solid fa-chart-line"></i>
-                        <span>Activity</span>
+                        <span>Aktivitas</span>
                     </a>
                 </li>
 
-                <li class="sidebar-item ">
-                    <a class="sidebar-link" onclick="document.getElementById('logout-form').submit();">
+                <li class="sidebar-item {{ $title == 'user' ? 'active' : ''  }} ">
+                    <a href="{{ route('user.index') }}" class='sidebar-link'>
+                        <i class="fa-solid fa-users"></i>
+                        <span>Pengguna</span>
+                    </a>
+                </li>
+
+                <li class="sidebar-item">
+                    <a class="sidebar-link" onclick="document.getElementById('logout-form').submit();" style="cursor: pointer;">
                         <i class="fa-solid fa-right-from-bracket"></i>
-                        <span>Logout</span>
+                        <span>Keluar</span>
                     </a>
                     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                         @csrf
                     </form>
                 </li>
+
             </ul>
         </div>
         <button class="sidebar-toggler btn x"><i data-feather="x"></i></button>

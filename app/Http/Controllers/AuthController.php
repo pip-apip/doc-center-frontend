@@ -4,11 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\View;
 
 class AuthController extends Controller
 {
-    public function login(Request $request)
-    {
+    public function login(){
         if(session('user')){
             return redirect()->route('home');
         }
@@ -23,28 +23,34 @@ class AuthController extends Controller
         ]);
 
         // Send a POST request to external API
-        $response = Http::post('http://doc-center-backend.test/api/v1/auth/login', [
+        $response = Http::post('https://bepm.hanatekindo.com/api/v1/auth/login', [
             'username'  => $validatedData['username'],
             'password'  => $validatedData['password'],
         ]);
 
-        if ($response->successful()) {
+        // Check API response
+        if ($response->json('status') === 200) {
+            // dd($response->json());
+            // Login successful, redirect to home with session
             session([
                 'user' => [
                     'access_token'  => $response->json('data.access_token'),
                     'refresh_token' => $response->json('data.refresh_token'),
                     'name'          => $response->json('data.name'),
                     'username'      => $response->json('data.username'),
-                    // 'role'          => $response->json('data.role'),
+                    'role'          => $response->json('data.role'),
+                    'id'            => $response->json('data.id'),
                 ]
             ]);
-            // dd(session()->all());
-            return redirect()->route('home')->with('success', 'Login successful.');
-        }
 
-        // Handle errors
-        $errorMessage = $response->json('message', 'Login failed. Please try again.');
-        return redirect()->back()->withErrors(['error' => $errorMessage])->withInput();
+            return redirect()->route('home')->with('success', 'Login successful.');
+        } elseif ($response->json('status') === 401) {
+            $errorMessage = 'Invalid username or password.';
+            return redirect()->back()->withErrors(['error' => $errorMessage])->withInput();
+        } else {
+            $errorMessage = $response->json('message', 'Login failed. Please try again.');
+            return redirect()->back()->withErrors(['error' => $errorMessage])->withInput();
+        }
     }
 
     public function register()
@@ -55,36 +61,31 @@ class AuthController extends Controller
     public function doRegister(Request $request)
     {
         // Validate input
-        $validatedData = $request->validate([
+        $request->validate([
             'name'      => 'required|string|max:255',
-            'name'      => 'required|string|max:255',
-            'username'  => 'required|string|max:255|unique:users,username',
-            'password'  => 'required|string|min:8|confirmed',
-            'role'      => 'required|in:USER,ADMIN,SUPERADMIN',
+            'username'  => 'required|string|max:255',
+            'password'  => 'required|string|min:8',
         ]);
 
         // Send a POST request to external API
-        $response = Http::post('http://doc-center-backend.test/api/v1/auth/register', [
-            'name'      => $validatedData['name'],
-            'username'  => $validatedData['username'],
-            'password'  => $validatedData['password'],
-            'role'      => $validatedData['role'],
+        $response = Http::post('https://bepm.hanatekindo.com/api/v1/auth/register', [
+            'name'      => $request['name'],
+            'username'  => $request['username'],
+            'password'  => $request['password'],
         ]);
 
-        // dd($response->json());
-
         if ($response->successful()) {
-            return redirect()->route('home')->with('message', 'Registration successful.');
+            return redirect()->route('user.index')->with('success', 'Data User created successfully.');
         }
 
-        // Handle errors (API might return validation errors)
-        $errorMessage = $response->json('message', 'Registration failed. Please try again.');
+        $errorMessage = $response->json('message', 'Data User failed to create. Please try again.');
         return redirect()->back()->withErrors(['error' => $errorMessage])->withInput();
     }
-
+    
     public function logout(){
         // Get token from session
         $token = session('user.access_token');
+        // dd($token);
 
         // Check if token exists
         if (!$token) {
@@ -92,10 +93,10 @@ class AuthController extends Controller
         }
 
         // Send a POST request to the API with Bearer Token
-        $response = Http::withToken($token)->post('http://doc-center-backend.test/api/v1/auth/logout');
+        $response = Http::withToken($token)->post('https://bepm.hanatekindo.com/api/v1/auth/logout');
 
         // Clear session data
-        session()->forget('user');
+        session()->forget(['user']);
         session()->flush();
 
         // Check API response
@@ -106,6 +107,4 @@ class AuthController extends Controller
         // Handle errors
         return redirect()->route('login')->with('error', 'Logout failed. Please try again.');
     }
-
-
 }

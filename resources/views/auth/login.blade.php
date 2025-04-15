@@ -77,10 +77,6 @@
     </div>
 </body>
 
-{{-- <script>
-    console.log(@json(session()->all()))
-</script> --}}
-
 @if(session('success'))
     <script>
         Swal.fire({

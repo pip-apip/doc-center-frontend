@@ -57,7 +57,7 @@
         <div class="col-sm-8" id="content">
             <div class="card">
                 <div class="card-header text-right">
-                    <h1>Document Activity</h1>
+                    <h1>Dokumen Activitas</h1>
                 </div>
             </div>
             <div id="content_card"></div>
@@ -65,7 +65,7 @@
 
         <div class="col-sm-4" id="tagsSearch" style="position: sticky; overflow-y: auto; top: 50px; height: auto;">
             <div class="card">
-                <div class="card-header text-right">Filter Doc Activity</div>
+                <div class="card-header text-right">Filter Dokumen Aktivitas</div>
                 <div class="card-body">
                     <label>Tags:</label>
                     <div class="form-group">
@@ -84,33 +84,66 @@
     </div>
 </section>
 
+<div class="modal fade text-left w-100" id="readModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel33"
+    aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel33" id="modalTitle"></h4>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="modal-body row">
+                <div class="col-md-6">
+                    <label><b> Nama Aktivitas : </b></label>
+                    <div class="form-group">
+                        <p class="form-control-static" id="activity_name"></p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <label><b> Judul Dokumen : </b></label>
+                    <div class="form-group">
+                        <p class="form-control-static" id="doc_title"></p>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <label><b>Deskripsi : </b></label>
+                    <div class="form-group">
+                        <p class="form-control-static" id="description"></p>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <label><b> Tag : </b></label>
+                    <div class="form-group" id="tags">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="fullPageLoader" class="full-page-loader" style="display: none">
+    <div class="spinner-border text-light" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
 <script>
-    let dataDoc = [];
     let tags = [];
     let tagOptions = [];
     let selectedIndex = -1;
-    let baseUrl = "http://doc-center-backend.test/api/v1/";
+    let baseUrl = 'https://bepm.hanatekindo.com/api/v1/';
+    let access_token = @json(session('user.access_token'));
 
+    let dataDoc = {!! json_encode($activityDoc) !!}
     $(document).ready(function () {
-        getActivityDoc();
+        renderDocs(dataDoc);
+        mergeTags();
     });
-
-    function getActivityDoc() {
-        $.ajax({
-            url: baseUrl + 'activity-docs',
-            type: 'GET',
-            success: function (response) {
-                dataDoc = response.data;
-                renderDocs(dataDoc);
-                mergeTags(); // Update available tags after fetching docs
-            },
-            error: function (xhr) {
-                console.log(xhr.responseJSON);
-            }
-        });
-    }
 
     function filterDocsByTags() {
         let filteredDocs = dataDoc.filter(doc => {
@@ -134,7 +167,7 @@
             let shortDescription = doc.description.length > 280
                 ? doc.description.substring(0, 280) + " ...."
                 : doc.description;
-                // console.log(doc.description.length)
+                console.log(doc)
             content_doc += `
                 <div class="card">
                     <div class="card-body">
@@ -148,7 +181,7 @@
                         </div>
                         <p class="card-text">${shortDescription}</p>
                         <div class="d-flex justify-content-end">
-                            <button type="submit" class="btn btn-primary me-1 justify-content-end">Read More...</button>
+                            <button type="submit" class="btn btn-primary me-1 justify-content-end" onclick="readModal(${doc.id})">Read More...</button>
                         </div>
                     </div>
                 </div>`;
@@ -157,12 +190,27 @@
         $('#content_card').html(content_doc);
     }
 
+    function readModal(id) {
+        let doc = dataDoc.find(doc => doc.id === id);
+        console.log("readModal",doc);
+        let modal = $('#readModal');
+        modal.find('#activity_name').text(doc.activity.title);
+        modal.find('#doc_title').text(doc.title);
+        modal.find('#description').text(doc.description);
+        let tagsShow = doc.tags.map(tag =>
+                            `<button class="btn btn-info me-2">${tag}</button>`
+                        ).join("");
+        modal.find('#tags').html(tagsShow);
+        modal.find('#modalTitle').text('Document Activity - MOM (' + dateFormat(doc.created_at) + ')');
+        modal.modal('show');
+    }
+
 
     function mergeTags() {
         let mergedTags = new Set();
         dataDoc.forEach(doc => {
             if (doc.tags && Array.isArray(doc.tags)) {
-                doc.tags.forEach(tag => mergedTags.add(tag));
+            doc.tags.forEach(tag => mergedTags.add(tag));
             }
         });
 
@@ -186,11 +234,9 @@
         if(tags.length > 0){
             filterDocsByTags();
         }else{
-            getActivityDoc();
+            renderDocs(dataDoc);
         }
-
     }
-
 
     $("#tagInput").on("input", function () {
         let inputText = this.value.trim().toLowerCase();
