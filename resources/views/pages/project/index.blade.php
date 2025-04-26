@@ -3,6 +3,47 @@
 @section('title', 'Project Page')
 
 @section('content')
+<style>
+    .scrollable-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .scrollable-table thead,
+    .scrollable-table tbody tr {
+        display: table;
+        width: 100%;
+        table-layout: fixed; /* Prevents layout issues */
+    }
+
+    .scrollable-table tbody {
+        display: block;
+        max-height: 200px;
+        overflow-y: auto;
+    }
+
+    .scrollable-table thead th input[type="text"] {
+        width: 80%;
+        padding: 2px 8px;
+        font-size: 0.9rem;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+        color: rgb(97, 112, 126);
+        margin-left: 4px;
+    }
+
+    .scrollable-table thead th input[type="text"]:focus {
+    outline: none;
+    box-shadow: none;
+    border-color: #ccc; /* atau warna border default yang kamu mau */
+}
+
+    .modal-body {
+        max-height: 70vh;
+        overflow-y: auto;
+    }
+</style>
 
 <div class="page-title">
     <div class="row">
@@ -14,7 +55,7 @@
             <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Projek</li>
+                    <li class="breadcrumb-item active" aria-current="page">Proyek</li>
                 </ol>
             </nav>
         </div>
@@ -24,69 +65,127 @@
     <div class="card">
         <div class="card-header">
             <div class="row">
-                <div class="col-sm-8">
-                    <h1>Projek</h1>
+                <div class="col-sm-8 col-8">
+                    <h1>Proyek</h1>
                 </div>
-                <div class="col-sm-4 d-flex justify-content-end align-items-center">
+                <div class="col-sm-4 col-4 d-flex justify-content-end align-items-center">
                     <a href="{{ route('project.create') }}" class="btn btn-success">
-                        <i class="fa-solid fa-plus"></i> Tambah
+                        <i class="fa-solid fa-plus"></i> <span class="d-none d-md-inline-block">Tambah</span>
                     </a>
                 </div>
             </div>
         </div>
         <div class="card-body">
-            <table class="table table-striped" id="table">
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Nama Projek</th>
-                        <th>Nama Perusahaan</th>
-                        <th>Tanggal Mulai</th>
-                        <th>Tanggal Selesai</th>
-                        <th>Status</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody id="table-body">
-                    @php
-                        $no = 1;
-                    @endphp
-                    @foreach ($projects as $project)
+            @php
+                $page = $results && $results->perPage() ? $results->perPage() : null;
+            @endphp
+            <div class="row">
+                <form method="GET" action="{{ route('project.index') }}" id="pagination-form" class="col-12 col-lg-1">
+                    <label>Data: </label>
+                    <fieldset class="form-group" style="width: 70px">
+                        <select class="form-select" id="entire-page" name="per_page" onchange="document.getElementById('pagination-form').submit();">
+                            <option value="5" {{ $page == 5 ? 'selected' : '' }}>5</option>
+                            <option value="10" {{ $page == 10 ? 'selected' : '' }}>10</option>
+                            <option value="15" {{ $page == 15 ? 'selected' : '' }}>15</option>
+                            <option value="20" {{ $page == 20 ? 'selected' : '' }}>20</option>
+                        </select>
+                    </fieldset>
+                </form>
+                <form method="POST" action="{{ route('project.filter') }}" id="search-form" class="mb-4 col-12 col-lg-11">
+                    @csrf
+                    <div class="row">
+                        <div class="col-md-3 col-6">
+                            <label>Tgl Mulai: </label>
+                            <div class="form-group">
+                                <input type="date" class="form-control" name="start_date" value="{{ session()->has('start_date') ? session('start_date') : '' }}">
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <label>Tgl Selesai: </label>
+                            <div class="form-group">
+                                <input type="date" class="form-control" name="end_date" value="{{ session()->has('end_date') ? session('end_date') : '' }}">
+                            </div>
+                        </div>
+                        <div class="col-lg-5 col-9">
+                            <label>Filter Nama Aktivitas: </label>
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control" name="q" value="{{ session()->has('q') ? session('q') : '' }}" placeholder="Ketik Nama Project & Klik Enter ..." onkeydown="if (event.key === 'Enter') { event.preventDefault(); this.form.submit(); }">
+                                <button class="btn btn-primary" type="submit" id="button-addon1"><i class="fa-solid fa-magnifying-glass"></i></button>
+                            </div>
+                        </div>
+                        <div class="col-lg-1 col-2">
+                            <a href="{{ route('project.reset') }}" class="btn btn-secondary mt-4" type="button" id="button-addon2">Reset</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-striped" id="table">
+                    <thead>
                         <tr>
-                            <td>{{ $no++ }}</td>
-                            <td>{{ $project['name'] }}</td>
-                            <td>{{ $project['company']['name'] }}</td>
-                            <td>{{ \Carbon\Carbon::parse($project['start_date'])->translatedFormat('d F Y') }}</td>
-                            <td>{{ \Carbon\Carbon::parse($project['end_date'])->translatedFormat('d F Y') }}</td>
-                            <td>
-                                {{-- <span class="badge {{ $project['status'] ? 'bg-success' : 'bg-danger'}}"> --}}
-                                <span class="badge bg-danger">
-                                    {{-- {{$project['status']}} --}}
-                                    Undefined
-                                </span>
-                            </td>
-                            <td>
-                                {{-- <a href="{{ route('project.edit', $project['id']) }}" class="btn btn-sm btn-warning rounded-pill" title="Edit">
-                                    <i class="fa-solid fa-pen"></i>
-                                </a> --}}
-                                <a onclick="showDetail({{ json_encode($project) }})" class="btn btn-sm btn-warning rounded-pill" data-bs-toggle="modal" data-bs-target="#detailModal">
-                                    <i class="fa-solid fa-ellipsis-vertical"></i>
-                                </a>
-                                <a href="{{ route('project.doc', $project['id']) }}" class="btn btn-sm btn-info rounded-pill">
-                                    <i class="fa-solid fa-file"></i>
-                                </a>
-                                <a href="{{ route('activity.project', $project['id']) }}" class="btn btn-sm btn-secondary rounded-pill">
-                                    <i class="fa-solid fa-chart-line"></i>
-                                </a>
-                                <a href="{{ route('activity.project', $project['id']) }}" class="btn btn-sm btn-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#teamModal">
-                                    <i class="fa-solid fa-user-group"></i>
-                                </a>
-                            </td>
+                            {{-- <th>No</th> --}}
+                            <th>Tanggal Mulai</th>
+                            <th>Tanggal Selesai</th>
+                            <th>Nama Proyek</th>
+                            <th>Nama Perusahaan</th>
+                            <th>Status</th>
+                            <th>Aksi</th>
                         </tr>
-                    @endforeach
-                </tbody>
-
-            </table>
+                    </thead>
+                    <tbody id="table-body">
+                        {{-- @php
+                            $no = is_object($results) && method_exists($results, 'firstItem') ? $results->firstItem() : 0;
+                        @endphp --}}
+                    @if(is_object($results) && method_exists($results, 'firstItem'))
+                        @foreach ($results as $project)
+                            <tr>
+                                {{-- <td>{{ $no++ }}</td> --}}
+                                <td>{{ \Carbon\Carbon::parse($project['start_date'])->translatedFormat('d F Y') }}</td>
+                                <td>{{ \Carbon\Carbon::parse($project['end_date'])->translatedFormat('d F Y') }}</td>
+                                <td>{{ $project['name'] }}</td>
+                                <td>{{ $project['company_name'] }}</td>
+                                <td>
+                                    {{-- <span class="badge {{ $project['status'] ? 'bg-success' : 'bg-danger'}}"> --}}
+                                    <span class="badge bg-danger">
+                                        {{-- {{$project['status']}} --}}
+                                        Undefined
+                                    </span>
+                                </td>
+                                <td>
+                                    {{-- <a href="{{ route('project.edit', $project['id']) }}" class="btn btn-sm btn-warning rounded-pill" title="Edit">
+                                        <i class="fa-solid fa-pen"></i>
+                                    </a> --}}
+                                    <a onclick="showDetail({{ json_encode($project) }})" class="btn btn-sm btn-warning rounded-pill" data-bs-toggle="modal" data-bs-target="#detailModal">
+                                        <i class="fa-solid fa-ellipsis-vertical"></i>
+                                    </a>
+                                    <a href="{{ route('project.doc', $project['id']) }}" class="btn btn-sm btn-info rounded-pill">
+                                        <i class="fa-solid fa-file"></i>
+                                    </a>
+                                    <a href="{{ route('project.activity', $project['id']) }}" class="btn btn-sm btn-secondary rounded-pill">
+                                        <i class="fa-solid fa-chart-line"></i>
+                                    </a>
+                                    <button type="button" onclick="teamModal({{ $project['id'] }}, `{{ $project['name'] }}`, ``)" class="btn btn-sm btn-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#teamModal">
+                                        <i class="fa-solid fa-user-group"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        @endforeach
+                    @else
+                            <tr>
+                                <td colspan="7" class="text-center">Tidak ada data</td>
+                            </tr>
+                    @endif
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            {{-- <td colspan="2">Total <b>{{ $results->firstItem() }}</b> Data</td> --}}
+                            @if (is_object($results) && method_exists($results, 'onEachSide'))
+                                <td colspan="7"><span style="margin-top: 15px;">{{ $results->appends(request()->query())->links() }}</span></td>
+                            @endif
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
         </div>
     </div>
 </section>
@@ -104,7 +203,7 @@
             <div>
                 <div class="modal-body">
 
-                    <label><b> Nama Projek : </b></label>
+                    <label><b> Nama Proyek : </b></label>
                     <div class="form-group">
                         <p class="form-control-static" id="project_name_detail">Alpha Build</p>
                     </div>
@@ -161,12 +260,10 @@
 
                 <div class="modal-footer">
                     <a class="btn btn-warning ml-1" id="editButton">
-                        <i class="bx bx-check d-block d-sm-none"></i>
-                        <span class="d-none d-sm-block"><i class="fa-solid fa-pen"></i> Edit</span>
+                        <i class="fa-solid fa-pen"></i> Edit
                     </a>
                     <button type="button" class="btn btn-danger ml-1" data-bs-dismiss="modal" onclick="deleteProject()">
-                        <i class="bx bx-check d-block d-sm-none"></i>
-                        <span class="d-none d-sm-block"><i class="fa-solid fa-trash"></i> Hapus</span>
+                        <i class="fa-solid fa-trash"></i> Hapus
                     </button>
                 </div>
             </div>
@@ -174,46 +271,47 @@
     </div>
 </div>
 
-<div class="modal fade text-left w-100" id="teamModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel33"
-    aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+<div class="modal fade text-left w-100" id="teamModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel33" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title" id="myModalLabel33">Tim Projek</h4>
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" id="closeDetailModal">
+                <h4 class="modal-title" id="myModalLabel33">Tim Proyek</h4>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" id="closeTeamModal">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
             <div>
                 <div class="modal-body">
-
-                    <label><b> Nama Projek : </b></label>
+                    <input type="text" id="project_id" hidden>
+                    <label><b> Nama Proyek : </b></label>
                     <div class="form-group">
-                        <p class="form-control-static" id="project_name_detail">Alpha Build</p>
+                        <p class="form-control-static" id="project_name_team">Alpha Build</p>
                     </div>
                     <hr>
-                    <div class="row">
+                    <div class="row" id="teamInput" style="display: none">
                         <div class="col-sm-6">
-                            <label class=" align-self-center">All User</label>
-                            <table class="table table-striped mb-0">
+                            <p class="text-center"><b>ALL USER</b></p>
+                            <hr>
+                            <table class="table table-striped mb-0 scrollable-table">
                                 <thead>
                                     <tr>
-                                        <th>Nama</th>
-                                        <th>Aksi</th>
+                                        <th width="80%">Nama <input type="text" id="userSearch"></th>
+                                        <th width="20%" style="text-align: center">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody id="table_set">
                                 </tbody>
                             </table>
                         </div>
-
+                        <hr class="d-sm-none">
                         <div class="col-sm-6">
-                            <label>Fix Team</label>
-                            <table class="table table-striped mb-0">
+                            <p class="text-center"><b>FIX TEAM</b></p>
+                            <hr>
+                            <table class="table table-striped mb-0 scrollable-table">
                                 <thead>
                                     <tr>
-                                        <th>Nama</th>
-                                        <th>Aksi</th>
+                                        <th width="80%">Nama <input type="text" id="teamSearch"></th>
+                                        <th width="20%">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody id="table_fix">
@@ -221,17 +319,32 @@
                             </table>
                         </div>
                     </div>
+                    <div id="teamShow" style="display: none">
+                        <div class="row">
+                            <div class="col-sm-2"></div>
+                            <div class="col-sm-8">
+                                <table class="table table-striped mb-0 scrollable-table">
+                                    <thead>
+                                        <tr>
+                                            <th width="10%">No</th>
+                                            <th width="90%">Nama</th>
+                                            {{-- <th width="20%">Aksi</th> --}}
+                                        </tr>
+                                    </thead>
+                                    <tbody id="table_show">
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-sm-2"></div>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="modal-footer">
-                    <a class="btn btn-warning ml-1" id="editButton">
-                        <i class="bx bx-check d-block d-sm-none"></i>
-                        <span class="d-none d-sm-block"><i class="fa-solid fa-pen"></i> Edit</span>
-                    </a>
-                    <button type="button" class="btn btn-danger ml-1" data-bs-dismiss="modal" onclick="deleteProject()">
-                        <i class="bx bx-check d-block d-sm-none"></i>
-                        <span class="d-none d-sm-block"><i class="fa-solid fa-trash"></i> Hapus</span>
-                    </button>
+                <div class="modal-footer" id="footerTeam">
+                    {{-- <button type="button" class="btn btn-success ml-1" onclick="saveTeam()" id="submitButton">
+                            <i class="fa-solid fa-floppy-disk"></i>
+                            Simpan
+                    </button> --}}
                 </div>
             </div>
         </div>
@@ -283,41 +396,169 @@
 @endif
 
 <script>
+    let projects = {!! isset($results) ? json_encode($results) : '[]' !!};
     let users = {!! isset($users) ? json_encode($users) : '[]' !!};
+    let teams = {!! isset($groupedTeams) ? json_encode($groupedTeams) : '[]' !!};
     let userSet = [];
     let teamFix = [];
 
-    $.each(users, function (index, user) {
-        userSet.push({ name: user.name, id: user.id });
-
-    });
 
     document.addEventListener("DOMContentLoaded", function () {
-    const table = document.querySelector('#table');
-
-    new simpleDatatables.DataTable(table, {
-        perPage: 5,
-        perPageSelect: [5, 10, 25, 50]
+        setUser();
+        console.log(JSON.stringify(@json(session('lastRoute')), null, 2));
     });
 
-    renderUser();
-});
+    $('#teamModal').on('hidden.bs.modal', function () {
+        $('#userSearch').val('');
+        $('#teamSearch').val('');
+        $('#table_set').empty();
+        $('#table_fix').empty();
+        userSet = [];
+        setUser();
+        teamFix = [];
+    });
+
+    function teamModal(id, projectName, status){
+        teams.forEach(function (team) {
+            if (team.project_id == id) {
+                teamFix = team.members;
+            }
+        });
+        userSet = userSet.filter(user => !teamFix.some(team => team.id === user.id));
+        renderTeam();
+        renderUser();
+
+        $('#project_id').val(id);
+        $('#project_name_team').text(projectName);
+        if(teamFix.length > 0 && status === ""){
+            $('#footerTeam').empty();
+            let html = '';
+            $.each(teamFix, function (index, user) {
+                html += `
+                    <tr>
+                        <td width="10%" class="text-bold-500">${index+1}</td>
+                        <td width="90%" class="text-bold-500">${user.name}</td>
+                    </tr>`;
+            });
+            $('#table_show').html(html);
+            $('#teamShow').show();
+            $('#teamInput').hide();
+        }else{
+            $('#teamShow').hide();
+            $('#teamInput').show();
+        }
+
+        let footerHtml = '';
+        if(status === "input" || teamFix.length === 0){
+            footerHtml += `
+                <button type="button" class="btn btn-success ml-1" onclick="saveTeam()" id="submitButton">
+                        <i class="fa-solid fa-floppy-disk"></i>
+                        Simpan
+                </button>
+            `;
+        }else{
+            footerHtml += `
+                <button type="button" class="btn btn-warning ml-1" onclick="teamModal(${id}, '${projectName}', 'input')" id="submitButton">
+                        <i class="fa-solid fa-pen"></i>
+                        Edit
+                </button>
+            `;
+        }
+        $('#footerTeam').html(footerHtml);
+        $('#userSearch').val('');
+        $('#teamSearch').val('');
+    }
+
+    $('#userSearch').on('keyup', function() {
+        let value = $(this).val().toLowerCase();
+        $('#table_set tr').filter(function() {
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+        });
+    });
+
+    $('#teamSearch').on('keyup', function() {
+        let value = $(this).val().toLowerCase();
+        $('#table_fix tr').filter(function() {
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+        });
+    });
+
+    function saveTeam(){
+        // console.log(teamFix);
+        buttonLoadingStart('submitButton');
+        $.ajax({
+            url: "{{ route('project.store.team') }}",
+            method: "POST",
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            data: {
+                team: teamFix,
+                project_id: $('#project_id').val()
+            },
+            success: function (response) {
+                console.log(response);
+                if (response.status === 'success') {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: response.message,
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+                        buttonLoadingEnd('submitButton');
+                        $('#closeTeamModal').click();
+                        window.location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: response.message,
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+                        buttonLoadingEnd('submitButton');
+                        $('#closeTeamModal').click();
+                    });
+                }
+            }, error: function (xhr) {
+                console.log(xhr.responseText);
+            }
+        })
+    }
+
+    function setUser(){
+        $.each(users, function (index, user) {
+            userSet.push({
+                name: user.name,
+                id: user.id
+            });
+        });
+    }
 
     function renderUser(){
         let rows = "";
+        // let button = "";
         $('#table_set').empty();
         if(userSet.length > 0){
             $.each(userSet, function (index, user) {
                 rows += `
                     <tr>
-                        <td class="text-bold-500">${user.name}</td>
-                        <td>
-                            <a href="#" class="btn btn-sm btn-success rounded-pill" onclick="removeUser(${user.id}, 'user')">
-                                <i class="fa-solid fa-plus"></i> 
-                            </a>
+                        <td width="80%" class="text-bold-500">${user.name}</td>
+                        <td width="20%" style="text-align: center">
+                            <button type="button" class="btn btn-sm btn-success rounded-pill" onclick="removeUser(${user.id}, 'user')">
+                                <i class="fa-solid fa-plus"></i>
+                            </button>
                         </td>
                     </tr>`;
+                // button = `
+                //     <button type="button" class="btn btn-success ml-1" onclick="teamModal(${user.id}, '${user.name}')" id="submitButton">
+                //             <i class="fa-solid fa-pen"></i>
+                //             Edit
+                //     </button>`;
             });
+            // $('#footerTeam').html(button);
         } else {
             rows += `
                 <tr>
@@ -334,11 +575,11 @@
             $.each(teamFix, function (index, user) {
                 rows += `
                     <tr>
-                        <td class="text-bold-500">${user.name}</td>
-                        <td>
-                            <a href="#" class="btn btn-sm btn-danger rounded-pill" onclick="removeUser(${user.id}, 'team')">
+                        <td width="80%" class="text-bold-500">${user.name}</td>
+                        <td width="20%" style="text-align: center">
+                            <button type="button" class="btn btn-sm btn-danger rounded-pill" onclick="removeUser(${user.id}, 'team')">
                                 <i class="fa-solid fa-xmark"></i>
-                            </a>
+                            </button>
                         </td>
                     </tr>`;
             });
@@ -387,10 +628,10 @@
     function showDetail(data){
         console.log(data);
         $("#project_name_detail").text(data.name);
-        $("#company_name_detail").text(data.company.name);
-        $("#company_address_detail").text(data.company.address);
-        $("#director_name_detail").text(data.company.director_name);
-        $("#director_phone_detail").text(data.company.director_phone);
+        $("#company_name_detail").text(data.company_name);
+        $("#company_address_detail").text(data.company_address);
+        $("#director_name_detail").text(data.company_director_name);
+        $("#director_phone_detail").text(data.company_director_phone);
         $("#start_project_detail").text(dateFormat(data.start_date));
         $("#end_project_detail").text(dateFormat(data.end_date));
         $("#editButton").attr("href", "{{ route('project.edit', '') }}/"+data.id);

@@ -90,11 +90,11 @@
     <div class="card">
         <div class="card-header">
             <div class="row">
-                <div class="col-sm-8">
-                    <h1>Form {{ $status === 'create' ? 'Tambah' : 'Edit' }} Perusahaan</h1>
+                <div class="col-sm-8 col-8">
+                    <h1>Form {{ $status === 'create' ? 'Tambah' : 'Edit' }} <span class="d-none d-md-inline-block">Perusahaan</span></h1>
                 </div>
-                <div class="col-sm-4 d-flex justify-content-end align-items-center">
-                    <a href="{{ route('company.index') }}"><i class="fa-solid fa-arrow-left"></i></a>
+                <div class="col-sm-4 col-4 d-flex justify-content-end align-items-center">
+                    <a href="{{ route('company.index') }}"><i class="fa-solid fa-angle-left"></i> <span class="d-none d-md-inline-block">Kembali</span></a>
                 </div>
             </div>
         </div>
@@ -109,7 +109,7 @@
                     <div class="col-sm-6">
                         <label>Nama Perusahaan: </label>
                         <div class="form-group">
-                            <input type="text" placeholder="Enter the Company Name" class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name', $company ? $company['name'] : '') }}">
+                            <input type="text" placeholder="Masukkan Nama Perusahaan" class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name', $company ? $company['name'] : '') }}">
                             @error('name')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -117,7 +117,7 @@
 
                         <label>Alamat Perusahaan: </label>
                         <div class="form-group">
-                            <textarea class="form-control @error('address') is-invalid @enderror" placeholder="Enter the Company Address" id="address" name="address">{{ old('address', $company ? $company['address'] : '') }}</textarea>
+                            <textarea class="form-control @error('address') is-invalid @enderror" placeholder="Masukkan Alamat Perusahaan" id="address" name="address">{{ old('address', $company ? $company['address'] : '') }}</textarea>
                             @error('address')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -127,7 +127,7 @@
                     <div class="col-sm-6">
                         <label>Nama Direktur: </label>
                         <div class="form-group">
-                            <input type="text" placeholder="Enter the Director Name" class="form-control @error('director_name') is-invalid @enderror" name="director_name" id="director_name" value="{{ old('director_name', $company ? $company['director_name'] : '') }}">
+                            <input type="text" placeholder="Masukkan Nama Direktur" class="form-control @error('director_name') is-invalid @enderror" name="director_name" id="director_name" value="{{ old('director_name', $company ? $company['director_name'] : '') }}">
                             @error('director_name')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -135,7 +135,7 @@
 
                         <label>No.Telp Direktur: </label>
                         <div class="form-group">
-                            <input type="text" placeholder="Enter the Director Phone" class="form-control @error('director_phone') is-invalid @enderror" name="director_phone" id="director_phone" value="{{ old('director_phone', $company ? $company['director_phone'] : '') }}">
+                            <input type="text" placeholder="Masukkan No.Telp Direktur" class="form-control @error('director_phone') is-invalid @enderror" name="director_phone" id="director_phone" value="{{ old('director_phone', $company ? $company['director_phone'] : '') }}">
                             @error('director_phone')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror

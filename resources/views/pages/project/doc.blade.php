@@ -274,11 +274,11 @@
     <div class="card">
         <div class="card-header">
             <div class="row">
-                <div class="col-sm-10">
-                    <h1>Form Dokumen Administrasi Projek</h1>
+                <div class="col-sm-10 col-10">
+                    <h1>Form Dokumen <span class="d-none d-md-inline-block">Administrasi Projek</span></h1>
                 </div>
-                <div class="col-sm-2 d-flex justify-content-end align-items-center">
-                    <a href="{{ route('project.index') }}"><i class="fa-solid fa-arrow-left"></i></a>
+                <div class="col-sm-2 col-2 d-flex justify-content-end align-items-center">
+                    <a href="{{ route('project.index') }}"><i class="fa-solid fa-angle-left"></i> <span class="d-none d-md-inline-block">Kembali</span></a>
                 </div>
             </div>
         </div>
@@ -295,7 +295,7 @@
                     <hr>
                     <label><b> Judul Dokumen : </b></label>
                     <div class="form-group">
-                        <input type="text" placeholder="Enter the Title Document" class="form-control @error('title') is-invalid @enderror" name="title" id="title">
+                        <input type="text" placeholder="Masukkan Judul Dokumen Administrasi" class="form-control @error('title') is-invalid @enderror" name="title" id="title">
                         @error('title')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -335,7 +335,7 @@
                             </small>
                             @enderror
                         </div>
-                        <div class="col-sm-2 d-flex justify-content-center align-items-center">
+                        <div class="col-sm-2 d-md-flex justify-content-md-center align-items-md-center mt-2 mt-md-0">
                             <button class="btn btn-success" type="submit" style="margin: 0 auto"><i class="fa-solid fa-plus"></i> Simpan</button>
                         </div>
                     </div>
@@ -361,24 +361,27 @@
                 </select>
             </fieldset>
             <hr>
-            <table class="table table-striped mb-0" id="table">
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Judul</th>
-                        <th>File</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody id="table_body">
-                    {{-- <tr>
-                        <td class="text-bold-500">Michael Right</td>
-                        <td>$15/hr</td>
-                        <td class="text-bold-500">UI/UX</td>
-                        <td>Remote</td>
-                    </tr> --}}
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table class="table table-striped mb-0" id="table">
+                    <thead>
+                        <tr>
+                            {{-- <th>No</th> --}}
+                            <th>Judul</th>
+                            <th>Kategori</th>
+                            <th>File</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table_body">
+                        {{-- <tr>
+                            <td class="text-bold-500">Michael Right</td>
+                            <td>$15/hr</td>
+                            <td class="text-bold-500">UI/UX</td>
+                            <td>Remote</td>
+                        </tr> --}}
+                    </tbody>
+                </table>
+            </div>
             {{-- <div class="row mb-2" id="data_doc">
 
             </div> --}}
@@ -447,14 +450,14 @@
             $.each(data, function (index, doc) {
                 let deleteUrl = `{{ route('project.destroy.doc', ':id') }}`.replace(':id', doc['id']);
                 rows += `
-                    <tr>
-                        <td>${index + 1}</td>
-                        <td>${doc['title']}</td>
+                    <tr>`;
+                        // <td>${index + 1}</td>
+                    rows += `<td>${doc['title']}</td>
+                        <td>${doc['admin_doc_category_name']}</td>
                         <td><a onclick="openPDFModal('${url}${ doc.file }')" style="text-decoration: none; color: grey"><i class="fa-solid fa-file-pdf"></i></a></td>
                         <td>
                             <a href="javascript:void(0)" class="btn btn-danger ml-1 btn-sm" onclick="confirmDelete('${deleteUrl}')">
-                                <i class="bx bx-check d-block d-sm-none"></i>
-                                <span class="d-none d-sm-block"><i class="fa-solid fa-trash"></i></span>
+                                <i class="fa-solid fa-trash"></i>
                             </a>
                         </td>
                     </tr>`;
@@ -517,7 +520,7 @@
             return;
         }
         let filteredDoc = data_doc.filter(doc =>
-            doc.admin_doc_category.id == id_category
+            doc.admin_doc_category_id == id_category
         );
         showDataDoc(filteredDoc);
     });

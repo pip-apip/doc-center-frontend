@@ -4,25 +4,72 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Session;
 
 class UserController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
+    public function __construct()
+    {
+        //
+
+    }
     public function index()
     {
+        if (!request()->has('search')) {
+            session()->forget('q');
+        }
+        $q = session('q');
+
+        $page = request('page', 1);
+        $perPage = request('per_page', 10);
+
         $accessToken = session('user.access_token');
 
-        $response = Http::withToken($accessToken)->get('https://bepm.hanatekindo.com/api/v1/users');
+        $response = Http::withToken($accessToken)->get('https://bepm.hanatekindo.com/api/v1/users/search', [
+            'name' => $q,
+            'limit' => $perPage,
+            'page' => $page
+        ]);
 
         if ($response->failed()) {
             return redirect()->back()->withErrors('Failed to fetch users.');
         }
 
-        $users = $response->json()['data'];
+        $total = $response->json()['pagination']['total'] ?? null;
+        $users = is_array($response->json()['data'] ?? null) ? $response->json()['data'] : null;
+        $results = null;
 
-        return view('pages.user.index', compact('users'))->with(['title' => 'user']);
+        if (!is_array($users) || empty($users)) {
+            $results = null;
+        }else{
+            $results = new LengthAwarePaginator(
+                collect($users),
+                $total,
+                $perPage,
+                $page,
+                ['path' => url('user')]
+            );
+        }
+
+        return view('pages.user.index', compact('results', 'q'))->with(['title' => 'user']);
+    }
+
+    public function filter(Request $request)
+    {
+        $q = $request->input('q', '');
+        session(['q' => $q]);
+
+        return redirect()->route('user.index', ['search' => $q]);
+    }
+
+    public function reset()
+    {
+        session()->forget('q');
+        return redirect()->route('user.index');
     }
 
     /**

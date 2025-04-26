@@ -5,52 +5,118 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Session;
 
 class ActivityController extends Controller
 {
         /**
      * Display a listing of the resource.
      */
-    public function __construct(){
-        // $currentRoute = Route::currentRouteName();
-
-        // if(Route::current()->parameters()['id'] ?? null){
-        //     $currentRoute .= ', '.Route::current()->parameters()['id'];
-        // }
-
-        // if (session('lastRoute') !== $currentRoute) {
-        //     session()->put(['lastRoute' => $currentRoute]);
-        //     dd(session('lastRoute'), $currentRoute, 'TRUE');
-        // }
-
-        // dd(session('lastRoute'), $currentRoute, 'FALSE');
-
-        $currentRoute = Route::currentRouteName();
-        $id = request()->route('id');
-
-
-        $currentRoute .= $id ? ', ' . $id : '';
-
-        if (session('lastRoute') !== $currentRoute) {
-            session(['lastRoute' => $currentRoute]);
-        }
+    public function __construct()
+    {
+        //
     }
 
     public function index()
     {
+        if (!request()->has('search')) {
+            session()->forget('q');
+        }
+        if (!request()->has('start_date')) {
+            session()->forget('start_date');
+        }
+        if (!request()->has('end_date')) {
+            session()->forget('end_date');
+        }
+
+        $q = session('q', '');
+        $start_date = session('start_date', '');
+        $end_date = session('end_date', '');
+
+        $page = request('page', 1);
+        $perPage = request()->has('per_page') ? request('per_page') : 10;
+
         $this->lastRoute = Route::currentRouteName();
 
         $accessToken = session('user.access_token');
 
-        $response = Http::withToken($accessToken)->get('https://bepm.hanatekindo.com/api/v1/activities');
+        $params = [
+            'limit' => $perPage,
+            'page' => $page,
+        ];
+
+        if (!empty($q)) {
+            $params[session('user.role') == 'SUPERADMIN' ? 'title' : 'name'] = $q;
+        }
+
+        if (!empty($start_date)) {
+            $params['start_date'] = date('Y-m-d', strtotime($start_date));
+        }
+
+        if (!empty($end_date)) {
+            $params['end_date'] = date('Y-m-d', strtotime($end_date));
+        }
+
+        if (session('user.role') != 'SUPERADMIN') {
+            $project_ids = session('user.project_id', []);
+            $params['project_id'] = is_array($project_ids) ? implode(',', $project_ids) : $project_ids;
+        }
+
+        $response = Http::withToken($accessToken)->get('https://bepm.hanatekindo.com/api/v1/activities/search', $params);
 
         if ($response->failed()) {
             return redirect()->back()->withErrors('Failed to fetch activities.');
         }
 
-        $activities = $response->json();
+        $total = $response->json()['pagination']['total'] ?? null;
+        $activities = is_array($response->json()['data'] ?? null) ? $response->json()['data'] : null;
+        $results = "";
 
-        return view('pages.activity.index', compact('activities'))->with(['title' => 'activity']);
+        if (!is_array($activities) || empty($activities)) {
+            $results = null;
+        } else {
+            $results = new LengthAwarePaginator(
+                collect($activities),
+                $total,
+                $perPage,
+                $page,
+                ['path' => url('activity')]
+            );
+        }
+
+        return view('pages.activity.index', compact('results'))->with(['title' => 'activity']);
+    }
+
+
+    public function filter(Request $request)
+    {
+        // dd($request->all());
+        $q = $request->input('q', '');
+        $start_date = $request->input('start_date', '');
+        $end_date = $request->input('end_date', '');
+
+        session(['start_date' => $start_date]);
+        session(['end_date' => $end_date]);
+        session(['q' => $q]);
+
+        // return redirect()->route('activity.index', ['search' => $q, 'start_date' => $start_date, 'end_date' => $end_date]);
+        return response()->json([
+            'status' => 'success',
+            'redirect_url' => route('activity.index', [
+                'search' => $q,
+                'start_date' => $start_date,
+                'end_date' => $end_date
+            ])
+        ]);
+    }
+
+    public function reset()
+    {
+        session()->forget('q');
+        session()->forget('start_date');
+        session()->forget('end_date');
+        return redirect()->route('activity.index');
     }
 
     /**
@@ -58,9 +124,26 @@ class ActivityController extends Controller
      */
     public function create()
     {
+        // dd(session('lastRoute'));
         $accessToken = session('user.access_token');
 
-        $response = Http::withToken($accessToken)->get('https://bepm.hanatekindo.com/api/v1/projects');
+        if(session('user.role') == 'SUPERADMIN'){
+            $response = Http::withToken($accessToken)->get('https://bepm.hanatekindo.com/api/v1/projects/search', [
+                'limit' => 1000,
+            ]);
+        } else {
+            $project_id = "";
+            for($i = 0; $i < count(session('user.project_id')); $i++){
+                if($i == 0){
+                    $project_id = session('user.project_id')[$i];
+                } else {
+                    $project_id .= ",".session('user.project_id')[$i];
+                }
+            }
+            $response = Http::withToken($accessToken)->get('https://bepm.hanatekindo.com/api/v1/projects/search', [
+                'id' => $project_id,
+            ]);
+        }
 
         if ($response->failed()) {
             return redirect()->back()->withErrors('Failed to fetch project.');
@@ -79,12 +162,12 @@ class ActivityController extends Controller
     public function store(Request $request)
     {
         // dd($request->all());
-        $request->validate([
-            'project_id' => ['required', 'not_in:#'],
-            'title' => 'required|string|max:255',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date',
-        ]);
+        // $request->validate([
+        //     'project_id' => ['required', 'not_in:#'],
+        //     'title' => 'required|string|max:255',
+        //     'start_date' => 'required|date',
+        //     'end_date' => 'required|date',
+        // ]);
 
         $accessToken = session('user.access_token');
 
@@ -122,7 +205,7 @@ class ActivityController extends Controller
             return redirect()->back()->withErrors('Failed to fetch doc activity data.');
         }
 
-        $responseCategoryDocActivity = Http::withToken($accessToken)->get('https://bepm.hanatekindo.com/api/v1/activity-doc-categories');
+        $responseCategoryDocActivity = Http::withToken($accessToken)->get('https://bepm.hanatekindo.com/api/v1/activity-doc-categories/search?limit=1000');
 
         if ($responseCategoryDocActivity->failed()) {
             return redirect()->back()->withErrors('Failed to fetch doc category of activity data.');
@@ -139,32 +222,9 @@ class ActivityController extends Controller
         return view('pages.activity.doc', compact('data'))->with(['title' => 'activity']);
     }
     /**
-     * Display the specified resource.
-     */
-    public function activity_project(string $id)
-    {
-        $accessToken = session('user.access_token');
-        $responseProject = Http::withToken($accessToken)->get('https://bepm.hanatekindo.com/api/v1/projects/'.$id);
-
-        if ($responseProject->failed()) {
-            return redirect()->back()->withErrors('Failed to fetch project data.');
-        }
-
-        $project = $responseProject->json()['data'][0];
-
-        $responseActivity = Http::withToken($accessToken)->get('https://bepm.hanatekindo.com/api/v1/activities/search?project_id='.$id);
-
-        if ($responseActivity->failed()) {
-            return redirect()->back()->withErrors('Failed to fetch activity data.');
-        }
-
-        $activities = $responseActivity->json()['data'];
-
-        return view('pages.project.activity', compact('project', 'activities'))->with(['title' => 'activity']);
-    }
-    /**
      * Store a newly created resource doc.
      */
+
     public function storeDoc(Request $request)
     {
         $accessToken = session('user.access_token');

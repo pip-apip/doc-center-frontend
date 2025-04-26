@@ -4,26 +4,75 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Session;
 
 class CategoryAdmController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
+
+    public function __construct()
+    {
+        //
+    }
+
     public function index()
     {
+        if (!request()->has('search')) {
+            session()->forget('q');
+        }
+
+        $q = Session::get('q');
+        $data['q'] = $q;
+
+        $page = request('page', 1);
+        $perPage = request()->has('per_page') ? request('per_page') : 10;
+
         $accessToken = session('user.access_token');
 
-        $response = Http::withToken($accessToken)->get('https://bepm.hanatekindo.com/api/v1/admin-doc-categories');
+        $response = Http::withToken($accessToken)->get('https://bepm.hanatekindo.com/api/v1/admin-doc-categories/search', [
+            'name' => $q,
+            'limit' => $perPage,
+            'page' => $page
+        ]);
 
         if ($response->failed()) {
             return redirect()->back()->withErrors('Failed to fetch categories.');
         }
 
-        $categories = $response->json();
-        // dd($categories);
+        $total = $response->json()['pagination']['total'] ?? null;
+        $category = is_array($response->json()['data'] ?? null) ? $response->json()['data'] : null;
+        $results = "";
 
-        return view('pages.categoryAdm.index', compact('categories'))->with(['title' => 'categoryAdm']);
+        if (!is_array($category) || empty($category)) {
+            $results = null;
+        } else {
+            $results = new LengthAwarePaginator(
+                collect($category),
+                $total,
+                $perPage,
+                $page,
+                ['path' => url('categoryAdm')]
+            );
+        }
+
+        return view('pages.categoryAdm.index', compact('results'))->with(['title' => 'categoryAdm']);
+    }
+
+    public function filter(Request $request)
+    {
+        $q = $request->input('q', '');
+        session(['q' => $q]);
+
+        return redirect()->route('categoryAdm.index', ['search' => $q]);
+    }
+
+    public function reset()
+    {
+        session()->forget('q');
+        return redirect()->route('categoryAdm.index');
     }
 
     /**
@@ -46,7 +95,7 @@ class CategoryAdmController extends Controller
 
         $accessToken = session('user.access_token');
 
-        $response = Http::withToken($accessToken)->post('https://bepm.hanatekindo.com/api/v1/admin-doc-categories', [
+        $response = Http::withToken($accessToken)->post('https://bepm.hanatekindo.com/api/v1/admin-doc-categories?limit=1000', [
             'name' => $request->input('name'),
         ]);
 

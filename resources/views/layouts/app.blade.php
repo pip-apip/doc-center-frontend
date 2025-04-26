@@ -7,10 +7,11 @@
     {{-- <meta name="csrf-token" content="{{ csrf_token() }}"> --}}
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>Dashboard - Mazer Admin Dashboard</title>
+    <title>Dashboard - PM - HMA</title>
 
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Zain:ital,wght@0,200;0,300;0,400;0,700;0,800;0,900;1,300;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.css') }}">
 
@@ -58,63 +59,29 @@
                 </div>
             </div>
         </footer> --}}
+
     </div>
 
-    {{-- <script>
-        function refreshToken() {
-            let csrfToken = $('meta[name="csrf-token"]').attr('content');
+    <script>
+        let oldButtonClass = "";
 
-            // Request untuk memperbarui token...
-            $.ajax({
-                url: 'https://bepm.hanatekindo.com/api/v1/auth/refresh',
-                type: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Authorization': 'Bearer ' + @json(session('user.refresh_token')),
-                },
-                data: {
-                    refresh_token: @json(session('user.refresh_token'))
-                },
-                success: function (response) {
-                    console.log("Token berhasil diperbarui", response);
-
-                    $.ajax({
-                        url: '/get-token',  // Endpoint yang baru kita buat
-                        type: 'POST',
-                        headers: {
-                            'X-CSRF-TOKEN': csrfToken
-                        },
-                        data: {
-                            access_token: response.data.access_token
-                        },
-                        success: function (updateResponse) {
-                            console.log("Session berhasil diperbarui dengan access token baru");
-                            console.log('New Session : ',@json(session('user')));
-                            // callback();
-                            location.reload();
-                        },
-                        error: function (xhr) {
-                            console.log("Gagal memperbarui session:", xhr.responseJSON.errors);
-                        }
-                    });
-                },
-                error: function (xhr) {
-                    console.log("Gagal memperbarui token:", xhr);
-                    $('#getUser').html("<p style='color: red;'>Session expired, silakan login ulang.</p>");
-                    // window.location.href = "/login";
-                }
-            });
+        function buttonLoadingStart(idButton){
+            oldButtonClass = $('#' + idButton).html();
+            let html = "<i class='fa-solid fa-spinner fa-spin-pulse'></i> Loading...";
+            $('#' + idButton).html(html).attr('disabled', true);
         }
 
-    </script> --}}
+        function buttonLoadingEnd(idButton){
+            $('#' + idButton).html(oldButtonClass).attr('disabled', false);
+        }
+    </script>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script src="{{ asset('assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js') }}"></script>
     <script src="{{ asset('assets/js/bootstrap.bundle.min.js') }}"></script>
 
-    {{-- <script src="{{ asset('assets/vendors/apexcharts/apexcharts.js') }}"></script> --}}
-    <script src="{{ asset('assets/js/pages/dashboard.js') }}"></script>
+    {{-- <script src="{{ asset('assets/js/pages/dashboard.js') }}"></script> --}}
 
     <script src="{{ asset('assets/js/main.js') }}"></script>
 </body>

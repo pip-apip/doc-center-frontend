@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Route;
 use Carbon\Carbon;
 
 class AuthMiddleware
@@ -17,39 +18,35 @@ class AuthMiddleware
             return redirect('/login')->withErrors(['error' => 'Anda harus login terlebih dahulu']);
         }
 
-        $loginTime = session('login-time');
+        // $loginTime = session('login-time');
 
-        if ($loginTime && now()->diffInMinutes(Carbon::parse($loginTime)) >= 5) {
-            $token = session('user.access_token');
-
-            try {
-                Http::withToken($token)->post('https://bepm.hanatekindo.com/api/v1/auth/logout');
-            } catch (\Exception $e) {
-                // log error optionally
-                return redirect('/login')->withErrors(['error' => 'Sesi telah berakhir, silakan login kembali']);
-            }
-
-            session()->forget(['user', 'login-time']);
-            session()->flush();
-
-            return redirect('/login')->withErrors(['error' => 'Sesi telah berakhir, silakan login kembali']);
-        }
-
-        // if (session('login-time') && now()->diffInMinutes(session('login-time')) >= 5) {
+        // if ($loginTime && now()->diffInMinutes(Carbon::parse($loginTime)) >= 5) {
         //     $token = session('user.access_token');
 
-        //     try{
+        //     try {
         //         Http::withToken($token)->post('https://bepm.hanatekindo.com/api/v1/auth/logout');
-        //     }catch (\Exception $e){
-        //         return redirect('/login')->withErrors(['error' => 'Anda harus login terlebih dahulu']);
+        //     } catch (\Exception $e) {
+        //         return redirect('/login')->withErrors(['error' => 'Sesi telah berakhir, silakan login kembali']);
         //     }
 
-        //     session()->forget(['user']);
-        //     session()->forget(['login-time']);
+        //     session()->forget(['user', 'login-time']);
         //     session()->flush();
 
-        //     return redirect('/login')->withErrors(['error' => 'Anda harus login terlebih dahulu']);
+        //     return redirect('/login')->withErrors(['error' => 'Sesi telah berakhir, silakan login kembali']);
         // }
+
+        $currentRoute = Route::currentRouteName();
+        $id = request()->route('id');
+        $currentRoute .= $id ? ', ' . $id : '';
+
+        $previousRoute = session('currentRoute');
+
+        if ($previousRoute !== $currentRoute) {
+            session()->put('lastRoute', $previousRoute);
+        }
+
+        session()->put('currentRoute', $currentRoute);
+        // dd(session('lastRoute'), session('currentRoute'));
 
         return $next($request);
     }

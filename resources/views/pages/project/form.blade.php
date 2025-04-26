@@ -13,7 +13,7 @@
             <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
-                    <li class="breadcrumb-item" aria-current="page">Project</li>
+                    <li class="breadcrumb-item" aria-current="page">Proyect</li>
                     <li class="breadcrumb-item active" aria-current="page">Form</li>
                 </ol>
             </nav>
@@ -24,11 +24,11 @@
     <div class="card">
         <div class="card-header">
             <div class="row">
-                <div class="col-sm-8">
-                    <h1>Form {{ $status === 'create' ? 'Tambah' : 'Edit' }} Projek</h1>
+                <div class="col-sm-8 col-8">
+                    <h1>Form {{ $status === 'create' ? 'Tambah' : 'Edit' }} <span class="d-none d-md-inline-block"> Proyek</span></h1>
                 </div>
-                <div class="col-sm-4 d-flex justify-content-end align-items-center">
-                    <a href="{{ route('project.index') }}"><i class="fa-solid fa-arrow-left"></i></a>
+                <div class="col-sm-4 col-4 d-flex justify-content-end align-items-center">
+                    <a href="{{ route('project.index') }}"><i class="fa-solid fa-angle-left"></i> <span class="d-none d-md-inline-block">Kembali</span></a>
                 </div>
             </div>
         </div>
@@ -39,9 +39,9 @@
                 <form action="{{ route('project.update', $project['id']) }}" method="POST" class="form form-vertical" enctype="multipart/form-data">
             @endif
             @csrf
-            <label>Nama Projek : </label>
+            <label>Nama Proyek : </label>
             <div class="form-group">
-                <input type="text" placeholder="Enter the Project Name" class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name', $project ? $project['name'] : '') }}">
+                <input type="text" placeholder="Masukkan Nama Projek" class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name', $project ? $project['name'] : '') }}">
                 @error('name')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
@@ -53,7 +53,7 @@
                     <select class="form-select @error('company_id') is-invalid @enderror" id="company_id" name="company_id">
                         <option value="">Pilih Perusahaan</option>
                         @foreach ($companies as $comp)
-                        <option value="{{ $comp['id'] }}" {{ old('company_id', $project ? $project['company']['id'] : '') == $comp['id'] ? 'selected' : '' }}>
+                        <option value="{{ $comp['id'] }}" {{ old('company_id', $project ? $project['company_id'] : '') == $comp['id'] ? 'selected' : '' }}>
                             {{ $comp['name'] }}
                         </option>
                         @endforeach
@@ -109,5 +109,11 @@
 
 <script src="{{ asset('assets/vendors/simple-datatables/simple-datatables.js') }}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        console.log(JSON.stringify(@json(session('lastRoute')), null, 2));
+    });
+</script>
 
 @endsection

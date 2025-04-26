@@ -25,62 +25,120 @@
     <div class="card">
         <div class="card-header text-right">
             <div class="row">
-                <div class="col-sm-8">
+                <div class="col-sm-8 col-8">
                     <h1>Aktivitas</h1>
                 </div>
-                <div class="col-sm-4 d-flex justify-content-end align-items-center">
+                <div class="col-sm-4 col-4 d-flex justify-content-end align-items-center">
                     <a href="{{ route('activity.create') }}" class="btn btn-success">
-                        <i class="fa-solid fa-plus"></i> Tambah
+                        <i class="fa-solid fa-plus"></i> <span class="d-none d-md-inline-block">Tambah</span>
                     </a>
                 </div>
             </div>
         </div>
         <div class="card-body">
-            <table class="table table-striped" id="table">
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Judul Aktivitas</th>
-                        <th>Projek</th>
-                        <th>Tanggal Mulai</th>
-                        <th>Tanggal Selesai</th>
-                        <th>Status</th>
-                        <th width="150">Aksi</th>
-                    </tr>
-                </thead>
-                @php
-                    $no = 1;
-                @endphp
-                <tbody id="table_body">
-                    @foreach ($activities['data'] as $act)
-                    <tr>
-                        <td>{{ $no++ }}</td>
-                        <td>{{ $act['title'] }}</td>
-                        <td>{{ $act['project']['name'] }}</td>
-                        <td>{{ \Carbon\Carbon::parse($act['start_date'])->translatedFormat('d F Y') }}</td>
-                        <td>{{ \Carbon\Carbon::parse($act['end_date'])->translatedFormat('d F Y') }}</td>
-                        <td>
-                            {{-- <span class="badge {{ $project['status'] ? 'bg-success' : 'bg-danger'}}"> --}}
-                            <span class="badge bg-danger">
-                                {{-- {{$project['status']}} --}}
-                                Undefined
-                            </span>
-                        </td>
-                        <td>
-                            <a href="{{ route('activity.edit', $act['id']) }}" class="btn btn-sm btn-warning rounded-pill">
-                                <i class="fa-solid fa-pen"></i>
-                            </a>
-                            <a href="javascript:void(0)" class="btn btn-sm btn-danger rounded-pill" onclick="confirmDelete('{{ route('activity.destroy', $act['id']) }}')">
-                                <i class="fa-solid fa-trash"></i>
-                            </a>
-                            <a href="{{ route('activity.doc', $act['id']) }}" class="btn btn-sm btn-info rounded-pill">
-                                <i class="fa-solid fa-file"></i>
-                            </a>
-                        </td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
+            @php
+                $page = $results && $results->perPage() ? $results->perPage() : null;
+            @endphp
+            <div class="row">
+                <form method="GET" action="{{ route('activity.index') }}" id="pagination-form" class="col-12 col-lg-1">
+                    <label>Data: </label>
+                    <fieldset class="form-group" style="width: 70px">
+                        <select class="form-select" id="entire-page" name="per_page" onchange="document.getElementById('pagination-form').submit();">
+                            <option value="5" {{ $page == 5 ? 'selected' : '' }}>5</option>
+                            <option value="10" {{ $page == 10 ? 'selected' : '' }}>10</option>
+                            <option value="15" {{ $page == 15 ? 'selected' : '' }}>15</option>
+                            <option value="20" {{ $page == 20 ? 'selected' : '' }}>20</option>
+                        </select>
+                    </fieldset>
+                </form>
+                <form method="POST" action="{{ route('activity.filter') }}" id="search-form" class="mb-4 col-12 col-lg-11">
+                    @csrf
+                    <div class="row">
+                        <div class="col-md-3 col-6">
+                            <label>Tgl Mulai: </label>
+                            <div class="form-group">
+                                <input type="date" class="form-control" name="start_date" value="{{ session()->has('start_date') ? session('start_date') : '' }}">
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <label>Tgl Selesai: </label>
+                            <div class="form-group">
+                                <input type="date" class="form-control" name="end_date" value="{{ session()->has('end_date') ? session('end_date') : '' }}">
+                            </div>
+                        </div>
+                        <div class="col-lg-5 col-9">
+                            <label>Filter Nama Aktivitas: </label>
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control" name="q" value="{{ session()->has('q') ? session('q') : '' }}" placeholder="Ketik Nama Aktivitias & Klik Enter ..." onkeydown="if (event.key === 'Enter') { event.preventDefault(); this.form.submit(); }">
+                                <button class="btn btn-primary" type="submit" id="button-addon1"><i class="fa-solid fa-magnifying-glass"></i></button>
+                            </div>
+                        </div>
+                        <div class="col-lg-1 col-2">
+                            <a href="{{ route('activity.reset') }}" class="btn btn-secondary mt-4" type="button" id="button-addon2">Reset</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-striped" id="table">
+                    <thead>
+                        <tr>
+                        {{-- <th>No</th> --}}
+                            <th>Tanggal Mulai</th>
+                            <th>Tanggal Selesai</th>
+                            <th>Projek</th>
+                            <th>Judul Aktivitas</th>
+                            <th>Status</th>
+                            <th width="150">Aksi</th>
+                        </tr>
+                    </thead>
+                    {{-- @php
+                        $no = is_object($results) && method_exists($results, 'firstItem') ? $results->firstItem() : 0;
+                    @endphp --}}
+                    <tbody id="table_body">
+                    @if(is_object($results) && method_exists($results, 'firstItem'))
+                        @foreach ($results as $act)
+                        <tr>
+                        {{-- <td>{{ $no++ }}</td> --}}
+                            <td>{{ \Carbon\Carbon::parse($act['start_date'])->translatedFormat('d F Y') }}</td>
+                            <td>{{ \Carbon\Carbon::parse($act['end_date'])->translatedFormat('d F Y') }}</td>
+                            <td>{{ $act['project_name'] }}</td>
+                            <td>{{ $act['title'] }}</td>
+                            <td>
+                                {{-- <span class="badge {{ $project['status'] ? 'bg-success' : 'bg-danger'}}"> --}}
+                                <span class="badge bg-danger">
+                                    {{-- {{$project['status']}} --}}
+                                    Undefined
+                                </span>
+                            </td>
+                            <td>
+                                <a href="{{ route('activity.edit', $act['id']) }}" class="btn btn-sm btn-warning rounded-pill">
+                                    <i class="fa-solid fa-pen"></i>
+                                </a>
+                                <a href="javascript:void(0)" class="btn btn-sm btn-danger rounded-pill" onclick="confirmDelete('{{ route('activity.destroy', $act['id']) }}')">
+                                    <i class="fa-solid fa-trash"></i>
+                                </a>
+                                <a href="{{ route('activity.doc', $act['id']) }}" class="btn btn-sm btn-info rounded-pill">
+                                    <i class="fa-solid fa-file"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        @endforeach
+                    @else
+                        <tr>
+                            <td colspan="7" class="text-center">Tidak ada data</td>
+                        </tr>
+                    @endif
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            @if (is_object($results) && method_exists($results, 'onEachSide'))
+                                <td colspan="7"><span style="margin-top: 15px;">{{ $results->appends(request()->query())->links() }}</span></td>
+                            @endif
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
         </div>
     </div>
 </section>
@@ -118,11 +176,39 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        const table = document.querySelector('#table');
+        // const table = document.querySelector('#table');
 
-        new simpleDatatables.DataTable(table, {
-            perPage: 5,
-            perPageSelect: [5, 10, 25, 50]
+        // new simpleDatatables.DataTable(table, {
+        //     perPage: 5,
+        //     perPageSelect: [5, 10, 25, 50]
+        // });
+    });
+
+    $('#search-form').on('submit', function (e) {
+        e.preventDefault();
+
+        $.ajax({
+            url: $(this).attr('action'),
+            type: 'POST',
+            data: $(this).serialize(),
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            // beforeSend: function() {
+            //     // Optional: tampilkan loading
+            //     $('#activity-results').html('<p>Loading...</p>');
+            // },
+            success: function (response) {
+                if (response.status === 'success' && response.redirect_url) {
+                    window.location.href = response.redirect_url;
+                } else {
+                    alert('Gagal memproses filter.');
+                }
+            },
+            error: function (xhr) {
+                alert('Terjadi kesalahan saat memproses filter');
+                console.log(xhr.responseText);
+            }
         });
     });
 

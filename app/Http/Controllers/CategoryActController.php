@@ -4,26 +4,74 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Session;
 
 class CategoryActController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
+    public function __construct()
+    {
+        //
+
+    }
+
     public function index()
     {
+        if (!request()->has('search')) {
+            session()->forget('q');
+        }
+
+        $q = Session::get('q');
+        $data['q'] = $q;
+
+        $page = request('page', 1);
+        $perPage = request()->has('per_page') ? request('per_page') : 10;
+
         $accessToken = session('user.access_token');
 
-        $response = Http::withToken($accessToken)->get('https://bepm.hanatekindo.com/api/v1/activity-doc-categories');
+        $response = Http::withToken($accessToken)->get('https://bepm.hanatekindo.com/api/v1/activity-doc-categories/search', [
+            'name' => $q,
+            'limit' => $perPage,
+            'page' => $page
+        ]);
 
         if ($response->failed()) {
             return redirect()->back()->withErrors('Failed to fetch categories.');
         }
 
-        $categories = $response->json();
-        // dd($categories);
+        $total = $response->json()['pagination']['total'] ?? null;
+        $categories = is_array($response->json()['data'] ?? null) ? $response->json()['data'] : null;
+        $results = null;
+        if (!is_array($categories) || empty($categories)) {
+            $results = null;
+        } else {
+            $results = new LengthAwarePaginator(
+                collect($categories),
+                $total,
+                $perPage,
+                $page,
+                ['path' => url('categoryAct')]
+            );
+        }
 
-        return view('pages.categoryAct.index', compact('categories'))->with(['title' => 'categoryAct']);
+        return view('pages.categoryAct.index', compact('results'))->with(['title' => 'categoryAct']);
+    }
+
+    public function filter(Request $request)
+    {
+        $q = $request->input('q', '');
+        session(['q' => $q]);
+
+        return redirect()->route('categoryAct.index', ['search' => $q]);
+    }
+
+    public function reset()
+    {
+        session()->forget('q');
+        return redirect()->route('categoryAct.index');
     }
 
     /**
@@ -100,7 +148,7 @@ class CategoryActController extends Controller
 
         $response = Http::withToken($accessToken)->patch('https://bepm.hanatekindo.com/api/v1/activity-doc-categories/'.$id, [
             'name' => $request->input('name'),
-        ]); 
+        ]);
 
         if ($response->json()['status'] == 400) {
             $errors = $response->json()['errors'];

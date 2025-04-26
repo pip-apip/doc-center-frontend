@@ -4,29 +4,85 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Session;
 
 class CompanyController extends Controller
 {
     protected $API_url = "https://bepm.hanatekindo.com";
+
+    public function __construct()
+    {
+        //
+    }
+
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
+
+    public function index(){
+        if (!request()->has('search')) {
+            session()->forget('q');
+        }
+        $q = Session::get('q');
+        $data['q'] = $q;
+
+        $page = request('page', 1);
+        $perPage = request()->has('per_page') ? request('per_page') : 10;
+
         $accessToken = session('user.access_token');
-        $response = Http::withToken($accessToken)->get('https://bepm.hanatekindo.com/api/v1/companies?limit=1000');
+
+        $response = Http::withToken($accessToken)->get('https://bepm.hanatekindo.com/api/v1/companies/search', [
+            'name' => $q,
+            'limit' => $perPage,
+            'page' => $page
+        ]);
 
         if ($response->failed()) {
-            return redirect()->back()->withErrors('Failed to fetch companys data.');
+            Log::error('Company search API failed', [
+                'status' => $response->status(),
+                'body' => $response->body()
+            ]);
+            return redirect()->back()->withErrors('Failed to fetch companies data.');
         }
 
-        $companies = $response->json()['data'];
+        $total = $response->json()['pagination']['total'] ?? null;
+        $companies = is_array($response->json()['data'] ?? null) ? $response->json()['data'] : null;
+        $result;
 
-        return view('pages.company.index', compact('companies'))->with([
+        if (!is_array($companies) || empty($companies)) {
+            $results = null;
+        }else{
+            $results = new LengthAwarePaginator(
+                collect($companies),
+                $total,
+                $perPage,
+                $page,
+                ['path' => url('company')]
+            );
+        }
+
+
+        return view('pages.company.index', $data, compact('results'))->with([
             'title' => 'company',
             'API_url' => $this->API_url
         ]);
     }
+
+    public function filter(Request $request)
+    {
+        $q = $request->input('q', '');
+        session(['q' => $q]);
+
+        return redirect()->route('company.index', ['search' => $q]);
+    }
+
+    public function reset()
+    {
+        session()->forget('q');
+        return redirect()->route('company.index');
+    }
+
 
     /**
      * Show the form for creating a new resource.
@@ -34,7 +90,7 @@ class CompanyController extends Controller
     public function create()
     {
         $company = [];
-    return view('pages.company.form', compact('company'))->with(['title' => 'company', 'status' => 'create']);
+        return view('pages.company.form', compact('company'))->with(['title' => 'company', 'status' => 'create']);
     }
 
     /**
@@ -150,12 +206,11 @@ class CompanyController extends Controller
                 // dd($response->json());
         }
 
-        if ($response->successful()) {
-            return redirect()->route('company.index')->with('success', 'Company updated successfully.');
-        } else {
-            $errors = $response->json()['errors'] ?? ['error' => 'An unknown error occurred.'];
+        if ($response->json()['status'] == 400) {
+            $errors = $response->json()['errors'];
             return redirect()->back()->withInput()->withErrors($errors);
         }
+        return redirect()->route('company.index')->with('success', 'Company updated successfully.');
     }
 
 

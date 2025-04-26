@@ -3,7 +3,14 @@
         <div class="sidebar-header">
             <div class="d-flex justify-content-between">
                 <div class="logo">
-                    <a href="index.html"><img src="{{ asset('assets/images/logo/logo.png') }}" alt="Logo" srcset=""></a>
+                    <div class="row">
+                        <div class="col-sm-4 col-4">
+                            <a href="index.html"><img src="{{ asset('assets/images/logo/logo.png') }}" alt="Logo" srcset="" style="width: "></a>
+                        </div>
+                        <div class="col-sm-8 col-8">
+                            <h5 class="mt-1">Proyek<br> Manajemen</h5>
+                        </div>
+                    </div>
                 </div>
                 <div class="toggler">
                     <a href="#" class="sidebar-hide d-xl-none d-block"><i class="bi bi-x bi-middle"></i></a>
@@ -21,6 +28,7 @@
 
                 <li class="sidebar-title">Menu</li>
 
+            @if(session('user.role') === 'SUPERADMIN')
                 <li class="sidebar-item {{ $title == 'categoryAct' || $title == 'categoryAdm' ? 'active' : ''  }} has-sub">
                     <a href="#" class='sidebar-link'>
                         <i class="fa-solid fa-list"></i>
@@ -35,18 +43,21 @@
                         </li>
                     </ul>
                 </li>
+            @endif
 
+            @if(session('user.role') === 'SUPERADMIN' || session('user.role') === 'ADMIN')
                 <li class="sidebar-item {{ $title == 'company' ? 'active' : ''  }} ">
                     <a href="{{ route('company.index') }}" class='sidebar-link'>
                         <i class="fa-solid fa-building"></i>
                         <span>Perusahaan</span>
                     </a>
                 </li>
+            @endif
 
                 <li class="sidebar-item {{ $title == 'project' ? 'active' : ''  }} ">
                     <a href="{{ route('project.index') }}" class='sidebar-link'>
                         <i class="bi bi-grid-fill"></i>
-                        <span>Projek</span>
+                        <span>Proyek</span>
                     </a>
                 </li>
 
@@ -57,12 +68,14 @@
                     </a>
                 </li>
 
+            @if(session('user.role') === 'SUPERADMIN')
                 <li class="sidebar-item {{ $title == 'user' ? 'active' : ''  }} ">
                     <a href="{{ route('user.index') }}" class='sidebar-link'>
                         <i class="fa-solid fa-users"></i>
                         <span>Pengguna</span>
                     </a>
                 </li>
+            @endif
 
                 <li class="sidebar-item">
                     <a class="sidebar-link" onclick="document.getElementById('logout-form').submit();" style="cursor: pointer;">

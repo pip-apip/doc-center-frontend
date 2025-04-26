@@ -25,14 +25,25 @@
 
     .suggestions li:hover,
     .suggestions li.selected {
-        background: #007bff;
+        background: #980003;
         color: white;
+    }
+
+    #tagSearch{
+        position: sticky;
+        overflow-y: auto;
+        top: 50px;
+        height: auto;
     }
 
     @media (max-width: 768px) {
         .row {
             display: flex;
             flex-direction: column-reverse;
+        }
+
+        #tagSearch {
+            position: relative;
         }
     }
 </style>
@@ -57,13 +68,13 @@
         <div class="col-sm-8" id="content">
             <div class="card">
                 <div class="card-header text-right">
-                    <h1>Dokumen Activitas</h1>
+                    <h1>Dokumen Aktivitas</h1>
                 </div>
             </div>
             <div id="content_card"></div>
         </div>
 
-        <div class="col-sm-4" id="tagsSearch" style="position: sticky; overflow-y: auto; top: 50px; height: auto;">
+        <div class="col-sm-4" id="tagsSearch">
             <div class="card">
                 <div class="card-header text-right">Filter Dokumen Aktivitas</div>
                 <div class="card-body">
@@ -137,7 +148,7 @@
     let tagOptions = [];
     let selectedIndex = -1;
     let baseUrl = 'https://bepm.hanatekindo.com/api/v1/';
-    let access_token = @json(session('user.access_token'));
+    let access_token = @json(session('user.access_token'))
 
     let dataDoc = {!! json_encode($activityDoc) !!}
     $(document).ready(function () {
@@ -158,7 +169,7 @@
         $('#content_card').empty();
 
         if (filteredDocs.length === 0) {
-            $('#content_card').html('<p>No documents found.</p>');
+            $('#content_card').html('<p>Dokumen Tidak di Temukan</p>');
             return;
         }
 
@@ -172,15 +183,16 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-7">
+                            <div class="col-md-7 col-12">
                                 <h4 class="card-title">${doc.title}</h4>
                             </div>
-                            <div class="col-5 d-flex justify-content-end">
+                            <div class="col-md-5 d-md-flex justify-content-end d-none">
                                 <small>${dateFormat(doc.created_at) || 'Unknown Date'}</small>
                             </div>
                         </div>
                         <p class="card-text">${shortDescription}</p>
-                        <div class="d-flex justify-content-end">
+                        <div class="d-flex justify-content-between">
+                            <small class="d-md-none mt-2">${dateFormat(doc.created_at) || 'Unknown Date'}</small>
                             <button type="submit" class="btn btn-primary me-1 justify-content-end" onclick="readModal(${doc.id})">Read More...</button>
                         </div>
                     </div>
@@ -204,7 +216,6 @@
         modal.find('#modalTitle').text('Document Activity - MOM (' + dateFormat(doc.created_at) + ')');
         modal.modal('show');
     }
-
 
     function mergeTags() {
         let mergedTags = new Set();

@@ -13,8 +13,8 @@
             <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
-                    <li class="breadcrumb-item" aria-current="page">Category</li>
-                    <li class="breadcrumb-item" aria-current="page">Administration</li>
+                    <li class="breadcrumb-item" aria-current="page">Kategori</li>
+                    <li class="breadcrumb-item" aria-current="page">Administrasi</li>
                     <li class="breadcrumb-item active" aria-current="page">Form</li>
                 </ol>
             </nav>
@@ -25,11 +25,11 @@
     <div class="card">
         <div class="card-header">
             <div class="row">
-                <div class="col-sm-8">
-                    <h1>Form {{ $status === 'create' ? 'Tambah' : 'Edit' }} Kategori Administrasi</h1>
+                <div class="col-sm-8 col-8">
+                    <h1>Form {{ $status === 'create' ? 'Tambah' : 'Edit' }} <span class="d-none d-md-inline-block">Kategori Administrasi</span></h1>
                 </div>
-                <div class="col-sm-4 d-flex justify-content-end align-items-center">
-                    <a href="{{ route('categoryAdm.index') }}"><i class="fa-solid fa-arrow-left"></i></a>
+                <div class="col-sm-4 col-4 d-flex justify-content-end align-items-center">
+                    <a href="{{ route('categoryAdm.index') }}"><i class="fa-solid fa-angle-left"></i> <span class="d-none d-md-inline-block">Kembali</span></a>
                 </div>
             </div>
         </div>
@@ -42,15 +42,14 @@
                 @csrf
                 <label>Nama Kategori : </label>
                 <div class="form-group">
-                    <input type="text" placeholder="Enter the Category Name" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name', $category ? $category['name'] : '') }}">
+                    <input type="text" placeholder="Masukkan Nama Kategori" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name', $category ? $category['name'] : '') }}">
                     @error('name')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
 
                 <button class="btn btn-primary ml-1" type="submit">
-                    <i class="bx bx-check d-block d-sm-none"></i>
-                    <span class="d-none d-sm-block"><i class="fa-solid fa-floppy-disk"></i> Simpan</span>
+                    <i class="fa-solid fa-floppy-disk"></i> Simpan
                 </button>
             </form>
         </div>

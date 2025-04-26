@@ -34,7 +34,7 @@
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
                     <li class="breadcrumb-item active" aria-current="page">Aktivitas</li>
-                    <li class="breadcrumb-item active" aria-current="page">Dokument</li>
+                    <li class="breadcrumb-item active" aria-current="page">Dokumen</li>
                 </ol>
             </nav>
         </div>
@@ -45,11 +45,11 @@
     <div class="card">
         <div class="card-header">
             <div class="row">
-                <div class="col-sm-8">
-                    <h1>Dokumen Aktivitas</h1>
+                <div class="col-sm-8 col-8">
+                    <h1>Dokumen <span class="d-none d-md-inline-block">Aktivitas</span></h1>
                 </div>
-                <div class="col-sm-4 d-flex justify-content-end align-items-center">
-                    <a href="{{ route('activity.index') }}"><i class="fa-solid fa-arrow-left"></i></a>
+                <div class="col-sm-4 col-4 d-flex justify-content-end align-items-center">
+                    <a href="{{ route('activity.index') }}"><i class="fa-solid fa-angle-left"></i> <span class="d-none d-md-inline-block">Kembali</span></a>
                 </div>
             </div>
         </div>
@@ -60,7 +60,7 @@
                 <p class="form-control-static" id="project_name_detail">{{ $activity['title'] }}</p>
             </div>
             <label><b> Kategori : </b></label>
-            @if(count($doc) == 0)
+            {{-- @if(count($doc) == 0) --}}
             <fieldset class="form-group">
                 <select class="form-select" id="documentCat1">
                     <option value="#">Pilih Kategori</option>
@@ -69,16 +69,16 @@
                     @endforeach
                 </select>
             </fieldset>
-            @else
+            {{-- @else
             <fieldset class="form-group">
                 <select class="form-select" id="documentCat2" disabled>
                     <option value="#">Pilih Kategori</option>
                     @foreach ($categoryDoc as $cat)
-                    <option value="{{ $cat['id'] }}" {{ $cat['id'] == $doc[0]['activity_doc_category']['id'] ? 'selected' : '' }}>{{ $cat['name'] }}</option>
+                    <option value="{{ $cat['id'] }}" {{ $cat['id'] == $doc[0]['activity_doc_category_id'] ? 'selected' : '' }}>{{ $cat['name'] }}</option>
                     @endforeach
                 </select>
             </fieldset>
-            @endif
+            @endif --}}
         </div>
     </div>
 </section>
@@ -96,7 +96,7 @@
                 <input type="text" name="doc_id" id="doc_id" hidden>
                 <label>Judul Dokumen :</label>
                 <div class="form-group">
-                    <input type="text" placeholder="Enter the Title" class="form-control" name="title" id="title_activity_doc">
+                    <input type="text" placeholder="Masukkan Judul Dokumen Kegiatan" class="form-control" name="title" id="title_activity_doc">
                 </div>
                 <div class="row">
                     <div class="col-sm-12">
@@ -110,7 +110,7 @@
                     <div class="col-sm-12 tags-form">
                         <label>Tags : </label>
                         <div class="form-group">
-                            <input type="text" class="form-control" id="tagInput" placeholder="Ketik dan tekan enter..." name="tags"/>
+                            <input type="text" class="form-control" id="tagInput" placeholder="Ketik dan Tekan Enter..." name="tags"/>
                         </div>
                         <div class="tag-container" id="tags">
                         </div>
@@ -140,7 +140,7 @@
                 <div class="col-sm-12">
                     <label><b>Deskripsi : </b></label>
                     <div class="form-group">
-                        <p class="form-control-static" id="desc_show"></p>
+                        <div class="form-control-static" id="desc_show"></div>
                     </div>
                 </div>
                 <div class="col-sm-12">
@@ -151,7 +151,7 @@
             </div>
         </div>
         <div class="card-footer">
-            <button type="button" class="btn btn-danger d-flex justify-content-end" id="btnDelete">
+            <button type="button" class="btn btn-danger" id="btnDelete">
                 <i class="fa-solid fa-trash"></i> Delete
             </button>
         </div>
@@ -304,7 +304,7 @@
     function showCardDoc(selectedValue){
         if(selectedValue !== "#"){
             // console.log("Selected Value:", selectedValue);
-            let filteredDocs = doc.filter(item => item.activity_doc_category.id == selectedValue);
+            let filteredDocs = doc.filter(item => item.activity_doc_category_id == selectedValue);
             if(filteredDocs.length !== 0){
                 // console.log("Filtered Documents:", filteredDocs);
                 showDoc(filteredDocs);
@@ -324,7 +324,7 @@
         let id = data[0]['id'];
 
         $('#title_show').text(title);
-        $('#desc_show').text(description);
+        $('#desc_show').html(description);
 
         let tagContainer = $("#tags_show");
         tagContainer.find(".tag").remove();
@@ -354,13 +354,13 @@
             success: function (response) {
                 console.log(response);
                 if(response.status === 400 || response.status === 500){
-                    // Swal.fire({
-                    //     icon: 'error',
-                    //     title: 'Error!',
-                    //     text: response.message,
-                    //     showConfirmButton: false,
-                    //     timer: 1500
-                    // }).then(() => {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: response.message,
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
                         let errors = response.errors;
 
                         $.each(errors, function (key, messages) {
@@ -370,7 +370,7 @@
                         });
                         // $('#fullPageLoader').hide();
                         // location.reload();
-                    // });
+                    });
 
                 }else{
                     Swal.fire({
@@ -400,6 +400,7 @@
             cancelButtonColor: '#d33',
             confirmButtonText: 'Ya, Hapus!',
         }).then((result) => {
+            console.log(result)
             if (result.isConfirmed) {
                 $('#fullPageLoader').show();
                 window.location.href = url;

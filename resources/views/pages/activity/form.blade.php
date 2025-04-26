@@ -23,11 +23,21 @@
     <div class="card">
         <div class="card-header">
             <div class="row">
-                <div class="col-sm-8">
-                    <h1>Form {{ $status === 'create' ? 'Tambah' : 'Edit' }} Aktivitas</h1>
+                <div class="col-sm-8 col-8">
+                    <h1>Form {{ $status === 'create' ? 'Tambah' : 'Edit' }} <span class="d-none d-md-inline-block">Aktivitas</span></h1>
                 </div>
-                <div class="col-sm-4 d-flex justify-content-end align-items-center">
-                    <a href="{{ route('activity.index') }}"><i class="fa-solid fa-arrow-left"></i></a>
+                @php
+                    $lastRoute = session('lastRoute');
+                    $routeParts = explode(', ', $lastRoute); // pisahkan nama route dan parameter
+                    $routeName = $routeParts[0];
+                    $routeParam = $routeParts[1] ?? null;
+                @endphp
+
+
+                <div class="col-sm-4 col-4 d-flex justify-content-end align-items-center">
+                    <a href="{{ $routeParam ? route($routeName, $routeParam) : route($routeName) }}">
+                        <i class="fa-solid fa-angle-left"></i><span class="d-none d-md-inline-block"> Kembali</span>
+                    </a>
                 </div>
             </div>
         </div>
@@ -40,11 +50,11 @@
                 @csrf
                 <label>Nama Projek : </label>
                 <fieldset class="form-group">
-                    {!! $countDocAct > 0 ? '<input type="text" name="project_id" id="project_id" value="' . $activity['project']['id'] . '" hidden>' : '' !!}
+                    {!! $countDocAct > 0 ? '<input type="text" name="project_id" id="project_id" value="' . $activity['project_id'] . '" hidden>' : '' !!}
                     <select class="form-select @error('project_id') is-invalid @enderror" id="project_id" name="project_id" {{ $countDocAct > 0 ? 'disabled' : '' }}>
                         <option value="">Pilih Projek</option>
                         @foreach ($projects as $project)
-                        <option value="{{ $project['id'] }}" {{ old('project_id', $activity ? $activity['project']['id'] : '') == $project['id'] ? 'selected' : '' }}>
+                        <option value="{{ $project['id'] }}" {{ old('project_id', $activity ? $activity['project_id'] : '') == $project['id'] ? 'selected' : '' }}>
                             {{ $project['name'] }}
                         </option>
                         @endforeach
@@ -88,8 +98,7 @@
                 </div>
 
                 <button class="btn btn-primary ml-1" type="submit">
-                    <i class="bx bx-check d-block d-sm-none"></i>
-                    <span class="d-none d-sm-block"><i class="fa-solid fa-floppy-disk"></i> Simpan</span>
+                    <i class="fa-solid fa-floppy-disk"></i> Simpan
                 </button>
             </form>
         </div>
@@ -126,11 +135,9 @@
 @endif
 
 <script>
-    // $(document).ready(function() {
-    //     $('form').on('submit', function() {
-    //         $('#fullPageLoader').show();
-    //     });
-    // });
+    document.addEventListener("DOMContentLoaded", function () {
+        console.log(JSON.stringify(@json(session('lastRoute')), null, 2));
+    });
 </script>
 
 
