@@ -65,6 +65,9 @@ class ActivityController extends Controller
 
         $response = Http::withToken($accessToken)->get('https://bepm.hanatekindo.com/api/v1/activities/search', $params);
 
+        // tag all
+        // https://bepm.hanatekindo.com/api/v1/activities/search?tags='possimus', 'asdasd'&description='possimus', 'asdasd'
+
         if ($response->failed()) {
             return redirect()->back()->withErrors('Failed to fetch activities.');
         }
@@ -149,11 +152,18 @@ class ActivityController extends Controller
             return redirect()->back()->withErrors('Failed to fetch project.');
         }
 
+        $responseCategoryDocActivity = Http::withToken($accessToken)->get('https://bepm.hanatekindo.com/api/v1/activity-doc-categories/search?limit=1000');
+
+        if ($responseCategoryDocActivity->failed()) {
+            return redirect()->back()->withErrors('Failed to fetch doc category of activity data.');
+        }
+
         $projects = $response->json()['data'];
         $activity = [];
         $countDocAct = 0;
+        $categoryAct = $responseCategoryDocActivity->json()['data'];
 
-        return view('pages.activity.form', compact('activity', 'projects', 'countDocAct'))->with(['title' => 'activity', 'status' => 'create', 'lastUrl' => session('lastUrl')]);
+        return view('pages.activity.form', compact('activity', 'projects', 'countDocAct', 'categoryAct'))->with(['title' => 'activity', 'status' => 'create', 'lastUrl' => session('lastUrl')]);
     }
 
     /**

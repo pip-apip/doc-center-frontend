@@ -41,13 +41,16 @@
             @endif
             @csrf
                 {{-- {{ dd($category); }} --}}
-
-                <label>Nama Kategori : </label>
-                <div class="form-group">
-                    <input type="text" placeholder="Masukkan Nama Kategori" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name', $category ? $category['name'] : '') }}">
-                    @error('name')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
+                <div class="row">
+                    <div class="col-md-2">
+                        <label>Nama Kategori : </label>
+                    </div>
+                    <div class="form-group col-md-10">
+                        <input type="text" placeholder="Masukkan Nama Kategori" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name', $category ? $category['name'] : '') }}">
+                        @error('name')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
                 </div>
                 <button class="btn btn-primary ml-1" type="submit">
                     <i class="fa-solid fa-floppy-disk"></i> Simpan
@@ -89,7 +92,7 @@
 <script>
     $(document).ready(function() {
         $('form').on('submit', function() {
-            $('#fullPageLoader').show();
+            // $('#fullPageLoader').show();
         });
     });
 </script>
