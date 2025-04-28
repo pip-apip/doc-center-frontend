@@ -39,51 +39,55 @@
                 <form action="{{ route('project.update', $project['id']) }}" method="POST" class="form form-vertical" enctype="multipart/form-data">
             @endif
             @csrf
-            <label>Nama Proyek : </label>
-            <div class="form-group">
-                <input type="text" placeholder="Masukkan Nama Projek" class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name', $project ? $project['name'] : '') }}">
-                @error('name')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
-            </div>
+                <div class="row">
+                    <div class="col-md-2">
+                        <label>Nama Proyek : </label>
+                    </div>
+                    <div class="form-group col-md-10">
+                        <input type="text" placeholder="Masukkan Nama Projek" class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name', $project ? $project['name'] : '') }}">
+                        @error('name')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
 
-            <div class="col-sm-12">
-                <label>Nama Perusahaan: </label>
-                <fieldset class="form-group">
-                    <select class="form-select @error('company_id') is-invalid @enderror" id="company_id" name="company_id">
-                        <option value="">Pilih Perusahaan</option>
-                        @foreach ($companies as $comp)
-                        <option value="{{ $comp['id'] }}" {{ old('company_id', $project ? $project['company_id'] : '') == $comp['id'] ? 'selected' : '' }}>
-                            {{ $comp['name'] }}
-                        </option>
-                        @endforeach
-                    </select>
-                    @error('company_id')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </fieldset>
-            </div>
-            <div class="row">
-                <div class="col-sm-6">
-                    <label>Tanggal Mulai: </label>
-                    <div class="form-group">
+                    <div class="col-md-2">
+                        <label>Nama Perusahaan: </label>
+                    </div>
+                    <fieldset class="form-group col-md-10">
+                        <select class="form-select @error('company_id') is-invalid @enderror" id="company_id" name="company_id">
+                            <option value="">Pilih Perusahaan</option>
+                            @foreach ($companies as $comp)
+                            <option value="{{ $comp['id'] }}" {{ old('company_id', $project ? $project['company_id'] : '') == $comp['id'] ? 'selected' : '' }}>
+                                {{ $comp['name'] }}
+                            </option>
+                            @endforeach
+                        </select>
+                        @error('company_id')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </fieldset>
+
+                    <div class="col-md-2">
+                        <label>Tanggal Mulai: </label>
+                    </div>
+                    <div class="form-group col-md-10">
                         <input type="date" class="form-control @error('start_date') is-invalid @enderror" name="start_date" value="{{ old('start_date', $project ? $project['start_date'] : '') }}">
                         @error('start_date')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
-                </div>
 
-                <div class="col-sm-6">
-                    <label>Tanggal Selesai: </label>
-                    <div class="form-group">
+                    <div class="col-md-2">
+                        <label>Tanggal Selesai: </label>
+                    </div>
+                    <div class="form-group col-md-10">
                         <input type="date" class="form-control @error('end_date') is-invalid @enderror" name="end_date" value="{{ old('end_date', $project ? $project['end_date'] : '') }}">
                         @error('end_date')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
                 </div>
-            </div>
+
 
                 <button type="submit" class="btn btn-primary ml-1">
                     <i class="fa-solid fa-floppy-disk"></i> Simpan

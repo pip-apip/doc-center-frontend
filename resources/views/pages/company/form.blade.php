@@ -106,44 +106,48 @@
             @endif
             @csrf
                 <div class="row mb-3">
-                    <div class="col-sm-6">
+                    <div class="col-md-2">
                         <label>Nama Perusahaan: </label>
-                        <div class="form-group">
-                            <input type="text" placeholder="Masukkan Nama Perusahaan" class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name', $company ? $company['name'] : '') }}">
-                            @error('name')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
+                    </div>
+                    <div class="form-group col-md-10">
+                        <input type="text" placeholder="Masukkan Nama Perusahaan" class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name', $company ? $company['name'] : '') }}">
+                        @error('name')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                    <div class="col-md-2">
                         <label>Alamat Perusahaan: </label>
-                        <div class="form-group">
-                            <textarea class="form-control @error('address') is-invalid @enderror" placeholder="Masukkan Alamat Perusahaan" id="address" name="address">{{ old('address', $company ? $company['address'] : '') }}</textarea>
-                            @error('address')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
+                    </div>
+                    <div class="form-group col-md-10">
+                        <textarea class="form-control @error('address') is-invalid @enderror" placeholder="Masukkan Alamat Perusahaan" id="address" name="address">{{ old('address', $company ? $company['address'] : '') }}</textarea>
+                        @error('address')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
 
-                    <div class="col-sm-6">
+                    <div class="col-md-2">
                         <label>Nama Direktur: </label>
-                        <div class="form-group">
-                            <input type="text" placeholder="Masukkan Nama Direktur" class="form-control @error('director_name') is-invalid @enderror" name="director_name" id="director_name" value="{{ old('director_name', $company ? $company['director_name'] : '') }}">
-                            @error('director_name')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
+                    </div>
+                    <div class="form-group col-md-10">
+                        <input type="text" placeholder="Masukkan Nama Direktur" class="form-control @error('director_name') is-invalid @enderror" name="director_name" id="director_name" value="{{ old('director_name', $company ? $company['director_name'] : '') }}">
+                        @error('director_name')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                    <div class="col-md-2">
                         <label>No.Telp Direktur: </label>
-                        <div class="form-group">
-                            <input type="text" placeholder="Masukkan No.Telp Direktur" class="form-control @error('director_phone') is-invalid @enderror" name="director_phone" id="director_phone" value="{{ old('director_phone', $company ? $company['director_phone'] : '') }}">
-                            @error('director_phone')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
+                    </div>
+                    <div class="form-group col-md-10">
+                        <input type="text" placeholder="Masukkan No.Telp Direktur" class="form-control @error('director_phone') is-invalid @enderror" name="director_phone" id="director_phone" value="{{ old('director_phone', $company ? $company['director_phone'] : '') }}">
+                        @error('director_phone')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
 
-                    <div class="col-sm-12">
+                    <div class="col-md-2">
                         <label>Tanda Tangan Direktur</label>
+                    </div>
+                    <div class="col-md-10">
                         <div class="file-upload-wrapper {{ $errors->has('director_signature') ? 'is-invalid' : '' }}" id="dropzone">
                             <label for="file-upload" class="file-upload">
                                 <div class="text" id="text"> Drag & Drop your files or <span class="browse">Browse</span></div>

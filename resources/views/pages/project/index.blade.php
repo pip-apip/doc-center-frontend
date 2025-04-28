@@ -124,12 +124,12 @@
                     <thead>
                         <tr>
                             {{-- <th>No</th> --}}
-                            <th>Tanggal Mulai</th>
-                            <th>Tanggal Selesai</th>
+                            <th width="150">Tanggal Mulai</th>
+                            <th width="170">Tanggal Selesai</th>
                             <th>Nama Proyek</th>
                             <th>Nama Perusahaan</th>
                             <th>Status</th>
-                            <th>Aksi</th>
+                            <th width="170">Aksi</th>
                         </tr>
                     </thead>
                     <tbody id="table-body">
@@ -140,8 +140,8 @@
                         @foreach ($results as $project)
                             <tr>
                                 {{-- <td>{{ $no++ }}</td> --}}
-                                <td>{{ \Carbon\Carbon::parse($project['start_date'])->translatedFormat('d F Y') }}</td>
-                                <td>{{ \Carbon\Carbon::parse($project['end_date'])->translatedFormat('d F Y') }}</td>
+                                <td width="150">{{ \Carbon\Carbon::parse($project['start_date'])->translatedFormat('d F Y') }}</td>
+                                <td width="170">{{ \Carbon\Carbon::parse($project['end_date'])->translatedFormat('d F Y') }}</td>
                                 <td>{{ $project['name'] }}</td>
                                 <td>{{ $project['company_name'] }}</td>
                                 <td>
@@ -151,7 +151,7 @@
                                         Undefined
                                     </span>
                                 </td>
-                                <td>
+                                <td width="170">
                                     {{-- <a href="{{ route('project.edit', $project['id']) }}" class="btn btn-sm btn-warning rounded-pill" title="Edit">
                                         <i class="fa-solid fa-pen"></i>
                                     </a> --}}
@@ -160,11 +160,11 @@
                                     </a>
                                     <a href="{{ route('project.doc', $project['id']) }}" class="btn btn-sm btn-info rounded-pill">
                                         <i class="fa-solid fa-file"></i>
-                                    </a><br>
-                                    <a href="{{ route('project.activity', $project['id']) }}" class="btn btn-sm btn-secondary rounded-pill mt-1">
+                                    </a>
+                                    <a href="{{ route('project.activity', $project['id']) }}" class="btn btn-sm btn-secondary rounded-pill">
                                         <i class="fa-solid fa-chart-line"></i>
                                     </a>
-                                    <button type="button" onclick="teamModal({{ $project['id'] }}, `{{ $project['name'] }}`, ``)" class="btn btn-sm btn-primary rounded-pill mt-1" data-bs-toggle="modal" data-bs-target="#teamModal">
+                                    <button type="button" onclick="teamModal({{ $project['id'] }}, `{{ $project['name'] }}`, ``)" class="btn btn-sm btn-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#teamModal">
                                         <i class="fa-solid fa-user-group"></i>
                                     </button>
                                 </td>

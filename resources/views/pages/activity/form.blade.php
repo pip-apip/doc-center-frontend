@@ -48,52 +48,68 @@
                 <form action="{{ route('activity.update', $activity['id']) }}" method="POST" class="form form-vertical" enctype="multipart/form-data">
             @endif
                 @csrf
-                <label>Nama Projek : </label>
-                <fieldset class="form-group">
-                    {!! $countDocAct > 0 ? '<input type="text" name="project_id" id="project_id" value="' . $activity['project_id'] . '" hidden>' : '' !!}
-                    <select class="form-select @error('project_id') is-invalid @enderror" id="project_id" name="project_id" {{ $countDocAct > 0 ? 'disabled' : '' }}>
-                        <option value="">Pilih Projek</option>
-                        @foreach ($projects as $project)
-                        <option value="{{ $project['id'] }}" {{ old('project_id', $activity ? $activity['project_id'] : '') == $project['id'] ? 'selected' : '' }}>
-                            {{ $project['name'] }}
-                        </option>
-                        @endforeach
-                    </select>
-                    @error('project_id')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </fieldset>
-                {{-- @if ($countDocAct > 0)
-                    <input type="text" name="project_id" id="project_id" value="{{ $activity['project']['id'] }}" hidden>
-                @endif --}}
-
-                <label>Judul Aktivitas : </label>
-                <div class="form-group">
-                    <input type="text" placeholder="Masukkan Judul Aktivitas" class="form-control @error('title') is-invalid @enderror" name="title" id="title" value="{{ old('title', $activity ? $activity['title'] : '') }}">
-                    @error('title')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
-
                 <div class="row">
-                    <div class="col-sm-6">
-                        <label>Tanggal Mulai: </label>
-                        <div class="form-group">
-                            <input type="date" class="form-control @error('start_date') is-invalid @enderror" name="start_date" id="start_date" value="{{ old('start_date', $activity ? $activity['start_date'] : '') }}">
-                            @error('start_date')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
+                    <div class="col-md-2">
+                        <label>Nama Projek : </label>
+                    </div>
+                    <fieldset class="form-group col-md-10">
+                        {!! $countDocAct > 0 ? '<input type="text" name="project_id" id="project_id" value="' . $activity['project_id'] . '" hidden>' : '' !!}
+                        <select class="form-select @error('project_id') is-invalid @enderror" id="project_id" name="project_id" {{ $countDocAct > 0 ? 'disabled' : '' }}>
+                            <option value="">Pilih Projek</option>
+                            @foreach ($projects as $project)
+                            <option value="{{ $project['id'] }}" {{ old('project_id', $activity ? $activity['project_id'] : '') == $project['id'] ? 'selected' : '' }}>
+                                {{ $project['name'] }}
+                            </option>
+                            @endforeach
+                        </select>
+                        @error('project_id')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </fieldset>
+                    {{-- @if ($countDocAct > 0)
+                        <input type="text" name="project_id" id="project_id" value="{{ $activity['project']['id'] }}" hidden>
+                    @endif --}}
+
+                    <div class="col-md-2">
+                        <label>Judul Aktivitas : </label>
+                    </div>
+                    <div class="form-group col-md-10">
+                        <input type="text" placeholder="Masukkan Judul Aktivitas" class="form-control @error('title') is-invalid @enderror" name="title" id="title" value="{{ old('title', $activity ? $activity['title'] : '') }}">
+                        @error('title')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
 
-                    <div class="col-sm-6">
+                    <div class="col-md-2">
+                        <label>Kategory Aktivitas: </label>
+                    </div>
+                    <fieldset class="form-group col-md-10">
+                        <select class="form-select" id="documentCat1">
+                            <option value="#">Pilih Kategori</option>
+                            @foreach ($categoryAct as $cat)
+                            <option value="{{ $cat['id'] }}">{{ $cat['name'] }}</option>
+                            @endforeach
+                        </select>
+                    </fieldset>
+
+                    <div class="col-md-2">
+                        <label>Tanggal Mulai: </label>
+                    </div>
+                    <div class="form-group col-md-10">
+                        <input type="date" class="form-control @error('start_date') is-invalid @enderror" name="start_date" id="start_date" value="{{ old('start_date', $activity ? $activity['start_date'] : '') }}">
+                        @error('start_date')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="col-md-2">
                         <label>Tanggal Selesai: </label>
-                        <div class="form-group">
-                            <input type="date" class="form-control @error('end_date') is-invalid @enderror" name="end_date" id="end_date" value="{{ old('end_date', $activity ? $activity['end_date'] : '') }}">
-                            @error('end_date')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
+                    </div>
+                    <div class="form-group col-md-10">
+                        <input type="date" class="form-control @error('end_date') is-invalid @enderror" name="end_date" id="end_date" value="{{ old('end_date', $activity ? $activity['end_date'] : '') }}">
+                        @error('end_date')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
                 </div>
 

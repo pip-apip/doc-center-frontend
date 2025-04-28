@@ -41,51 +41,51 @@
             @endif
             @csrf
                 <div class="row">
-                    <div class="col-sm-6">
+                    <div class="col-md-2">
                         <label>Username: </label>
-                        <div class="form-group">
-                            <input type="text" placeholder="Masukkan Username" class="form-control @error('username') is-invalid @enderror" id="username" name="username" value="{{ old('username', $user ? $user['username'] : '') }}">
-                            @error('username')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
                     </div>
-                    <div class="col-sm-6">
+                    <div class="form-group col-md-10">
+                        <input type="text" placeholder="Masukkan Username" class="form-control @error('username') is-invalid @enderror" id="username" name="username" value="{{ old('username', $user ? $user['username'] : '') }}">
+                        @error('username')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="col-md-2">
                         <label>Name: </label>
-                        <div class="form-group">
-                            <input type="text" placeholder="Masukkan Nama" class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name', $user ? $user['name'] : '') }}">
-                            @error('name')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-sm-6">
+                    <div class="form-group col-md-10">
+                        <input type="text" placeholder="Masukkan Nama" class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name', $user ? $user['name'] : '') }}">
+                        @error('name')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="col-md-2">
                         <label>Password: </label>
-                        <div class="form-group">
-                            <input type="password" placeholder="Masukkan Password" class="form-control @error('password') is-invalid @enderror" id="password" name="password">
-                            @error('password')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
                     </div>
-                    <div class="col-sm-6">
+                    <div class="form-group col-md-10">
+                        <input type="password" placeholder="Masukkan Password" class="form-control @error('password') is-invalid @enderror" id="password" name="password">
+                        @error('password')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                    <div class="col-md-2">
                         <label>Role User</label>
-                        <fieldset class="form-group">
-                            <select class="form-select" name="role" id="role">
-                                <option value="USER" {{ old('role', $user ? $user['role'] : '') == 'USER' ? 'selected' : '' }}>User</option>
-                                <option value="ADMIN" {{ old('role', $user ? $user['role'] : '') == 'ADMIN' ? 'selected' : '' }}>Admin</option>
-                                <option value="SUPERADMIN" {{ old('role', $user ? $user['role'] : '') == 'SUPERADMIN' ? 'selected' : '' }}>Super Admin</option>
-                            </select>
-                            @error('role')
-                                <div class="invalid-feedback">
-                                    <i class="bx bx-radio-circle"></i>
-                                    {{ $message }}
-                                </div>
-                            @enderror
-                        </fieldset>
                     </div>
+                    <fieldset class="form-group col-md-10">
+                        <select class="form-select" name="role" id="role">
+                            <option value="USER" {{ old('role', $user ? $user['role'] : '') == 'USER' ? 'selected' : '' }}>User</option>
+                            <option value="ADMIN" {{ old('role', $user ? $user['role'] : '') == 'ADMIN' ? 'selected' : '' }}>Admin</option>
+                            <option value="SUPERADMIN" {{ old('role', $user ? $user['role'] : '') == 'SUPERADMIN' ? 'selected' : '' }}>Super Admin</option>
+                        </select>
+                        @error('role')
+                            <div class="invalid-feedback">
+                                <i class="bx bx-radio-circle"></i>
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </fieldset>
                 </div>
 
                 <button type="submit" class="btn btn-primary ml-1">

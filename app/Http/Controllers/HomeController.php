@@ -13,6 +13,8 @@ class HomeController extends Controller
         $accessToken = session('user.access_token');
         $response = '';
 
+        $responseTags = Http::withToken($accessToken)->get('https://bepm.hanatekindo.com/api/v1/activity-docs/tags');
+
         if(session('user.role') == 'SUPERADMIN'){
             $response = Http::withToken($accessToken)->get('https://bepm.hanatekindo.com/api/v1/activity-docs?limit=1000');
         } else {
@@ -33,7 +35,8 @@ class HomeController extends Controller
         }
 
         $activityDoc = $response->json()['data'];
+        $tags = $responseTags->json()['data'];
 
-        return view('pages.home', compact('activityDoc'))->with(['title' => 'Home']);
+        return view('pages.home', compact('activityDoc', 'tags'))->with(['title' => 'Home']);
     }
 }
