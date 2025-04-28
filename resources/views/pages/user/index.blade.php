@@ -37,7 +37,7 @@
                 $page = $results && $results->perPage() ? $results->perPage() : null;
             @endphp
             <div class="row">
-                <form method="GET" action="{{ route('user.index') }}" id="pagination-form" class="col-3 col-lg-12">
+                <form method="GET" action="{{ route('user.index') }}" id="pagination-form" class="col-12 col-lg-1">
                     <fieldset class="form-group" style="width: 70px">
                         <select class="form-select" id="entire-page" name="per_page" onchange="document.getElementById('pagination-form').submit();">
                             <option value="5" {{ $page == 5 ? 'selected' : '' }}>5</option>

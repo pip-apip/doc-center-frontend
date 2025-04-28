@@ -160,11 +160,11 @@
                                     </a>
                                     <a href="{{ route('project.doc', $project['id']) }}" class="btn btn-sm btn-info rounded-pill">
                                         <i class="fa-solid fa-file"></i>
-                                    </a>
-                                    <a href="{{ route('project.activity', $project['id']) }}" class="btn btn-sm btn-secondary rounded-pill">
+                                    </a><br>
+                                    <a href="{{ route('project.activity', $project['id']) }}" class="btn btn-sm btn-secondary rounded-pill mt-1">
                                         <i class="fa-solid fa-chart-line"></i>
                                     </a>
-                                    <button type="button" onclick="teamModal({{ $project['id'] }}, `{{ $project['name'] }}`, ``)" class="btn btn-sm btn-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#teamModal">
+                                    <button type="button" onclick="teamModal({{ $project['id'] }}, `{{ $project['name'] }}`, ``)" class="btn btn-sm btn-primary rounded-pill mt-1" data-bs-toggle="modal" data-bs-target="#teamModal">
                                         <i class="fa-solid fa-user-group"></i>
                                     </button>
                                 </td>

@@ -9,7 +9,7 @@ body {
 
 #auth #auth-right {
     height: 100%;
-    background: url(../../images/bg/4853433.jpg), linear-gradient(90deg, #980003, #b2474b)
+    background: url(../../images/bg/4853433.jpg), linear-gradient(90deg, #ffffff, #f8d5d5, #e79c9d, #c75a5d, #980003);
 }
 
 #auth #auth-left {

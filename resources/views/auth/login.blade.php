@@ -79,12 +79,12 @@
             </div>
             <div class="col-lg-7 d-none d-lg-block">
                 <div id="auth-right" class="d-flex justify-content-center">
-                    <div class="p-lg-5 p-3 text-start">
+                    {{-- <div class="p-lg-5 p-3 text-start">
                         <h1 class="title-right-content">Proyek Manajemen</h1>
                         <div class="text-center">
                             <img src="{{ asset('assets/images/bg/login-bg.png') }}" alt="Ilustrasi Latar Login" style="width: 80%;">
                         </div>
-                    </div>
+                    </div> --}}
                 </div>
             </div>
         </div>
