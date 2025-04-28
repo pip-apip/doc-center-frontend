@@ -12,6 +12,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
 
+use App\Http\Controllers\SearchController;
+
 use App\Http\Middleware\AuthMiddleware;
 use App\Http\Middleware\RefershTokenMiddleware;
 use App\Http\Middleware\MaintenanceRedirect;
@@ -32,6 +34,8 @@ Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::middleware([AuthMiddleware::class, RefershTokenMiddleware::class])->group(function () {
     Route::get('home', [HomeController::class, 'index'])->name('home')->middleware(['role:SUPERADMIN,ADMIN,USER']);
+
+    Route::get('search', [SearchController::class, 'index'])->name('search.index');
 
     // Category Administration
     Route::get('categoryAdm', [CategoryAdmController::class, 'index'])->name('categoryAdm.index')->middleware(['role:SUPERADMIN,ADMIN']);

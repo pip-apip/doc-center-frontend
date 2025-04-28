@@ -28,6 +28,13 @@
 
                 <li class="sidebar-title">Menu</li>
 
+                <li class="sidebar-item {{ $title == 'Search' ? 'active' : ''  }} ">
+                    <a href="{{ route('search.index') }}" class='sidebar-link'>
+                        <i class="fa-solid fa-search"></i>
+                        <span>Pencarian Dokumen</span>
+                    </a>
+                </li>
+
             @if(session('user.role') === 'SUPERADMIN')
                 <li class="sidebar-item {{ $title == 'categoryAct' || $title == 'categoryAdm' ? 'active' : ''  }} has-sub">
                     <a href="#" class='sidebar-link'>

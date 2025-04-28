@@ -48,150 +48,47 @@
     }
 </style>
 
-
 <div class="page-title mb-2">
     <div class="row">
         <div class="col-12 col-md-6 order-md-1 order-last">
-            <h3>Dashboard</h3>
+            <h3>Pencarian</h3>
         </div>
         <div class="col-12 col-md-6 order-md-2 order-first">
             <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item active"><a href="#">Dashboard</a></li>
+                    <li class="breadcrumb-item active"><a href="#">Pencarian</a></li>
                 </ol>
             </nav>
         </div>
     </div>
 </div>
 
-<section class="row">
-    <div class="col-12 col-lg-9">
-        <div class="row">
-            <div class="col-6 col-lg-3 col-md-6">
-                <div class="card">
-                    <div class="card-body px-3 py-4-5">
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="stats-icon purple">
-                                    <i class="fa fa-user-shield"></i>
-                                </div>
-                            </div>
-                            <div class="col-md-8">
-                                <h6 class="text-muted font-semibold">Total Aktivitas</h6>
-                                <h6 class="font-extrabold mb-0">112.000</h6>
-                            </div>
+<section class="section">
+    <div class="row">
+        <div class="col-sm-12" id="tagsSearch">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Pencarian Dokumen Aktivitas</h4>
+                </div>
+                <div class="card-body">
+                    <div class="form-group position-relative has-icon-left">
+                        <div class="form-control-icon">
+                            <i class="bi bi-person"></i>
                         </div>
+                        <input type="text" class="form-control form-control-lg" id="tagInput" placeholder="Masukkan kata kunci pencarian ..." />
+                        <ul class="suggestions" id="suggestions"></ul>
                     </div>
+                    <div class="tag-container" id="tags"></div>
                 </div>
             </div>
-            <div class="col-6 col-lg-3 col-md-6">
-                <div class="card">
-                    <div class="card-body px-3 py-4-5">
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="stats-icon blue">
-                                    <i class="fa fa-user-clock"></i>
-                                </div>
-                            </div>
-                            <div class="col-md-8">
-                                <h6 class="text-muted font-semibold">Aktivitas Perbulan</h6>
-                                <h6 class="font-extrabold mb-0">183.000</h6>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-6 col-lg-3 col-md-6">
-                <div class="card">
-                    <div class="card-body px-3 py-4-5">
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="stats-icon green">
-                                    <i class="fa fa-user-check"></i>
-                                </div>
-                            </div>
-                            <div class="col-md-8">
-                                <h6 class="text-muted font-semibold">Sedang Bertugas</h6>
-                                <h6 class="font-extrabold mb-0">80.000</h6>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-6 col-lg-3 col-md-6">
-                <div class="card">
-                    <div class="card-body px-3 py-4-5">
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="stats-icon red">
-                                    <i class="fa fa-user-times"></i>
-                                </div>
-                            </div>
-                            <div class="col-md-8">
-                                <h6 class="text-muted font-semibold">Menunggu Tugas</h6>
-                                <h6 class="font-extrabold mb-0">112</h6>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+
+            <div class="card">
+                
             </div>
         </div>
-        <div class="row">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h4>Grafik Aktivitas Bulan Ini</h4>
-                    </div>
-                    <div class="card-body">
-                        <div id="chart-profile-visit"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-12 col-lg-3">
-        <div class="card">
-            <div class="card-body py-4 px-5">
-                <div class="d-flex align-items-center">
-                    <div class="avatar avatar-lg">
-                        <img src="{{ asset('assets/images/logo/logo.png') }}" alt="PM - HMA" />
-                    </div>
-                    <div class="ms-3 name">
-                        <h5 class="font-bold">{{ session('user.username') }}</h5>
-                        <h6 class="text-muted mb-0">{{ session('user.name') }}</h6>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="card">
-            <div class="card-header">
-                <h4>Aktivitas Terkini</h4>
-            </div>
-            <div class="card-content pb-4">
-                <div class="recent-message d-flex px-0 py-2">
-                    <div class="name ms-4">
-                        <h5 class="mb-1">Hank Schrader</h5>
-                        <h6 class="text-muted mb-0">Lorem Ipsum is not simply random text</h6>
-                    </div>
-                </div>
-                <div class="recent-message d-flex px-0 py-2">
-                    <div class="name ms-4">
-                        <h5 class="mb-1">Dean Winchester</h5>
-                        <h6 class="text-muted mb-0">Lorem Ipsum is simply dummy text of the printing and typesetting industry</h6>
-                    </div>
-                </div>
-                <div class="recent-message d-flex px-0 py-2">
-                    <div class="name ms-4">
-                        <h5 class="mb-1">Morbi Leo</h5>
-                        <h6 class="text-muted mb-0">It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.</h6>
-                    </div>
-                </div>
-                <div class="px-4">
-                    <button class='btn btn-block btn-xl btn-light-primary font-bold mt-3'>
-                        Selengkapnya
-                    </button>
-                </div>
-            </div>
+
+        <div class="col-sm-12" id="content">
+            <div id="content_card"></div>
         </div>
     </div>
 </section>
@@ -270,7 +167,7 @@
         $('#content_card').empty();
 
         if (filteredDocs.length === 0) {
-            $('#content_card').html('<p>Dokumen Tidak di Temukan</p>');
+            $('#content_card').html('<div class="card card-body"><p class="card-text text-center">Dokumen tidak ditemukan</p></div>');
             return;
         }
 
@@ -281,7 +178,7 @@
                 : doc.description;
                 console.log(doc)
             content_doc += `
-                <div class="card">
+                <div class="card" style="margin-bottom: 1.1rem;">
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-7 col-12">
@@ -437,43 +334,4 @@
     }
 </script>
 
-<script src="{{ asset('assets/vendors/apexcharts/apexcharts.js') }}"></script>
-<script>
-    var optionsProfileVisit = {
-        annotations: {
-            position: 'back'
-        },
-        dataLabels: {
-            enabled:false
-        },
-        chart: {
-            type: 'bar',
-            height: 400
-        },
-        fill: {
-            opacity:1
-        },
-        plotOptions: {
-        },
-        series: [{
-            name: 'sales',
-            data: [
-                9,20,30,20,10,20,30,20,10,20,
-                19,210,130,120,140,210,130,210,110,120,
-                99,10,30,100,40,80,30,50,110,220,120,
-            ]
-        }],
-        colors: '#435ebe',
-        xaxis: {
-            categories: [
-                "01","02","03","04","05","06","07","08","09","10",
-                "11","12","13","14","15","16","17","18","19","20",
-                "21","22","23","24","25","26","27","28","29","30","31",
-            ]
-        },
-    }
-
-    var chartProfileVisit = new ApexCharts(document.querySelector("#chart-profile-visit"), optionsProfileVisit);
-    chartProfileVisit.render();
-</script>
 @endsection
