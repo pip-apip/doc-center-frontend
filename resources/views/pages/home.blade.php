@@ -48,153 +48,156 @@
     }
 </style>
 
-
-<div class="page-title mb-2">
-    <div class="row">
-        <div class="col-12 col-md-6 order-md-1 order-last">
-            <h3>Dashboard</h3>
+<div class="page-heading">
+    <div class="page-title">
+        <div class="row">
+            <div class="col-12 col-md-6 order-md-1 order-last">
+                <h3>Dashboard</h3>
+                <p class="text-subtitle text-muted">Halaman yang akan menampilkan ringkasan data aplikasi</p>
+            </div>
+            <div class="col-12 col-md-6 order-md-2 order-first">
+                <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item active" aria-current="page"><a href="{{ route('home') }}">Dashboard</a></li>
+                    </ol>
+                </nav>
+            </div>
         </div>
-        <div class="col-12 col-md-6 order-md-2 order-first">
-            <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item active"><a href="#">Dashboard</a></li>
-                </ol>
-            </nav>
-        </div>
+    </div>
+    <div class="page-content">
+        <section class="row">
+            <div class="col-12 col-lg-9">
+                <div class="row">
+                    <div class="col-6 col-lg-3 col-md-6">
+                        <div class="card">
+                            <div class="card-body px-3 py-4-5">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="stats-icon purple">
+                                            <i class="fa fa-user-shield"></i>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <h6 class="text-muted font-semibold">Total Aktivitas</h6>
+                                        <h6 class="font-extrabold mb-0">112.000</h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-lg-3 col-md-6">
+                        <div class="card">
+                            <div class="card-body px-3 py-4-5">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="stats-icon blue">
+                                            <i class="fa fa-user-clock"></i>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <h6 class="text-muted font-semibold">Aktivitas Perbulan</h6>
+                                        <h6 class="font-extrabold mb-0">183.000</h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-lg-3 col-md-6">
+                        <div class="card">
+                            <div class="card-body px-3 py-4-5">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="stats-icon green">
+                                            <i class="fa fa-user-check"></i>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <h6 class="text-muted font-semibold">Sedang Bertugas</h6>
+                                        <h6 class="font-extrabold mb-0">80.000</h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-lg-3 col-md-6">
+                        <div class="card">
+                            <div class="card-body px-3 py-4-5">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="stats-icon red">
+                                            <i class="fa fa-user-times"></i>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <h6 class="text-muted font-semibold">Menunggu Tugas</h6>
+                                        <h6 class="font-extrabold mb-0">112</h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4>Grafik Aktivitas Bulan Ini</h4>
+                            </div>
+                            <div class="card-body">
+                                <div id="chart-profile-visit"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-lg-3">
+                <div class="card">
+                    <div class="card-body py-4 px-5">
+                        <div class="d-flex align-items-center">
+                            <div class="avatar avatar-lg">
+                                <img src="{{ asset('assets/images/logo/logo.png') }}" alt="PM - HMA" />
+                            </div>
+                            <div class="ms-3 name">
+                                <h5 class="font-bold">9 Paket</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Aktivitas Terkini</h4>
+                    </div>
+                    <div class="card-content pb-4">
+                        <div class="recent-message d-flex px-0 py-2">
+                            <div class="name ms-4">
+                                <h5 class="mb-1">Hank Schrader</h5>
+                                <h6 class="text-muted mb-0">Lorem Ipsum is not simply random text</h6>
+                            </div>
+                        </div>
+                        <div class="recent-message d-flex px-0 py-2">
+                            <div class="name ms-4">
+                                <h5 class="mb-1">Dean Winchester</h5>
+                                <h6 class="text-muted mb-0">Lorem Ipsum is simply dummy text of the printing and typesetting industry</h6>
+                            </div>
+                        </div>
+                        <div class="recent-message d-flex px-0 py-2">
+                            <div class="name ms-4">
+                                <h5 class="mb-1">Morbi Leo</h5>
+                                <h6 class="text-muted mb-0">It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.</h6>
+                            </div>
+                        </div>
+                        <div class="px-4">
+                            <button class='btn btn-block btn-xl btn-light-primary font-bold mt-3'>
+                                Selengkapnya
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
     </div>
 </div>
 
-<section class="row">
-    <div class="col-12 col-lg-9">
-        <div class="row">
-            <div class="col-6 col-lg-3 col-md-6">
-                <div class="card">
-                    <div class="card-body px-3 py-4-5">
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="stats-icon purple">
-                                    <i class="fa fa-user-shield"></i>
-                                </div>
-                            </div>
-                            <div class="col-md-8">
-                                <h6 class="text-muted font-semibold">Total Aktivitas</h6>
-                                <h6 class="font-extrabold mb-0">112.000</h6>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-6 col-lg-3 col-md-6">
-                <div class="card">
-                    <div class="card-body px-3 py-4-5">
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="stats-icon blue">
-                                    <i class="fa fa-user-clock"></i>
-                                </div>
-                            </div>
-                            <div class="col-md-8">
-                                <h6 class="text-muted font-semibold">Aktivitas Perbulan</h6>
-                                <h6 class="font-extrabold mb-0">183.000</h6>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-6 col-lg-3 col-md-6">
-                <div class="card">
-                    <div class="card-body px-3 py-4-5">
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="stats-icon green">
-                                    <i class="fa fa-user-check"></i>
-                                </div>
-                            </div>
-                            <div class="col-md-8">
-                                <h6 class="text-muted font-semibold">Sedang Bertugas</h6>
-                                <h6 class="font-extrabold mb-0">80.000</h6>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-6 col-lg-3 col-md-6">
-                <div class="card">
-                    <div class="card-body px-3 py-4-5">
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="stats-icon red">
-                                    <i class="fa fa-user-times"></i>
-                                </div>
-                            </div>
-                            <div class="col-md-8">
-                                <h6 class="text-muted font-semibold">Menunggu Tugas</h6>
-                                <h6 class="font-extrabold mb-0">112</h6>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h4>Grafik Aktivitas Bulan Ini</h4>
-                    </div>
-                    <div class="card-body">
-                        <div id="chart-profile-visit"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-12 col-lg-3">
-        <div class="card">
-            <div class="card-body py-4 px-5">
-                <div class="d-flex align-items-center">
-                    <div class="avatar avatar-lg">
-                        <img src="{{ asset('assets/images/logo/logo.png') }}" alt="PM - HMA" />
-                    </div>
-                    <div class="ms-3 name">
-                        <h5 class="font-bold">{{ session('user.username') }}</h5>
-                        <h6 class="text-muted mb-0">{{ session('user.name') }}</h6>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="card">
-            <div class="card-header">
-                <h4>Aktivitas Terkini</h4>
-            </div>
-            <div class="card-content pb-4">
-                <div class="recent-message d-flex px-0 py-2">
-                    <div class="name ms-4">
-                        <h5 class="mb-1">Hank Schrader</h5>
-                        <h6 class="text-muted mb-0">Lorem Ipsum is not simply random text</h6>
-                    </div>
-                </div>
-                <div class="recent-message d-flex px-0 py-2">
-                    <div class="name ms-4">
-                        <h5 class="mb-1">Dean Winchester</h5>
-                        <h6 class="text-muted mb-0">Lorem Ipsum is simply dummy text of the printing and typesetting industry</h6>
-                    </div>
-                </div>
-                <div class="recent-message d-flex px-0 py-2">
-                    <div class="name ms-4">
-                        <h5 class="mb-1">Morbi Leo</h5>
-                        <h6 class="text-muted mb-0">It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.</h6>
-                    </div>
-                </div>
-                <div class="px-4">
-                    <button class='btn btn-block btn-xl btn-light-primary font-bold mt-3'>
-                        Selengkapnya
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
 
 <div class="modal fade text-left w-100" id="readModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel33"
     aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
