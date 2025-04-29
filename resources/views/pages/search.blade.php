@@ -48,50 +48,40 @@
     }
 </style>
 
-<div class="page-title">
-    <div class="row">
-        <div class="col-12 col-md-6 order-md-1 order-last">
-            <h3>Pencarian</h3>
-        </div>
-        <div class="col-12 col-md-6 order-md-2 order-first">
-            <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item active"><a href="#">Pencarian</a></li>
-                </ol>
-            </nav>
-        </div>
+
+
+<div class="page-heading">
+    <div class="page-content">
+        <section class="section">
+            <div class="row">
+                <div class="col-sm-12" id="tagsSearch">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title">Pencarian Dokumen Aktivitas</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group position-relative has-icon-left">
+                                <div class="form-control-icon">
+                                    <i class="bi bi-person"></i>
+                                </div>
+                                <input type="text" class="form-control form-control-lg" id="tagInput" placeholder="Masukkan kata kunci pencarian ..." />
+                                <ul class="suggestions" id="suggestions"></ul>
+                            </div>
+                            <div class="tag-container" id="tags"></div>
+                        </div>
+
+                    </div>
+
+                    <div class="card">
+                        
+                    </div>
+                </div>
+
+
+            </div>
+        </section>
     </div>
 </div>
-
-<section class="section">
-    <div class="row">
-        <div class="col-sm-12" id="tagsSearch">
-            <div class="card">
-                <div class="card-header">
-                    <h4 class="card-title">Pencarian Dokumen Aktivitas</h4>
-                </div>
-                <div class="card-body">
-                    <div class="form-group position-relative has-icon-left">
-                        <div class="form-control-icon">
-                            <i class="bi bi-person"></i>
-                        </div>
-                        <input type="text" class="form-control form-control-lg" id="tagInput" placeholder="Masukkan kata kunci pencarian ..." autocomplete="off" />
-                        <ul class="suggestions" id="suggestions"></ul>
-                    </div>
-                    <div class="tag-container" id="tags"></div>
-                </div>
-            </div>
-
-            <div class="card">
-
-            </div>
-        </div>
-
-        <div class="col-sm-12" id="content">
-            <div id="content_card"></div>
-        </div>
-    </div>
-</section>
 
 <div class="modal fade text-left w-100" id="readModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel33"
     aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">

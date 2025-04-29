@@ -91,126 +91,115 @@
     }
 </style>
 
-<div class="page-title">
-    <div class="row">
-        <div class="col-12 col-md-6 order-md-1 order-last">
-            {{-- <h3>Data Company</h3> --}}
-            {{-- <p class="text-subtitle text-muted">For user to check they list</p> --}}
-        </div>
-        <div class="col-12 col-md-6 order-md-2 order-first">
-            <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Perusahaan</li>
-                </ol>
-            </nav>
-        </div>
-    </div>
-</div>
-<section class="section">
-    <div class="card">
-        <div class="card-header">
-            <div class="row">
-                <div class="col-sm-8 col-8">
-                    <h1>Perusahaan</h1>
-                </div>
-                <div class="col-sm-4 col-4 d-flex justify-content-end align-items-center">
-                    <a href="{{ route('company.create') }}" class="btn btn-success">
-                        <i class="fa-solid fa-plus"></i> <span class="d-none d-md-inline-block">Tambah</span>
-                    </a>
-                </div>
-            </div>
-        </div>
-        <div class="card-body">
-            @php
-                $page = $results && $results->perPage() ? $results->perPage() : null;
-            @endphp
-            <div class="row">
-                <form method="GET" action="{{ route('company.index') }}" id="pagination-form" class="col-12 col-lg-1">
-                    <fieldset class="form-group" style="width: 70px">
-                        <select class="form-select" id="entire-page" name="per_page" onchange="document.getElementById('pagination-form').submit();">
-                            <option value="5" {{ $page == 5 ? 'selected' : '' }}>5</option>
-                            <option value="10" {{ $page == 10 ? 'selected' : '' }}>10</option>
-                            <option value="15" {{ $page == 15 ? 'selected' : '' }}>15</option>
-                            <option value="20" {{ $page == 20 ? 'selected' : '' }}>20</option>
-                        </select>
-                    </fieldset>
-                </form>
-                <form method="POST" action="{{ route('company.filter') }}" id="search-form" class="mb-4 col-12 col-lg-11">
-                    @csrf
+<div class="page-heading">
+    <div class="page-content">
+        <section class="section">
+            <div class="card">
+                <div class="card-header">
                     <div class="row">
-                        <div class="col-lg-11 col-8">
-                            <div class="input-group mb-3">
-                                <input type="text" class="form-control" name="q" value="{{ session()->has('q') ? session('q') : '' }}" placeholder="Ketik Nama Perusahaan & Klik Enter ..." onkeydown="if (event.key === 'Enter') { event.preventDefault(); this.form.submit(); }">
-                                <button class="btn btn-primary" type="submit" id="button-addon1"><i class="fa-solid fa-magnifying-glass"></i></button>
-                            </div>
+                        <div class="col-sm-8 col-8">
+                            <h1>Daftar Perusahaan</h1>
                         </div>
-                        <div class="col-lg-1 col-3">
-                            <a href="{{ route('company.reset') }}" class="btn btn-secondary" type="button" id="button-addon2">Reset</a>
+                        <div class="col-sm-4 col-4 d-flex justify-content-end align-items-center">
+                            <a href="{{ route('company.create') }}" class="btn btn-success btn-sm">
+                                <i class="fa-solid fa-plus"></i> <span class="d-none d-md-inline-block">Tambah</span>
+                            </a>
                         </div>
                     </div>
-                </form>
-            </div>
-            <div class="table-responsive">
-                <table class="table table-striped" id="table">
-                    <thead>
-                        <tr>
-                        {{-- <th width="100">No</th> --}}
-                            <th>Nama Perusahaan</th>
-                            <th>Alamat Perusahaan</th>
-                            <th>Nama Direktur</th>
-                            {{-- <th>Director Phone</th> --}}
-                            {{-- <th>Director Signature</th> --}}
-                            <th width="100">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody id="table-body">
+                </div>
+                <div class="card-body">
+                    @php
+                        $page = $results && $results->perPage() ? $results->perPage() : null;
+                    @endphp
+                    <div class="row">
+                        <form method="GET" action="{{ route('company.index') }}" id="pagination-form" class="col-12 col-lg-1">
+                            <fieldset class="form-group" style="width: 70px">
+                                <select class="form-select" id="entire-page" name="per_page" onchange="document.getElementById('pagination-form').submit();">
+                                    <option value="5" {{ $page == 5 ? 'selected' : '' }}>5</option>
+                                    <option value="10" {{ $page == 10 ? 'selected' : '' }}>10</option>
+                                    <option value="15" {{ $page == 15 ? 'selected' : '' }}>15</option>
+                                    <option value="20" {{ $page == 20 ? 'selected' : '' }}>20</option>
+                                </select>
+                            </fieldset>
+                        </form>
+                        <form method="POST" action="{{ route('company.filter') }}" id="search-form" class="mb-4 col-12 col-lg-11">
+                            @csrf
+                            <div class="row">
+                                <div class="col-lg-11 col-8">
+                                    <div class="input-group mb-3">
+                                        <input type="text" class="form-control" name="q" value="{{ session()->has('q') ? session('q') : '' }}" placeholder="Ketik Nama Perusahaan & Klik Enter ..." onkeydown="if (event.key === 'Enter') { event.preventDefault(); this.form.submit(); }">
+                                        <button class="btn btn-primary" type="submit" id="button-addon1"><i class="fa-solid fa-magnifying-glass"></i></button>
+                                    </div>
+                                </div>
+                                <div class="col-lg-1 col-3">
+                                    <a href="{{ route('company.reset') }}" class="btn btn-secondary" type="button" id="button-addon2">Reset</a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-striped" id="table">
+                            <thead>
+                                <tr>
+                                {{-- <th width="100">No</th> --}}
+                                    <th width="20%" class="text-center">Nama Perusahaan</th>
+                                    <th class="text-center">Alamat Perusahaan</th>
+                                    <th width="15%" class="text-center">Nama Direktur</th>
+                                    {{-- <th>Director Phone</th> --}}
+                                    {{-- <th>Director Signature</th> --}}
+                                    <th width="10%" class="text-center">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-body">
 
-                    {{-- @php
-                            $no = is_object($results) && method_exists($results, 'firstItem') ? $results->firstItem() : 0;
-                        @endphp --}}
-                    @if(is_object($results) && method_exists($results, 'firstItem'))
-                        @foreach ($results as $company)
-                        @php
-                            $director_signature = $company['director_signature'] ?
-                            '<button class="btn btn-sm btn-info" onclick="openModernModal(\'' . $API_url . $company['director_signature'] . '\')"><i class="fa-solid fa-eye"></i> Preview Signature</button>' : "Don't have Signature Director";
-                        @endphp
-                        <tr>
-                        {{-- <td>{{ $no++ }}</td> --}}
-                            <td>{{ $company['name'] }}</td>
-                            <td>{{ $company['address'] }}</td>
-                            <td>{{ $company['director_name'] }}</td>
-                            {{-- <td>{{ $company['director_phone'] }}</td> --}}
-                            {{-- <td>{!! $director_signature !!}</td> --}}
-                            <td>
-                                <a href="{{ route('company.edit', $company['id']) }}" class="btn btn-sm btn-warning rounded-pill">
-                                    <i class="fa-solid fa-pen"></i>
-                                </a>
-                                <a href="javascript:void(0)" class="btn btn-sm btn-danger rounded-pill" onclick="confirmDelete('{{ route('company.destroy', $company['id']) }}')">
-                                    <i class="fa-solid fa-trash"></i>
-                                </a>
-                            </td>
-                        </tr>
-                        @endforeach
-                    @else
-                        <tr>
-                            <td colspan="5" class="text-center">Tidak ada data</td>
-                        </tr>
-                    @endif
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                            @if (is_object($results) && method_exists($results, 'onEachSide'))
-                                <td colspan="7"><span style="margin-top: 15px;">{{ $results->appends(request()->query())->links() }}</span></td>
+                            {{-- @php
+                                    $no = is_object($results) && method_exists($results, 'firstItem') ? $results->firstItem() : 0;
+                                @endphp --}}
+                            @if(is_object($results) && method_exists($results, 'firstItem'))
+                                @foreach ($results as $company)
+                                @php
+                                    $director_signature = $company['director_signature'] ?
+                                    '<button class="btn btn-sm btn-info" onclick="openModernModal(\'' . $API_url . $company['director_signature'] . '\')"><i class="fa-solid fa-eye"></i> Preview Signature</button>' : "Don't have Signature Director";
+                                @endphp
+                                <tr>
+                                {{-- <td>{{ $no++ }}</td> --}}
+                                    <td>{{ $company['name'] }}</td>
+                                    <td>{{ $company['address'] }}</td>
+                                    <td>{{ $company['director_name'] }}</td>
+                                    {{-- <td>{{ $company['director_phone'] }}</td> --}}
+                                    {{-- <td>{!! $director_signature !!}</td> --}}
+                                    <td class="text-center">
+                                        <a href="{{ route('company.edit', $company['id']) }}" class="btn btn-sm btn-warning rounded-pill">
+                                            <i class="fa-solid fa-pen"></i>
+                                        </a>
+                                        <a href="javascript:void(0)" class="btn btn-sm btn-danger rounded-pill" onclick="confirmDelete('{{ route('company.destroy', $company['id']) }}')">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                @endforeach
+                            @else
+                                <tr>
+                                    <td colspan="4" class="text-center">Tidak ada data</td>
+                                </tr>
                             @endif
-                        </tr>
-                    </tfoot>
-                </table>
+                            </tbody>
+                            @if ($results->hasPages())
+                            <tfoot>
+                                <tr>
+                                    @if (is_object($results) && method_exists($results, 'onEachSide'))
+                                        <td colspan="4"><span style="margin-top: 15px;">{{ $results->appends(request()->query())->links() }}</span></td>
+                                    @endif
+                                </tr>
+                            </tfoot>
+                            @endif
+                        </table>
+                    </div>
+                </div>
             </div>
-        </div>
+        </section>
     </div>
-    <div id="data-container"></div>
-</section>
+</div>
 
 <div id="fullPageLoader" class="full-page-loader" style="display: none">
     <div class="spinner-border text-light" role="status">
