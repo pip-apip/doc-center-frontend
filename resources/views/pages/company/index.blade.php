@@ -92,32 +92,16 @@
 </style>
 
 <div class="page-heading">
-    <div class="page-title">
-        <div class="row">
-            <div class="col-12 col-md-6 order-md-1 order-last">
-                <h3>Perusahaan</h3>
-                <p class="text-subtitle text-muted">Halaman yang akan menampilkan data induk perusahaan</p>
-            </div>
-            <div class="col-12 col-md-6 order-md-2 order-first">
-                <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="{{ route('home') }}">Dashboard</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Perusahaan</li>
-                    </ol>
-                </nav>
-            </div>
-        </div>
-    </div>
     <div class="page-content">
         <section class="section">
             <div class="card">
                 <div class="card-header">
                     <div class="row">
                         <div class="col-sm-8 col-8">
-                            <h1>Perusahaan</h1>
+                            <h1>Daftar Perusahaan</h1>
                         </div>
                         <div class="col-sm-4 col-4 d-flex justify-content-end align-items-center">
-                            <a href="{{ route('company.create') }}" class="btn btn-success">
+                            <a href="{{ route('company.create') }}" class="btn btn-success btn-sm">
                                 <i class="fa-solid fa-plus"></i> <span class="d-none d-md-inline-block">Tambah</span>
                             </a>
                         </div>
@@ -158,12 +142,12 @@
                             <thead>
                                 <tr>
                                 {{-- <th width="100">No</th> --}}
-                                    <th>Nama Perusahaan</th>
-                                    <th>Alamat Perusahaan</th>
-                                    <th>Nama Direktur</th>
+                                    <th width="20%" class="text-center">Nama Perusahaan</th>
+                                    <th class="text-center">Alamat Perusahaan</th>
+                                    <th width="15%" class="text-center">Nama Direktur</th>
                                     {{-- <th>Director Phone</th> --}}
                                     {{-- <th>Director Signature</th> --}}
-                                    <th width="100">Aksi</th>
+                                    <th width="10%" class="text-center">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody id="table-body">
@@ -184,7 +168,7 @@
                                     <td>{{ $company['director_name'] }}</td>
                                     {{-- <td>{{ $company['director_phone'] }}</td> --}}
                                     {{-- <td>{!! $director_signature !!}</td> --}}
-                                    <td>
+                                    <td class="text-center">
                                         <a href="{{ route('company.edit', $company['id']) }}" class="btn btn-sm btn-warning rounded-pill">
                                             <i class="fa-solid fa-pen"></i>
                                         </a>
@@ -196,7 +180,7 @@
                                 @endforeach
                             @else
                                 <tr>
-                                    <td colspan="5" class="text-center">Tidak ada data</td>
+                                    <td colspan="4" class="text-center">Tidak ada data</td>
                                 </tr>
                             @endif
                             </tbody>
@@ -204,7 +188,7 @@
                             <tfoot>
                                 <tr>
                                     @if (is_object($results) && method_exists($results, 'onEachSide'))
-                                        <td colspan="7"><span style="margin-top: 15px;">{{ $results->appends(request()->query())->links() }}</span></td>
+                                        <td colspan="4"><span style="margin-top: 15px;">{{ $results->appends(request()->query())->links() }}</span></td>
                                     @endif
                                 </tr>
                             </tfoot>
