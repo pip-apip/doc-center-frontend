@@ -172,7 +172,7 @@ class ProjectController extends Controller
 
         $activities = $responseActivity->json()['data'];
 
-        return view('pages.project.activity', compact('project', 'activities'))->with(['title' => 'project  ']);
+        return view('pages.project.activity', compact('project', 'activities'))->with(['title' => 'project']);
     }
 
     /**

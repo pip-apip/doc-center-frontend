@@ -51,36 +51,7 @@
 <div class="page-heading">
     <!-- <div class="page-title">
         <div class="row">
-            <div class="col-12 col-md-6 order-md-1 order-last">
-                <h3>Dashboard</h3>
-                <p class="text-subtitle text-muted">Halaman yang akan menampilkan ringkasan data aplikasi</p>
-            </div>
-            <div class="col-12 col-md-6 order-md-2 order-first">
-                <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item active" aria-current="page"><a href="{{ route('home') }}">Dashboard</a></li>
-                    </ol>
-                </nav>
-            </div>
-        </div>
-    </div> -->
-    <div class="page-content">
-        <section class="row">
-            <div class="col-12 col-lg-9">
-                <div class="row">
-                    <div class="col-6 col-lg-3 col-md-6">
-                        <div class="card">
-                            <div class="card-body px-3 py-4-5">
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <div class="stats-icon purple">
-                                            <i class="fa fa-user-shield"></i>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-8">
-                                        <h6 class="text-muted font-semibold">Total Aktivitas</h6>
-                                        <h6 class="font-extrabold mb-0">112.000</h6>
-                                    </div>
+
                                 </div>
                             </div>
                         </div>
@@ -102,19 +73,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-6 col-lg-3 col-md-6">
-                        <div class="card">
-                            <div class="card-body px-3 py-4-5">
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <div class="stats-icon green">
-                                            <i class="fa fa-user-check"></i>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-8">
-                                        <h6 class="text-muted font-semibold">Sedang Bertugas</h6>
-                                        <h6 class="font-extrabold mb-0">80.000</h6>
-                                    </div>
+
                                 </div>
                             </div>
                         </div>
@@ -137,11 +96,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <h4>Grafik Aktivitas Bulan Ini</h4>
+
                             </div>
                             <div class="card-body">
                                 <div id="chart-profile-visit"></div>
@@ -163,34 +118,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="card">
-                    <div class="card-header">
-                        <h4>Aktivitas Terkini</h4>
-                    </div>
-                    <div class="card-content pb-4">
-                        <div class="recent-message d-flex px-0 py-2">
-                            <div class="name ms-4">
-                                <h5 class="mb-1">Hank Schrader</h5>
-                                <h6 class="text-muted mb-0">Lorem Ipsum is not simply random text</h6>
-                            </div>
-                        </div>
-                        <div class="recent-message d-flex px-0 py-2">
-                            <div class="name ms-4">
-                                <h5 class="mb-1">Dean Winchester</h5>
-                                <h6 class="text-muted mb-0">Lorem Ipsum is simply dummy text of the printing and typesetting industry</h6>
-                            </div>
-                        </div>
-                        <div class="recent-message d-flex px-0 py-2">
-                            <div class="name ms-4">
-                                <h5 class="mb-1">Morbi Leo</h5>
-                                <h6 class="text-muted mb-0">It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.</h6>
-                            </div>
-                        </div>
-                        <div class="px-4">
-                            <button class='btn btn-block btn-xl btn-light-primary font-bold mt-3'>
-                                Selengkapnya
-                            </button>
-                        </div>
+
                     </div>
                 </div>
             </div>
@@ -247,199 +175,6 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
-<script>
-    let tags = [];
-    let tagOptions = [];
-    let selectedIndex = -1;
-    let baseUrl = 'https://bepm.hanatekindo.com/api/v1/';
-    let access_token = @json(session('user.access_token'))
-
-    let dataDoc = {!! json_encode($activityDoc) !!}
-    $(document).ready(function () {
-        renderDocs(dataDoc);
-        mergeTags();
-    });
-
-    function filterDocsByTags() {
-        let filteredDocs = dataDoc.filter(doc => {
-            return tags.some(tag => doc.description.toLowerCase().includes(tag.toLowerCase()));
-        });
-
-        renderDocs(filteredDocs);
-    }
-
-
-    function renderDocs(filteredDocs) {
-        $('#content_card').empty();
-
-        if (filteredDocs.length === 0) {
-            $('#content_card').html('<p>Dokumen Tidak di Temukan</p>');
-            return;
-        }
-
-        let content_doc = '';
-        $.each(filteredDocs, function (index, doc) {
-            let shortDescription = doc.description.length > 280
-                ? doc.description.substring(0, 280) + " ...."
-                : doc.description;
-                console.log(doc)
-            content_doc += `
-                <div class="card">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-7 col-12">
-                                <h4 class="card-title">${doc.title}</h4>
-                            </div>
-                            <div class="col-md-5 d-md-flex justify-content-end d-none">
-                                <small>${dateFormat(doc.created_at) || 'Unknown Date'}</small>
-                            </div>
-                        </div>
-                        <p class="card-text">${shortDescription}</p>
-                        <div class="d-flex justify-content-between">
-                            <small class="d-md-none mt-2">${dateFormat(doc.created_at) || 'Unknown Date'}</small>
-                            <button type="submit" class="btn btn-primary me-1 justify-content-end" onclick="readModal(${doc.id})">Read More...</button>
-                        </div>
-                    </div>
-                </div>`;
-        });
-
-        $('#content_card').html(content_doc);
-    }
-
-    function readModal(id) {
-        let doc = dataDoc.find(doc => doc.id === id);
-        console.log("readModal",doc);
-        let modal = $('#readModal');
-        modal.find('#activity_name').text(doc.activity.title);
-        modal.find('#doc_title').text(doc.title);
-        modal.find('#description').text(doc.description);
-        let tagsShow = doc.tags.map(tag =>
-                            `<button class="btn btn-info me-2">${tag}</button>`
-                        ).join("");
-        modal.find('#tags').html(tagsShow);
-        modal.find('#modalTitle').text('Document Activity - MOM (' + dateFormat(doc.created_at) + ')');
-        modal.modal('show');
-    }
-
-    function mergeTags() {
-        let mergedTags = new Set();
-        dataDoc.forEach(doc => {
-            if (doc.tags && Array.isArray(doc.tags)) {
-            doc.tags.forEach(tag => mergedTags.add(tag));
-            }
-        });
-
-        tagOptions = Array.from(mergedTags);
-    }
-
-    function renderTags() {
-        let tagContainer = $("#tags");
-        tagContainer.find(".tag").remove();
-
-        tags.forEach((tag, index) => {
-            let tagElement = $(`
-                <div class="tag">
-                    ${tag}
-                    <span class="remove" data-index="${index}">&times;</span>
-                </div>
-            `);
-            tagContainer.append(tagElement);
-        });
-
-        if(tags.length > 0){
-            filterDocsByTags();
-        }else{
-            renderDocs(dataDoc);
-        }
-    }
-
-    $("#tagInput").on("input", function () {
-        let inputText = this.value.trim().toLowerCase();
-        let suggestionList = $("#suggestions");
-        selectedIndex = -1;
-
-        if (inputText === "") {
-            suggestionList.hide();
-            return;
-        }
-
-        let filteredOptions = tagOptions.filter(tag => tag.toLowerCase().includes(inputText));
-
-        if (filteredOptions.length > 0) {
-            suggestionList.empty().show();
-            filteredOptions.forEach((tag, index) => {
-                suggestionList.append(`<li data-index="${index}">${tag}</li>`);
-            });
-        } else {
-            suggestionList.hide();
-        }
-    });
-
-    $("#tagInput").on("keydown", function (event) {
-        let items = $("#suggestions").find("li");
-
-        if (event.key === "ArrowDown") {
-            event.preventDefault();
-            if (selectedIndex < items.length - 1) selectedIndex++;
-        } else if (event.key === "ArrowUp") {
-            event.preventDefault();
-            if (selectedIndex > 0) selectedIndex--;
-        } else if (event.key === "Enter") {
-            event.preventDefault();
-            if (selectedIndex >= 0 && selectedIndex < items.length) {
-                addTag($(items[selectedIndex]).text());
-            } else if (this.value.trim() !== "") {
-                addTag(this.value.trim());
-            }
-            return;
-        }
-
-        items.removeClass("selected");
-        if (selectedIndex >= 0) $(items[selectedIndex]).addClass("selected");
-    });
-
-    $(document).on("click", "#suggestions li", function () {
-        addTag($(this).text());
-    });
-
-    $(document).on("click", ".remove", function () {
-        let index = $(this).data("index");
-        tags.splice(index, 1);
-        renderTags();
-    });
-
-    $(document).on("click", function (event) {
-        if (!$(event.target).closest("#tagInput, #suggestions").length) {
-            $("#suggestions").hide();
-        }
-    });
-
-    function addTag(tagText) {
-        if (!tags.includes(tagText)) {
-            tags.push(tagText);
-            renderTags();
-        }
-        $("#tagInput").val("").focus();
-        $("#suggestions").hide();
-    }
-
-    function dateFormat(dateTimeString) {
-        let datePart = dateTimeString.split(" ")[0];
-
-        let [year, month, day] = datePart.split("-");
-
-        let date = new Date(year, month - 1, day);
-
-        let formattedDate = new Intl.DateTimeFormat("id-ID", {
-            day: "2-digit",
-            month: "long",
-            year: "numeric"
-        }).format(date);
-
-        return formattedDate;
-    }
-</script>
-
 <script src="{{ asset('assets/vendors/apexcharts/apexcharts.js') }}"></script>
 <script>
     var optionsProfileVisit = {
@@ -459,7 +194,7 @@
         plotOptions: {
         },
         series: [{
-            name: 'sales',
+            name: 'total',
             data: [
                 9,20,30,20,10,20,30,20,10,20,
                 19,210,130,120,140,210,130,210,110,120,

@@ -4,20 +4,7 @@
 
 @section('content')
 
-<div class="page-heading">
-    <div class="page-content">
-        <section id="basic-horizontal-layouts">
-            <div class="card">
-                <div class="card-header">
-                    <div class="row">
-                        <div class="col-sm-8 col-8">
-                            <h1>{{ $status === 'create' ? 'Tambah' : 'Edit' }} <span class="d-none d-md-inline-block">Aktivitas</span></h1>
-                        </div>
-                        <div class="col-sm-4 col-4 d-flex justify-content-end align-items-center">
-                            <a href="{{ route('activity.index') }}" class="btn btn-secondary btn-sm">
-                                <i class="fa-solid fa-angle-left"></i> <span class="d-none d-md-inline-block">Kembali</span>
-                            </a>
-                        </div>
+
                     </div>
                 </div>
                 <div class="card-body">

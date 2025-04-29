@@ -127,8 +127,8 @@ class ActivityController extends Controller
      */
     public function create()
     {
-        // dd(session('lastRoute'));
         $accessToken = session('user.access_token');
+        $response;
 
         if(session('user.role') == 'SUPERADMIN'){
             $response = Http::withToken($accessToken)->get('https://bepm.hanatekindo.com/api/v1/projects/search', [
@@ -152,16 +152,17 @@ class ActivityController extends Controller
             return redirect()->back()->withErrors('Failed to fetch project.');
         }
 
-        $responseCategoryDocActivity = Http::withToken($accessToken)->get('https://bepm.hanatekindo.com/api/v1/activity-doc-categories/search?limit=1000');
+        $activityCategory = Http::withToken($accessToken)->get('https://bepm.hanatekindo.com/api/v1/activity-categories/search?limit=1000');
 
-        if ($responseCategoryDocActivity->failed()) {
+
+        if ($activityCategory->failed()) {
             return redirect()->back()->withErrors('Failed to fetch doc category of activity data.');
         }
 
         $projects = $response->json()['data'];
         $activity = [];
         $countDocAct = 0;
-        $categoryAct = $responseCategoryDocActivity->json()['data'];
+        $categoryAct = $activityCategory->json()['data'];
 
         return view('pages.activity.form', compact('activity', 'projects', 'countDocAct', 'categoryAct'))->with(['title' => 'activity', 'status' => 'create', 'lastUrl' => session('lastUrl')]);
     }
@@ -184,6 +185,7 @@ class ActivityController extends Controller
         $response = Http::withToken($accessToken)->post('https://bepm.hanatekindo.com/api/v1/activities', [
             'project_id' => $request->input('project_id'),
             'title' => $request->input('title'),
+            'activity_category_id' => $request->input('activity_category_id'),
             'start_date' => date('Y-m-d', strtotime($request->input('start_date'))),
             'end_date' => date('Y-m-d', strtotime($request->input('end_date'))),
         ]);
@@ -215,7 +217,7 @@ class ActivityController extends Controller
             return redirect()->back()->withErrors('Failed to fetch doc activity data.');
         }
 
-        $responseCategoryDocActivity = Http::withToken($accessToken)->get('https://bepm.hanatekindo.com/api/v1/activity-doc-categories/search?limit=1000');
+        $responseCategoryDocActivity = Http::withToken($accessToken)->get('https://bepm.hanatekindo.com/api/v1/activity-categories/search?limit=1000');
 
         if ($responseCategoryDocActivity->failed()) {
             return redirect()->back()->withErrors('Failed to fetch doc category of activity data.');
@@ -239,32 +241,45 @@ class ActivityController extends Controller
     {
         $accessToken = session('user.access_token');
 
-        $response = Http::withToken($accessToken)->post('https://bepm.hanatekindo.com/api/v1/activity-docs', [
-            'title' => $request->input('title'),
-            'description' => $request->input('description'),
-            'tags' => $request->input('tags'),
-            'activity_id' => $request->input('activity_id'),
-            'activity_doc_category_id' => $request->input('category_id'),
-        ]);
+        $http = Http::withToken($accessToken);
 
-        return $response->json();
+        // Attach text fields
+        $http->attach('title', $request->input('title'))
+            ->attach('description', $request->input('description'))
+            ->attach('tags', $request->input('tags'))
+            ->attach('activity_id', $request->input('activity_id'));
 
-        if ($response->json()['status'] == 400 || $response->json()['status'] == 500) {
-            $errors = $response->json()['errors'];
+        // Attach each file
+        if ($request->hasFile('files')) {
+            foreach ($request->file('files') as $index => $file) {
+                $http->attach(
+                    "files[$index]",                    // e.g., files[0], files[1]
+                    file_get_contents($file->getRealPath()),
+                    $file->getClientOriginalName()
+                );
+            }
+        }
 
-            // return redirect()->back()->withInput()->withErrors($errors);
+        $response = $http->post('https://bepm.hanatekindo.com/api/v1/activity-docs');
+
+        $responseData = $response->json();
+
+        if (in_array($responseData['status'], [400, 500])) {
             return response()->json([
-                'status' => 'error',
-                'message' => $error
+                'status' => $responseData['status'],
+                'message' => $responseData['message'] ?? 'An error occurred',
+                'errors' => $responseData['errors'] ?? []
             ]);
         }
 
-        // return redirect()->back()->with('success', 'Activity Doc created successfully.');
         return response()->json([
-            'status' => 'success',
-            'message' => $response->json()
+            'status' => 200,
+            'message' => 'Document uploaded successfully.',
+            'data' => $responseData
         ]);
     }
+
+
 
     /**
      * Show the form for editing the specified resource.
