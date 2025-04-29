@@ -84,7 +84,7 @@
                         <label>Kategory Aktivitas: </label>
                     </div>
                     <fieldset class="form-group col-md-10">
-                        <select class="form-select" id="documentCat1">
+                        <select class="form-select" id="activity_category_id" name="activity_category_id">
                             <option value="#">Pilih Kategori</option>
                             @foreach ($categoryAct as $cat)
                             <option value="{{ $cat['id'] }}">{{ $cat['name'] }}</option>

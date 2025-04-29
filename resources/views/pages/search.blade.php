@@ -39,7 +39,7 @@
     @media (max-width: 768px) {
         .row {
             display: flex;
-            flex-direction: column-reverse;
+            /* flex-direction: column-reverse; */
         }
 
         #tagSearch {
@@ -48,7 +48,7 @@
     }
 </style>
 
-<div class="page-title mb-2">
+<div class="page-title">
     <div class="row">
         <div class="col-12 col-md-6 order-md-1 order-last">
             <h3>Pencarian</h3>
@@ -75,7 +75,7 @@
                         <div class="form-control-icon">
                             <i class="bi bi-person"></i>
                         </div>
-                        <input type="text" class="form-control form-control-lg" id="tagInput" placeholder="Masukkan kata kunci pencarian ..." />
+                        <input type="text" class="form-control form-control-lg" id="tagInput" placeholder="Masukkan kata kunci pencarian ..." autocomplete="off" />
                         <ul class="suggestions" id="suggestions"></ul>
                     </div>
                     <div class="tag-container" id="tags"></div>
@@ -83,7 +83,7 @@
             </div>
 
             <div class="card">
-                
+
             </div>
         </div>
 
