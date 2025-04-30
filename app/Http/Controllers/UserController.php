@@ -94,7 +94,17 @@ class UserController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $accessToken = session('user.access_token');
+
+        $response = Http::withToken($accessToken)->get("https://bepm.hanatekindo.com/api/v1/users/{$id}");
+
+        if ($response->failed()) {
+            return redirect()->back()->withErrors('Failed to fetch category details.');
+        }
+
+        $user = $response->json()['data'][0];
+
+        return view('pages.user.profile', compact('user'))->with(['title' => 'user', 'status' => 'Detail']);
     }
 
     /**
