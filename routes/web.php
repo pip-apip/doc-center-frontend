@@ -13,6 +13,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
 
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\ProfileController;
 
 use App\Http\Middleware\AuthMiddleware;
 use App\Http\Middleware\RefershTokenMiddleware;
@@ -36,6 +37,12 @@ Route::middleware([AuthMiddleware::class, RefershTokenMiddleware::class])->group
     Route::get('home', [HomeController::class, 'index'])->name('home')->middleware(['role:SUPERADMIN,ADMIN,USER']);
 
     Route::get('search', [SearchController::class, 'index'])->name('search.index');
+    Route::get('profile', [ProfileController::class, 'index'])->name('profile.index');
+    Route::get('profile/form', [ProfileController::class, 'form'])->name('profile.form');
+    Route::post('profile/update/{id}', [ProfileController::class, 'update'])->name('profile.update');
+    Route::get('profile/password', [ProfileController::class, 'password'])->name('profile.password');
+    Route::post('profile/change/{id}', [ProfileController::class, 'change'])->name('profile.change');
+    
 
     // Category Administration
     Route::get('categoryAdm', [CategoryAdmController::class, 'index'])->name('categoryAdm.index')->middleware(['role:SUPERADMIN,ADMIN']);
