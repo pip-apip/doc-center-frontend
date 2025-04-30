@@ -71,11 +71,11 @@
                                             <h6 class="mb-0 text-gray-600">{{ session('user.name') }}</h6>
                                             <p class="mb-0 text-sm text-gray-600">{{ session('user.role') }}</p>
                                         </div>
-                                        <div class="user-img d-flex align-items-center">
+                                        {{-- <div class="user-img d-flex align-items-center">
                                             <div class="avatar avatar-md">
                                                 <img src="{{ asset('assets/images/faces/1.jpg') }}">
                                             </div>
-                                        </div>
+                                        </div> --}}
                                     </div>
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
