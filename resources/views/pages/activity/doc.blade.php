@@ -230,12 +230,12 @@
     $categoryDoc = $data['categoryDoc'];
 @endphp
 
-<div class="page-title">
+{{-- <div class="page-title">
     <div class="row">
         <div class="col-12 col-md-6 order-md-1 order-last">
-            {{-- <a href="{{ route('activity.index') }}"><i class="fa-solid fa-arrow-left"></i></a> --}}
-            {{-- <h3>Activity Detail</h3> --}}
-            {{-- <p class="text-subtitle text-muted">For user to check they list</p> --}}
+            <a href="{{ route('activity.index') }}"><i class="fa-solid fa-arrow-left"></i></a>
+            <h3>Activity Detail</h3>
+            <p class="text-subtitle text-muted">For user to check they list</p>
         </div>
         <div class="col-12 col-md-6 order-md-2 order-first">
             <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
@@ -247,7 +247,11 @@
             </nav>
         </div>
     </div>
-</div>
+</div> --}}
+@php
+    $lastRoute = session()->get('lastRoute');
+    $lastRoute = $lastRoute ? explode(',', $lastRoute) : [];
+@endphp
 
 <section class="section">
     <div class="card">
@@ -257,7 +261,9 @@
                     <h1>Dokumen <span class="d-none d-md-inline-block">Aktivitas</span></h1>
                 </div>
                 <div class="col-sm-4 col-4 d-flex justify-content-end align-items-center">
-                    <a href="{{ route('activity.index') }}"><i class="fa-solid fa-angle-left"></i> <span class="d-none d-md-inline-block">Kembali</span></a>
+                    <a href="{{ isset($lastRoute[0], $lastRoute[1]) ? route($lastRoute[0], $lastRoute[1]) : '#' }}" class="btn btn-secondary btn-sm">
+                        <i class="fa-solid fa-angle-left"></i> <span class="d-none d-md-inline-block">Kembali</span>
+                    </a>
                 </div>
             </div>
         </div>
@@ -378,7 +384,7 @@
                     <div class="tag-container" id="tags_show">
                     </div>
                 </div>
-                @if ($data['docActivity'] !== [])
+                {{-- @if ($data['docActivity'] !== []) --}}
                 <div class="col-sm-12">
                     <label><b>Dokumentasi :</b></label>
                     <table style="width: 100%">
@@ -400,7 +406,7 @@
                         </tr>
                     </table>
                 </div>
-                @endif
+                {{-- @endif --}}
             </div>
         </div>
         <div class="card-footer">
@@ -503,7 +509,7 @@
         }
     });
 
-    console.log({!! json_encode($data) !!})
+    console.log({!! json_encode(session()->get('lastRoute')) !!});
     let tags = [];
 
     function renderTags() {

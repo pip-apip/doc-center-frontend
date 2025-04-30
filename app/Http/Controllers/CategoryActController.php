@@ -32,7 +32,7 @@ class CategoryActController extends Controller
 
         $accessToken = session('user.access_token');
 
-        $response = Http::withToken($accessToken)->get('https://bepm.hanatekindo.com/api/v1/activity-doc-categories/search', [
+        $response = Http::withToken($accessToken)->get('https://bepm.hanatekindo.com/api/v1/activity-categories/search', [
             'name' => $q,
             'limit' => $perPage,
             'page' => $page
@@ -94,7 +94,7 @@ class CategoryActController extends Controller
 
         $accessToken = session('user.access_token');
 
-        $response = Http::withToken($accessToken)->post('https://bepm.hanatekindo.com/api/v1/activity-doc-categories', [
+        $response = Http::withToken($accessToken)->post('https://bepm.hanatekindo.com/api/v1/activity-categories', [
             'name' => $request->input('name'),
         ]);
 
@@ -124,7 +124,7 @@ class CategoryActController extends Controller
     {
         $accessToken = session('user.access_token');
 
-        $response = Http::withToken($accessToken)->get("https://bepm.hanatekindo.com/api/v1/activity-doc-categories/{$id}");
+        $response = Http::withToken($accessToken)->get("https://bepm.hanatekindo.com/api/v1/activity-categories/{$id}");
 
         if ($response->failed()) {
             return redirect()->back()->withErrors('Failed to fetch category details.');
@@ -146,7 +146,7 @@ class CategoryActController extends Controller
 
         $accessToken = session('user.access_token');
 
-        $response = Http::withToken($accessToken)->patch('https://bepm.hanatekindo.com/api/v1/activity-doc-categories/'.$id, [
+        $response = Http::withToken($accessToken)->patch('https://bepm.hanatekindo.com/api/v1/activity-categories/'.$id, [
             'name' => $request->input('name'),
         ]);
 
@@ -166,7 +166,7 @@ class CategoryActController extends Controller
     {
         $accessToken = session('user.access_token');
 
-        $response = Http::withToken($accessToken)->delete('https://bepm.hanatekindo.com/api/v1/activity-doc-categories/'.$id);
+        $response = Http::withToken($accessToken)->delete('https://bepm.hanatekindo.com/api/v1/activity-categories/'.$id);
 
         if ($response->failed()) {
             return redirect()->back()->withErrors('Failed to delete category.');

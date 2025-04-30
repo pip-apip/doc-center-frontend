@@ -84,7 +84,7 @@
                 </li>
             @endif
 
-                <li class="sidebar-item">
+                {{-- <li class="sidebar-item">
                     <a class="sidebar-link" onclick="document.getElementById('logout-form').submit();" style="cursor: pointer;">
                         <i class="fa-solid fa-right-from-bracket"></i>
                         <span>Keluar</span>
@@ -92,7 +92,7 @@
                     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                         @csrf
                     </form>
-                </li>
+                </li> --}}
 
             </ul>
         </div>

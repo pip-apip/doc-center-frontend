@@ -112,6 +112,8 @@ Route::middleware([AuthMiddleware::class, RefershTokenMiddleware::class])->group
     Route::post('user/update/{id}', [UserController::class, 'update'])->name('user.update');
     Route::get('user/destroy/{id}', [UserController::class, 'destroy'])->name('user.destroy');
 
+    Route::get('profile/{id}', [UserController::class, 'show'])->name('user.profile');
+
     Route::post('user/filter', [UserController::class, 'filter'])->name('user.filter');
     Route::get('user/reset', [UserController::class, 'reset'])->name('user.reset');
 

@@ -4,10 +4,10 @@
 
 @section('content')
 
-<div class="page-title">
+{{-- <div class="page-title">
     <div class="row">
         <div class="col-12 col-md-6 order-md-1 order-last">
-            {{-- <p class="text-subtitle text-muted">For user to check they list</p> --}}
+            <p class="text-subtitle text-muted">For user to check they list</p>
         </div>
         <div class="col-12 col-md-6 order-md-2 order-first">
             <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
@@ -19,7 +19,7 @@
             </nav>
         </div>
     </div>
-</div>
+</div> --}}
 <section class="section">
     <div class="card">
         <div class="card-header">
@@ -28,7 +28,9 @@
                     <h1>Form {{ $status === 'create' ? 'Tambah' : 'Edit' }} <span class="d-none d-md-inline-block"> Proyek</span></h1>
                 </div>
                 <div class="col-sm-4 col-4 d-flex justify-content-end align-items-center">
-                    <a href="{{ route('project.index') }}"><i class="fa-solid fa-angle-left"></i> <span class="d-none d-md-inline-block">Kembali</span></a>
+                    <a href="{{ route('project.index') }}" class="btn btn-secondary btn-sm">
+                        <i class="fa-solid fa-angle-left"></i> <span class="d-none d-md-inline-block">Kembali</span>
+                    </a>
                 </div>
             </div>
         </div>
@@ -51,7 +53,7 @@
                     </div>
 
                     <div class="col-md-2">
-                        <label>Nama Perusahaan: </label>
+                        <label>Nama Perusahaan <code>*</code></label>
                     </div>
                     <fieldset class="form-group col-md-10">
                         <select class="form-select @error('company_id') is-invalid @enderror" id="company_id" name="company_id">
@@ -68,7 +70,7 @@
                     </fieldset>
 
                     <div class="col-md-2">
-                        <label>Tanggal Mulai: </label>
+                        <label>Tanggal Mulai <code>*</code></label>
                     </div>
                     <div class="form-group col-md-10">
                         <input type="date" class="form-control @error('start_date') is-invalid @enderror" name="start_date" value="{{ old('start_date', $project ? $project['start_date'] : '') }}">
@@ -78,7 +80,7 @@
                     </div>
 
                     <div class="col-md-2">
-                        <label>Tanggal Selesai: </label>
+                        <label>Tanggal Selesai <code>*</code></label>
                     </div>
                     <div class="form-group col-md-10">
                         <input type="date" class="form-control @error('end_date') is-invalid @enderror" name="end_date" value="{{ old('end_date', $project ? $project['end_date'] : '') }}">
@@ -86,12 +88,13 @@
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
+                    <div class="col-sm-12 offset-sm-2 d-flex justify-content-start mt-3">
+                        <button type="submit"
+                            class="btn btn-primary me-1 mb-1">Simpan</button>
+                        <button type="reset"
+                            class="btn btn-light-secondary me-1 mb-1">Batal</button>
+                    </div>
                 </div>
-
-
-                <button type="submit" class="btn btn-primary ml-1">
-                    <i class="fa-solid fa-floppy-disk"></i> Simpan
-                </button>
             </form>
         </div>
     </div>
