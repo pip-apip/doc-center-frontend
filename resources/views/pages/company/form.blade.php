@@ -103,7 +103,7 @@
                                 @enderror
                             </div>
                             <div class="col-md-2">
-                                <label>Alamat Perusahaan <code>*</code></label>
+                                <label>Alamat <code>*</code></label>
                             </div>
                             <div class="form-group col-md-10">
                                 <textarea class="form-control @error('address') is-invalid @enderror" placeholder="Masukkan Alamat Perusahaan" id="address" name="address">{{ old('address', $company ? $company['address'] : '') }}</textarea>

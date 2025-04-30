@@ -71,19 +71,16 @@
                                             <h6 class="mb-0 text-gray-600">{{ session('user.name') }}</h6>
                                             <p class="mb-0 text-sm text-gray-600">{{ session('user.role') }}</p>
                                         </div>
-                                        <div class="user-img d-flex align-items-center">
-                                            <div class="avatar avatar-md">
-                                                <img src="assets/images/faces/1.jpg">
-                                            </div>
-                                        </div>
                                     </div>
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
                                     <li>
                                         <h6 class="dropdown-header">Hi, {{ session('user.username') }}!</h6>
                                     </li>
-                                    <li><a class="dropdown-item" href="#"><i class="icon-mid bi bi-person me-2"></i> My
+                                    <li><a class="dropdown-item" href="{{ route('profile.form') }}"><i class="icon-mid bi bi-person me-2"></i>
                                             Profil</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('profile.password') }}"><i class="icon-mid bi bi-lock me-2"></i>
+                                            Kata Sandi</a></li>
                                     <li><a class="dropdown-item" href="#"><i class="icon-mid bi bi-wallet me-2"></i>
                                             Aktivitas</a></li>
                                     <li>
