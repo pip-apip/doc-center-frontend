@@ -35,7 +35,7 @@
 <body>
     <div id="app">
         @include('layouts.sidebar')
-    
+
         <div id="main" class='layout-navbar'>
             <header class='mb-3'>
                 <nav class="navbar navbar-expand navbar-light ">
@@ -73,7 +73,7 @@
                                         </div>
                                         <div class="user-img d-flex align-items-center">
                                             <div class="avatar avatar-md">
-                                                <img src="assets/images/faces/1.jpg">
+                                                <img src="{{ asset('assets/images/faces/1.jpg') }}">
                                             </div>
                                         </div>
                                     </div>
@@ -89,8 +89,14 @@
                                     <li>
                                         <hr class="dropdown-divider">
                                     </li>
-                                    <li><a class="dropdown-item" href="#"><i
-                                                class="icon-mid bi bi-box-arrow-left me-2"></i> Keluar</a></li>
+                                    <li>
+                                        <a class="dropdown-item" onclick="document.getElementById('logout-form').submit();" style="cursor: pointer;">
+                                            <i class="icon-mid bi bi-box-arrow-left me-2"></i> Keluar
+                                        </a>
+                                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                                            @csrf
+                                        </form>
+                                    </li>
                                 </ul>
                             </div>
                         </div>

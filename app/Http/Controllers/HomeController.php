@@ -11,32 +11,15 @@ class HomeController extends Controller
     public function index()
     {
         $accessToken = session('user.access_token');
-        $response = '';
 
-        $responseTags = Http::withToken($accessToken)->get('https://bepm.hanatekindo.com/api/v1/activity-docs/tags');
-
-        if(session('user.role') == 'SUPERADMIN'){
-            $response = Http::withToken($accessToken)->get('https://bepm.hanatekindo.com/api/v1/activity-docs?limit=1000');
-        } else {
-            $project_id = "";
-            for($i = 0; $i < count(session('user.project_id')); $i++){
-                if($i == 0){
-                    $project_id = session('user.project_id')[$i];
-                } else {
-                    $project_id .= ",".session('user.project_id')[$i];
-                }
-            }
-
-            $response = Http::withToken($accessToken)->get('https://bepm.hanatekindo.com/api/v1/activity-docs/search?project_id='.$project_id.'&limit=1000');
-        }
+        $response = Http::withToken($accessToken)->get('https://bepm.hanatekindo.com/api/v1/dashboard');
 
         if ($response->failed()) {
             return redirect()->back()->withErrors('Failed to fetch activity doc list.');
         }
 
-        $activityDoc = $response->json()['data'];
-        $tags = $responseTags->json()['data'];
+        $data = $response->json()['data'];
 
-        return view('pages.home', compact('activityDoc', 'tags'))->with(['title' => 'Home']);
+        return view('pages.home', compact('data'))->with(['title' => 'Home']);
     }
 }

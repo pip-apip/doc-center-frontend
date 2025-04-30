@@ -4,7 +4,24 @@
 
 @section('content')
 
-
+@php
+    $lastRoute = session()->get('lastRoute');
+    $lastRoute = $lastRoute ? explode(',', $lastRoute) : [];
+@endphp
+<div class="page-heading">
+    <div class="page-content">
+        <section id="basic-horizontal-layouts">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-sm-8 col-8">
+                            <h1>{{ $status === 'create' ? 'Tambah' : 'Edit' }} <span class="d-none d-md-inline-block">Aktivitas</span></h1>
+                        </div>
+                        <div class="col-sm-4 col-4 d-flex justify-content-end align-items-center">
+                            <a href="{{ isset($lastRoute[0], $lastRoute[1]) ? route($lastRoute[0], $lastRoute[1]) : '#' }}" class="btn btn-secondary btn-sm">
+                                <i class="fa-solid fa-angle-left"></i> <span class="d-none d-md-inline-block">Kembali</span>
+                            </a>
+                        </div>
                     </div>
                 </div>
                 <div class="card-body">
@@ -48,10 +65,12 @@
                                 <label>Kategory Aktivitas <code>*</code></label>
                             </div>
                             <fieldset class="form-group col-md-10">
-                                <select class="form-select" id="documentCat1">
+                                <select class="form-select" id="activity_category_id">
                                     <option value="#">Pilih Kategori</option>
                                     @foreach ($categoryAct as $cat)
-                                    <option value="{{ $cat['id'] }}">{{ $cat['name'] }}</option>
+                                    <option value="{{ $cat['id'] }}" {{ old('activity_category_id', $activity ? $activity['activity_category_id'] : '') == $cat['id'] ? 'selected' : '' }}>
+                                        {{ $cat['name'] }}
+                                    </option>
                                     @endforeach
                                 </select>
                             </fieldset>

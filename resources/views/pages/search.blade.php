@@ -39,7 +39,7 @@
     @media (max-width: 768px) {
         .row {
             display: flex;
-            /* flex-direction: column-reverse; */
+            flex-direction: column-reverse;
         }
 
         #tagSearch {
@@ -47,7 +47,6 @@
         }
     }
 </style>
-
 
 
 <div class="page-heading">
@@ -69,15 +68,16 @@
                             </div>
                             <div class="tag-container" id="tags"></div>
                         </div>
-
                     </div>
 
                     <div class="card">
-                        
+
                     </div>
                 </div>
 
-
+                <div class="col-sm-12" id="content">
+                    <div id="content_card"></div>
+                </div>
             </div>
         </section>
     </div>

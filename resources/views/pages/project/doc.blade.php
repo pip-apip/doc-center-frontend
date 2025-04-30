@@ -178,11 +178,11 @@
     }
 </style>
 
-<div class="page-title">
+{{-- <div class="page-title">
     <div class="row">
         <div class="col-12 col-md-6 order-md-1 order-last">
-            {{-- <h3>Activity Detail</h3> --}}
-            {{-- <p class="text-subtitle text-muted">For user to check they list</p> --}}
+            <h3>Activity Detail</h3>
+            <p class="text-subtitle text-muted">For user to check they list</p>
         </div>
         <div class="col-12 col-md-6 order-md-2 order-first">
             <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
@@ -194,7 +194,7 @@
             </nav>
         </div>
     </div>
-</div>
+</div> --}}
 
 @php
     $project = $data['project'];
@@ -277,8 +277,10 @@
                 <div class="col-sm-10 col-10">
                     <h1>Form Dokumen <span class="d-none d-md-inline-block">Administrasi Projek</span></h1>
                 </div>
-                <div class="col-sm-2 col-2 d-flex justify-content-end align-items-center">
-                    <a href="{{ route('project.index') }}"><i class="fa-solid fa-angle-left"></i> <span class="d-none d-md-inline-block">Kembali</span></a>
+                <div class="col-sm-4 col-4 d-flex justify-content-end align-items-center">
+                    <a href="{{ route('project.index') }}" class="btn btn-secondary btn-sm">
+                        <i class="fa-solid fa-angle-left"></i> <span class="d-none d-md-inline-block">Kembali</span>
+                    </a>
                 </div>
             </div>
         </div>

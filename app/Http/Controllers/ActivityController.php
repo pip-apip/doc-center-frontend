@@ -190,6 +190,12 @@ class ActivityController extends Controller
             'end_date' => date('Y-m-d', strtotime($request->input('end_date'))),
         ]);
 
+        $responseIsProcess = Http::withToken($accessToken)->patch('https://bepm.hanatekindo.com/api/v1/user/'. session('user.id'), [
+            'is_process' => TRUE,
+        ]);
+
+        dd($response->json(), $responseIsProcess->json());
+
         if ($response->json()['status'] == 400) {
             $errors = $response->json()['errors'];
 
@@ -312,7 +318,16 @@ class ActivityController extends Controller
 
         $countDocAct = count($responseDocAct->json()['data']);
 
-        return view('pages.activity.form', compact('activity', 'projects', 'countDocAct'))->with(['title' => 'activity', 'status' => 'edit']);
+        $activityCategory = Http::withToken($accessToken)->get('https://bepm.hanatekindo.com/api/v1/activity-categories/search?limit=1000');
+
+
+        if ($activityCategory->failed()) {
+            return redirect()->back()->withErrors('Failed to fetch doc category of activity data.');
+        }
+
+        $categoryAct = $activityCategory->json()['data'];
+
+        return view('pages.activity.form', compact('activity', 'projects', 'countDocAct', 'categoryAct'))->with(['title' => 'activity', 'status' => 'edit']);
     }
 
     /**

@@ -4,12 +4,12 @@
 
 @section('content')
 
-<div class="page-title">
+{{-- <div class="page-title">
     <div class="row">
         <div class="col-12 col-md-6 order-md-1 order-last">
-            {{-- <a href="{{ route('project.index') }}"><i class="fa-solid fa-arrow-left"></i></a> --}}
-            {{-- <h3>Activity Detail</h3> --}}
-            {{-- <p class="text-subtitle text-muted">For user to check they list</p> --}}
+            <a href="{{ route('project.index') }}"><i class="fa-solid fa-arrow-left"></i></a>
+            <h3>Activity Detail</h3>
+            <p class="text-subtitle text-muted">For user to check they list</p>
         </div>
         <div class="col-12 col-md-6 order-md-2 order-first">
             <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
@@ -21,7 +21,7 @@
             </nav>
         </div>
     </div>
-</div>
+</div> --}}
 
 <section class="section">
     <div class="card">
@@ -30,8 +30,10 @@
                 <div class="col-sm-8 col-10">
                     <h1>Detail Proyek</h1>
                 </div>
-                <div class="col-sm-4 col-1 d-flex justify-content-end align-items-center">
-                    <a href="{{ route('project.index') }}"><i class="fa-solid fa-angle-left"></i> <span class="d-none d-md-inline-block">Kembali</span></a>
+                <div class="col-sm-4 col-4 d-flex justify-content-end align-items-center">
+                    <a href="{{ route('project.index') }}" class="btn btn-secondary btn-sm">
+                        <i class="fa-solid fa-angle-left"></i> <span class="d-none d-md-inline-block">Kembali</span>
+                    </a>
                 </div>
             </div>
         </div>

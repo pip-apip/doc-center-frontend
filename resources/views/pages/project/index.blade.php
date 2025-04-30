@@ -45,11 +45,11 @@
     }
 </style>
 
-<div class="page-title">
+{{-- <div class="page-title">
     <div class="row">
         <div class="col-12 col-md-6 order-md-1 order-last">
-            {{-- <h3>Data Project</h3> --}}
-            {{-- <p class="text-subtitle text-muted">For user to check they list</p> --}}
+            <h3>Data Project</h3>
+            <p class="text-subtitle text-muted">For user to check they list</p>
         </div>
         <div class="col-12 col-md-6 order-md-2 order-first">
             <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
@@ -60,16 +60,16 @@
             </nav>
         </div>
     </div>
-</div>
+</div> --}}
 <section class="section">
     <div class="card">
         <div class="card-header">
             <div class="row">
                 <div class="col-sm-8 col-8">
-                    <h1>Proyek</h1>
+                    <h1>Daftar Proyek</h1>
                 </div>
                 <div class="col-sm-4 col-4 d-flex justify-content-end align-items-center">
-                    <a href="{{ route('project.create') }}" class="btn btn-success">
+                    <a href="{{ route('project.create') }}" class="btn btn-success btn-sm">
                         <i class="fa-solid fa-plus"></i> <span class="d-none d-md-inline-block">Tambah</span>
                     </a>
                 </div>

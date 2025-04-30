@@ -246,19 +246,19 @@
 @endif
 
 <script>
-    const apiBaseUrl = "https://bepm.hanatekindo.com/api/v1/companies";
-    let access_token = @json(session('user.access_token'));
-    document.addEventListener("DOMContentLoaded", function () {
-        setInterval(() => {
-            fetch('/refresh-csrf')
-                .then(res => res.json())
-                .then(data => {
-                    document.querySelector('meta[name="csrf-token"]').setAttribute('content', data.token);
-                    console.log('result', data.token);
-                    console.log('csrf-token', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
-                });
-        }, 60000);
-    });
+    // const apiBaseUrl = "https://bepm.hanatekindo.com/api/v1/companies";
+    // let access_token = @json(session('user.access_token'));
+    // document.addEventListener("DOMContentLoaded", function () {
+    //     setInterval(() => {
+    //         fetch('/refresh-csrf')
+    //             .then(res => res.json())
+    //             .then(data => {
+    //                 document.querySelector('meta[name="csrf-token"]').setAttribute('content', data.token);
+    //                 console.log('result', data.token);
+    //                 console.log('csrf-token', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
+    //             });
+    //     }, 60000);
+    // });
 
 
 

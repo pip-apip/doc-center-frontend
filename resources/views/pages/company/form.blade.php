@@ -208,8 +208,7 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        const table = document.querySelector('#table');
-        new simpleDatatables.DataTable(table);
+        
     });
 
     function confirmDelete(url) {
