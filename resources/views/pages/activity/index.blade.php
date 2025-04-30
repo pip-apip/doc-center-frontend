@@ -115,7 +115,6 @@
                                 </tr>
                             @endif
                             </tbody>
-                            @if ($results->hasPages())
                             <tfoot>
                                 <tr>
                                     @if (is_object($results) && method_exists($results, 'onEachSide'))
@@ -123,7 +122,6 @@
                                     @endif
                                 </tr>
                             </tfoot>
-                            @endif
                         </table>
                     </div>
                 </div>

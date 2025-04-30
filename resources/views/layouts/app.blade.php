@@ -82,8 +82,10 @@
                                     <li>
                                         <h6 class="dropdown-header">Hi, {{ session('user.username') }}!</h6>
                                     </li>
-                                    <li><a class="dropdown-item" href="#"><i class="icon-mid bi bi-person me-2"></i> My
+                                    <li><a class="dropdown-item" href="{{ route('profile.form') }}"><i class="icon-mid bi bi-person me-2"></i>
                                             Profil</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('profile.password') }}"><i class="icon-mid bi bi-lock me-2"></i>
+                                            Kata Sandi</a></li>
                                     <li><a class="dropdown-item" href="#"><i class="icon-mid bi bi-wallet me-2"></i>
                                             Aktivitas</a></li>
                                     <li>
@@ -113,7 +115,7 @@
                             <p>2025 &copy; HMA</p>
                         </div>
                         <div class="float-end">
-                            <p><a href="https://hanatekiondo.com">PT. Hanatekindo Mulia Abadi                                </a></p>
+                            <p><a href="https://hanatekiondo.com">PT. Hanatekindo Mulia Abadi</a></p>
                         </div>
                     </div>
                 </footer>
