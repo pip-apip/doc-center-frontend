@@ -103,15 +103,15 @@ class ActivityController extends Controller
         session(['end_date' => $end_date]);
         session(['q' => $q]);
 
-        // return redirect()->route('activity.index', ['search' => $q, 'start_date' => $start_date, 'end_date' => $end_date]);
-        return response()->json([
-            'status' => 'success',
-            'redirect_url' => route('activity.index', [
-                'search' => $q,
-                'start_date' => $start_date,
-                'end_date' => $end_date
-            ])
-        ]);
+        return redirect()->route('activity.index', ['search' => $q, 'start_date' => $start_date, 'end_date' => $end_date]);
+        // return response()->json([
+        //     'status' => 'success',
+        //     'redirect_url' => route('activity.index', [
+        //         'search' => $q,
+        //         'start_date' => $start_date,
+        //         'end_date' => $end_date
+        //     ])
+        // ]);
     }
 
     public function reset()
@@ -190,11 +190,11 @@ class ActivityController extends Controller
             'end_date' => date('Y-m-d', strtotime($request->input('end_date'))),
         ]);
 
-        $responseIsProcess = Http::withToken($accessToken)->patch('https://bepm.hanatekindo.com/api/v1/user/'. session('user.id'), [
+        $responseIsProcess = Http::withToken($accessToken)->patch('https://bepm.hanatekindo.com/api/v1/users/'. session('user.id'), [
             'is_process' => TRUE,
         ]);
 
-        dd($response->json(), $responseIsProcess->json());
+        // dd($response->json(), $responseIsProcess->json());
 
         if ($response->json()['status'] == 400) {
             $errors = $response->json()['errors'];
@@ -267,6 +267,10 @@ class ActivityController extends Controller
         }
 
         $response = $http->post('https://bepm.hanatekindo.com/api/v1/activity-docs');
+
+        $responseIsProcess = Http::withToken($accessToken)->patch('https://bepm.hanatekindo.com/api/v1/users/'. session('user.id'), [
+            'is_process' => FALSE,
+        ]);
 
         $responseData = $response->json();
 
