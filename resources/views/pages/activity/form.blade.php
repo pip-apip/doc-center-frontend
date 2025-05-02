@@ -65,7 +65,7 @@
                                 <label>Kategory Aktivitas <code>*</code></label>
                             </div>
                             <fieldset class="form-group col-md-10">
-                                <select class="form-select" id="activity_category_id">
+                                <select class="form-select" id="activity_category_id" name="activity_category_id">
                                     <option value="#">Pilih Kategori</option>
                                     @foreach ($categoryAct as $cat)
                                     <option value="{{ $cat['id'] }}" {{ old('activity_category_id', $activity ? $activity['activity_category_id'] : '') == $cat['id'] ? 'selected' : '' }}>
