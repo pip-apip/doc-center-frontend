@@ -125,10 +125,12 @@ class ActivityController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request)
     {
         $accessToken = session('user.access_token');
         $response;
+
+        $projectId = $request->query('project_id');
 
         if(session('user.role') == 'SUPERADMIN'){
             $response = Http::withToken($accessToken)->get('https://bepm.hanatekindo.com/api/v1/projects/search', [
@@ -154,17 +156,25 @@ class ActivityController extends Controller
 
         $activityCategory = Http::withToken($accessToken)->get('https://bepm.hanatekindo.com/api/v1/activity-categories/search?limit=1000');
 
-
-        if ($activityCategory->failed()) {
+        if ($activityCategory->json()['status'] !== 200) {
             return redirect()->back()->withErrors('Failed to fetch doc category of activity data.');
+        }
+
+        $responseUser = Http::withToken($accessToken)->get('https://bepm.hanatekindo.com/api/v1/users?limit=1000');
+
+        if ($responseUser->json()['status'] !== 200) {
+            return redirect()->back()->withErrors('Failed to fetch user data.');
         }
 
         $projects = $response->json()['data'];
         $activity = [];
         $countDocAct = 0;
         $categoryAct = $activityCategory->json()['data'];
+        $users = $responseUser->json()['data'];
 
-        return view('pages.activity.form', compact('activity', 'projects', 'countDocAct', 'categoryAct'))->with(['title' => 'activity', 'status' => 'create', 'lastUrl' => session('lastUrl')]);
+        // dd($projectId);
+
+        return view('pages.activity.form', compact('activity', 'projects', 'countDocAct', 'categoryAct', 'users', 'projectId'))->with(['title' => 'activity', 'status' => 'create', 'lastUrl' => session('lastUrl')]);
     }
 
     /**
@@ -179,6 +189,7 @@ class ActivityController extends Controller
         //     'start_date' => 'required|date',
         //     'end_date' => 'required|date',
         // ]);
+        dd($request->all());
 
         $accessToken = session('user.access_token');
 
@@ -187,7 +198,8 @@ class ActivityController extends Controller
             'title' => $request->input('title'),
             'activity_category_id' => $request->input('activity_category_id'),
             'start_date' => date('Y-m-d', strtotime($request->input('start_date'))),
-            'end_date' => date('Y-m-d', strtotime($request->input('end_date'))),
+            // 'end_date' => date('Y-m-d', strtotime($request->input('end_date'))),
+            'end_date' => date('Y-m-d', strtotime($request->input('start_date'))),
         ]);
 
         $responseIsProcess = Http::withToken($accessToken)->patch('https://bepm.hanatekindo.com/api/v1/users/'. session('user.id'), [

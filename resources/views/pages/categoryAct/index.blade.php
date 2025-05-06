@@ -38,7 +38,19 @@
                         <form method="POST" action="{{ route('categoryAct.filter') }}" id="search-form" class="mb-4 col-12 col-md-11">
                             @csrf
                             <div class="row">
-                                <div class="col-lg-11 col-8">
+                                <div class="col-lg-4 col-12">
+                                    <fieldset class="form-group">
+                                        <select class="form-select" id="project_id" name="project_id" onchange="document.getElementById('search-form').submit();">
+                                            <option value="">Filter By Project</option>
+                                            @foreach ($projects as $project)
+                                            <option value="{{ $project['id'] }}" {{ old('project_id', session('project_id') ?? '') == $project['id'] ? 'selected' : '' }}>
+                                                {{ $project['name'] }}
+                                            </option>
+                                            @endforeach
+                                        </select>
+                                    </fieldset>
+                                </div>
+                                <div class="col-lg-7 col-8">
                                     <div class="input-group mb-3">
                                         <input type="text" class="form-control" name="q" value="{{ session()->has('q') ? session('q') : '' }}" placeholder="Ketik Nama Kategori Aktivitas & Klik Enter ..." onkeydown="if (event.key === 'Enter') { event.preventDefault(); this.form.submit(); }">
                                         <button class="btn btn-primary" type="submit" id="button-addon1"><i class="fa-solid fa-magnifying-glass"></i></button>
@@ -55,6 +67,7 @@
                             <tr>
                             {{-- <th width="100">No</th> --}}
                                 <th>Nama Kategori</th>
+                                <th>Proyek</th>
                                 <th width="10%" class="text-center">Aksi</th>
                             </tr>
                         </thead>
@@ -68,6 +81,7 @@
                                 <tr>
                                 {{-- <td>{{ $no++ }}</td> --}}
                                     <td>{{ $category['name'] }}</td>
+                                    <td>{{ $category['project_name'] }}</td>
                                     <td class="text-center">
                                         <a href="{{ route('categoryAct.edit', $category['id']) }}" class="btn btn-sm btn-warning rounded-pill">
                                             <i class="fa-solid fa-pen"></i>

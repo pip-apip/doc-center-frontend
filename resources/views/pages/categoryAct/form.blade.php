@@ -38,11 +38,28 @@
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
+
+                            <div class="col-md-2">
+                                <label>Nama Project <code>*</code></label>
+                            </div>
+                            <fieldset class="form-group col-md-10">
+                                <select class="form-select @error('project_id') is-invalid @enderror" id="project_id" name="project_id">
+                                    <option value="">Pilih Project</option>
+                                    <option value="0">Lain - lain</option>
+                                    @foreach ($projects as $project)
+                                    <option value="{{ $project['id'] }}" {{ old('project_id', $category['project_id'] ?? '') == $project['id'] ? 'selected' : '' }}>
+                                        {{ $project['name'] }}
+                                    </option>
+                                    @endforeach
+                                </select>
+                                @error('project_id')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </fieldset>
+
                             <div class="col-sm-12 offset-sm-2 d-flex justify-content-start mt-3">
-                                <button type="submit"
-                                    class="btn btn-primary me-1 mb-1">Simpan</button>
-                                <button type="reset"
-                                    class="btn btn-light-secondary me-1 mb-1">Batal</button>
+                                <button type="submit" class="btn btn-primary me-1 mb-1">Simpan</button>
+                                <button type="reset" class="btn btn-light-secondary me-1 mb-1">Batal</button>
                             </div>
                         </div>
                     </form>

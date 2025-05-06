@@ -38,14 +38,16 @@
             </div>
         </div>
         <div class="card-body">
-            <label><b> Nama Proyek : </b></label>
-            <div class="form-group">
-                <p class="form-control-static" id="project_name_detail">{{ $project['name'] }}</p>
-            </div>
+
 
             <div class="row">
 
                 <div class="col-sm-8">
+                    <label><b> Nama Proyek : </b></label>
+                    <div class="form-group">
+                        <p class="form-control-static" id="project_name_detail">{{ $project['name'] }}</p>
+                    </div>
+
                     <label><b> Nama Perusahaan : </b></label>
                     <div class="form-group">
                         <p class="form-control-static" id="company_name_detail">{{ $project['company_name'] }}</p>
@@ -60,6 +62,11 @@
                 </div>
 
                 <div class="col-sm-4">
+                    <label><b> Proyek Leader : </b></label>
+                    <div class="form-group">
+                        <p class="form-control-static" id="project_leader_name_detail">{{ $project['project_leader_name'] }}</p>
+                    </div>
+
                     <label><b> Nama Direktur : </b></label>
                     <div class="form-group">
                         <p class="form-control-static" id="director_name_detail">{{ $project['company_director_name'] }}</p>
@@ -100,7 +107,7 @@
                     <h1>Aktivitas Proyek</h1>
                 </div>
                 <div class="col-sm-4 col-1 d-flex justify-content-end align-items-center">
-                    <a href="{{ route('activity.create') }}" class="btn btn-success"><i class="fa-solid fa-plus"></i> <span class="d-none d-md-inline-block">Tambah</span></a>
+                    <a href="{{ route('activity.create', ['project_id' => $project['id']]) }}" class="btn btn-success"><i class="fa-solid fa-plus"></i> <span class="d-none d-md-inline-block">Tambah</span></a>
                 </div>
             </div>
         </div>
@@ -121,6 +128,11 @@
                         {{-- @php
                             $no = 1;
                         @endphp --}}
+                        @if($activities = [] || count($activities) == 0)
+                            <tr>
+                                <td colspan="5" class="text-center">Tidak ada data aktivitas</td>
+                            </tr>
+                        @else
                         @foreach ($activities as $act)
                         <tr>
                             {{-- <td>{{ $no++ }}</td> --}}
@@ -147,6 +159,7 @@
                             </td>
                         </tr>
                         @endforeach
+                        @endif
                     </tbody>
                 </table>
             </div>
