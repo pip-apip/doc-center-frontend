@@ -74,7 +74,7 @@
                                     </div>
                                     <div class="col-md-8">
                                         <h6 class="text-muted font-semibold">Total Aktivitas</h6>
-                                        <h6 class="font-extrabold mb-0" id="total-aktivitas"></h6>
+                                        <h6 class="font-extrabold mb-0" id="total-aktivitas" style='font-size:14px;'></h6>
                                     </div>
                                 </div>
                             </div>
@@ -91,7 +91,7 @@
                                     </div>
                                     <div class="col-md-8">
                                         <h6 class="text-muted font-semibold">Aktivitas Perbulan</h6>
-                                        <h6 class="font-extrabold mb-0" id="aktivitas-perbulan"></h6>
+                                        <h6 class="font-extrabold mb-0" id="aktivitas-perbulan" style='font-size:14px;'></h6>
                                     </div>
                                 </div>
                             </div>
@@ -108,7 +108,7 @@
                                     </div>
                                     <div class="col-md-8">
                                         <h6 class="text-muted font-semibold">Sedang Bertugas</h6>
-                                        <h6 class="font-extrabold mb-0" id="sedang-bertugas"></h6>
+                                        <h6 class="font-extrabold mb-0" id="sedang-bertugas" style='font-size:14px;'></h6>
                                     </div>
                                 </div>
                             </div>
@@ -125,7 +125,7 @@
                                     </div>
                                     <div class="col-md-8">
                                         <h6 class="text-muted font-semibold">Menunggu Tugas</h6>
-                                        <h6 class="font-extrabold mb-0" id="menunggu-tugas"></h6>
+                                        <h6 class="font-extrabold mb-0" id="menunggu-tugas" style='font-size:14px;'></h6>
                                     </div>
                                 </div>
                             </div>
@@ -193,7 +193,7 @@
         $('#aktivitas-perbulan').text(monthly.length + " Aktivitas");
         $('#sedang-bertugas').text(total_is_process + " Karyawan");
         $('#menunggu-tugas').text(total_no_process + " Karyawan");
-        $('#total_paket').text(total_paket + " Paket");
+        $('#total_paket').text(total_paket + " Proyek");
         setChart();
         setRecentActivity();
     });

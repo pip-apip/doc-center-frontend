@@ -48,7 +48,6 @@
     }
 </style>
 
-
 <div class="page-heading">
     <div class="page-content">
         <section class="section">
@@ -56,25 +55,20 @@
                 <div class="col-sm-12" id="tagsSearch">
                     <div class="card">
                         <div class="card-header">
-                            <h4 class="card-title">Pencarian Dokumen Aktivitas</h4>
+                            <h1 class="card-title">Pencarian Dokumen Aktivitas</h1>
                         </div>
                         <div class="card-body">
                             <div class="form-group position-relative has-icon-left">
                                 <div class="form-control-icon">
-                                    <i class="bi bi-person"></i>
+                                    <i class="bi bi-search"></i>
                                 </div>
-                                <input type="text" class="form-control form-control-lg" id="tagInput" placeholder="Masukkan kata kunci pencarian ..." />
+                                <input type="text" class="form-control form-control-lg" id="tagInput" placeholder="Masukkan kata kunci pencarian ..." autocomplete="off" />
                                 <ul class="suggestions" id="suggestions"></ul>
                             </div>
                             <div class="tag-container" id="tags"></div>
                         </div>
                     </div>
-
-                    <div class="card">
-
-                    </div>
                 </div>
-
                 <div class="col-sm-12" id="content">
                     <div id="content_card"></div>
                 </div>

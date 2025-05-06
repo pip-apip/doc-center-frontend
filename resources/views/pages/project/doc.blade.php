@@ -178,145 +178,44 @@
     }
 </style>
 
-{{-- <div class="page-title">
-    <div class="row">
-        <div class="col-12 col-md-6 order-md-1 order-last">
-            <h3>Activity Detail</h3>
-            <p class="text-subtitle text-muted">For user to check they list</p>
-        </div>
-        <div class="col-12 col-md-6 order-md-2 order-first">
-            <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Projek</li>
-                    <li class="breadcrumb-item active" aria-current="page">Dokumen</li>
-                </ol>
-            </nav>
-        </div>
-    </div>
-</div> --}}
-
 @php
     $project = $data['project'];
     $doc = $data['docProject'];
     $categoryDoc = $data['categoryDoc'];
 @endphp
 
-{{-- <section class="section">
-    <div class="card">
-        <div class="card-header">
-            <div class="row">
-                <div class="col-sm-8">
-                    <h1>Detail Project</h1>
-                </div>
-            </div>
-        </div>
-        <div class="card-body">
-            <label><b> Project Name : </b></label>
-            <div class="form-group">
-                <p class="form-control-static" id="project_name_detail">{{ $project['name'] }}</p>
-            </div>
-
-            <div class="row">
-
-                <div class="col-sm-8">
-                    <label><b> Company Name : </b></label>
-                    <div class="form-group">
-                        <p class="form-control-static" id="company_name_detail">{{ $project['company']['name'] }}</p>
-                    </div>
-
-                    <label><b> Company Address : </b></label>
-                    <div class="form-group">
-                        <div class="form-floating">
-                            <p class="form-control-static" id="company_address_detail">{{ $project['company']['address'] }}</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-sm-4">
-                    <label><b> Director Name : </b></label>
-                    <div class="form-group">
-                        <p class="form-control-static" id="director_name_detail">{{ $project['company']['director_name'] }}</p>
-                    </div>
-
-                    <label><b> Director Phone : </b></label>
-                    <div class="form-group">
-                        <p class="form-control-static" id="director_phone_detail">{{ $project['company']['director_phone'] }}</p>
-                    </div>
-                </div>
-
-                <hr>
-
-                <div class="col-sm-8">
-                    <label><b> Start Project : </b></label>
-                    <div class="form-group">
-                        <p class="form-control-static" id="start_project_detail">
-                            {{ \Carbon\Carbon::parse($project['start_date'])->translatedFormat('d F Y') }}
-                        </p>
-                    </div>
-                </div>
-
-                <div class="col-sm-4">
-                    <label><b> End Project : </b></label>
-                    <div class="form-group">
-                        <p class="form-control-static" id="end_project_detail">
-                            {{ \Carbon\Carbon::parse($project['end_date'])->translatedFormat('d F Y') }}
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-</section> --}}
-
-<section class="section">
-    <div class="card">
-        <div class="card-header">
-            <div class="row">
-                <div class="col-sm-10 col-10">
-                    <h1>Form Dokumen <span class="d-none d-md-inline-block">Administrasi Projek</span></h1>
-                </div>
-                <div class="col-sm-2 col-2 d-flex justify-content-end align-items-center">
-                    <a href="{{ route('project.index') }}" class="btn btn-secondary btn-sm">
-                        <i class="fa-solid fa-angle-left"></i> <span class="d-none d-md-inline-block">Kembali</span>
-                    </a>
-                </div>
-            </div>
-        </div>
-        <div class="card-body">
-            <form action="{{ route('project.store.doc') }}" method="POST" class="form form-vertical" enctype="multipart/form-data">
-                @csrf
-                {{-- <input type="text" style="display: none"> --}}
-                <div class="modal-body">
+<div class="page-heading">
+    <div class="page-content">
+        <section id="basic-horizontal-layouts">
+            <div class="card">
+                <div class="card-header">
                     <div class="row">
-                        <div class="col-sm-8">
-                            <label><b> Nama Projek : </b></label>
-                            <div class="form-group">
-                                <p class="form-control-static" id="project_name_doc">{{ $project['name'] }}</p>
-                            </div>
-                            <input type="text" name="project_id" id="project_id" value="{{ $project['id'] }}" style="display: none">
+                        <div class="col-sm-8 col-8">
+                            <h1>Dokumen Administrasi <span class="d-none d-md-inline-block">Proyek</span></h1>
                         </div>
-                        <div class="col-sm-4">
-                            <label><b> Proyek Leader : </b></label>
-                            <div class="form-group">
-                                <p class="form-control-static" id="project_leader_name_doc">{{ $project['project_leader_name'] }}</p>
-                            </div>
-                            <input type="text" name="project_id" id="project_id" value="{{ $project['id'] }}" style="display: none">
+                        <div class="col-sm-4 col-4 d-flex justify-content-end align-items-center">
+                            <a href="{{ route('project.index') }}" class="btn btn-secondary btn-sm">
+                                <i class="fa-solid fa-angle-left"></i> <span class="d-none d-md-inline-block">Kembali</span>
+                            </a>
                         </div>
-                        <hr>
-                        <div class="col-sm-12">
-                            <label><b> Judul Dokumen : </b></label>
-                            <div class="form-group">
-                                <input type="text" placeholder="Masukkan Judul Dokumen Administrasi" class="form-control @error('title') is-invalid @enderror" name="title" id="title">
-                                @error('title')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form action="{{ route('project.store.doc') }}" method="POST" class="form form-vertical" enctype="multipart/form-data">
+                        @csrf
+                        <input type="hidden" name="project_id" id="project_id" value="{{ $project['id'] }}" />
+                        <div class="row">
+                            <div class="col-md-2">
+                                <label>Nama Proyek</label>
                             </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <label><b> Kategori Dokumen : </b></label>
-                            <fieldset class="form-group">
+                            <div class="form-group col-md-10">
+                                <input type="text" class="form-control @error('name') is-invalid @enderror" id="project_name_doc" value="{{ $project['name'] }}" readonly />
+                            </div>
+
+                            <div class="col-md-2">
+                                <label>Kategori Dokumen <code>*</code></label>
+                            </div>
+                            <fieldset class="form-group col-md-10">
                                 <select class="form-select @error('admin_doc_category_id') is-invalid @enderror" id="category_input" name="admin_doc_category_id">
                                     <option value="">Pilih Kategori</option>
                                     @foreach ($categoryDoc as $cat)
@@ -327,80 +226,92 @@
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </fieldset>
-                        </div>
-                        <div class="col-sm-6">
-                            <div class="file-upload-wrapper" id="dropzone">
-                                <label for="file-upload" class="file-upload-area @error('file') is-invalid @enderror">
-                                    <div class="upload-text" id="upload-text">
-                                        Drag & Drop your files or <span class="browse">Browse</span>
-                                    </div>
-                                    <input type="file" id="file-upload" name="file" />
-                                    <div class="file-preview" id="file-preview" style="display: none;">
-                                        <span class="file-info" id="file-name"></span>
-                                        <span class="remove-file" id="remove-file">&times;</span>
-                                    </div>
-                                </label>
+
+                            <div class="col-md-2">
+                                <label>Judul Dokumen <code>*</code></label>
+                            </div>
+                            <div class="form-group col-md-10">
+                                <input type="text" placeholder="Masukkan Judul Dokumen Administrasi" class="form-control @error('title') is-invalid @enderror" name="title" id="title">
+                                    @error('title')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                             </div>
 
-                            @error('file')
-                            <small class="file-error-text" style="color: #e74c3c;" id="file-error">
-                                {{ $message }}
-                            </small>
-                            @enderror
+                            <div class="col-md-2">
+                                <label>Berkas Dokumen</label>
+                            </div>
+                            <div class="col-md-10">
+                                <div class="file-upload-wrapper" id="dropzone">
+                                    <label for="file-upload" class="file-upload-area @error('file') is-invalid @enderror">
+                                        <div class="upload-text" id="upload-text">
+                                            Drag & Drop your files or <span class="browse">Browse</span>
+                                        </div>
+                                        <input type="file" id="file-upload" name="file" />
+                                        <div class="file-preview" id="file-preview" style="display: none;">
+                                            <span class="file-info" id="file-name"></span>
+                                            <span class="remove-file" id="remove-file">&times;</span>
+                                        </div>
+                                    </label>
+                                </div>
+                                @error('file')
+                                <small class="file-error-text" style="color: #e74c3c;" id="file-error">
+                                    {{ $message }}
+                                </small>
+                                @enderror
+                            </div>
+                            <div class="col-sm-12 offset-sm-2 d-flex justify-content-start mt-3">
+                                <button type="submit"
+                                    class="btn btn-primary me-1 mb-1">Simpan</button>
+                                <button type="reset"
+                                    class="btn btn-light-secondary me-1 mb-1">Batal</button>
+                            </div>
                         </div>
-                        <div class="col-sm-2 d-md-flex justify-content-md-center align-items-md-center mt-2 mt-md-0">
-                            <button class="btn btn-primary" type="submit" style="margin: 0 auto">Simpan</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+
+<div class="page-heading">
+    <div class="page-content">
+        <section class="section">
+            <div class="row">
+                <div class="col-sm-12" id="tagsSearch">
+                    <div class="card">
+                        <div class="card-header">
+                            <h1 class="card-title">Daftar Dokumen</h1>
+                        </div>
+                        <div class="card-body">
+                            <fieldset class="form-group">
+                                <select class="form-select" id="category_show">
+                                    <option value="#">Pilih Kategori Dokumen</option>
+                                    @foreach ($categoryDoc as $cat)
+                                    <option value="{{ $cat['id'] }}">{{ $cat['name'] }}</option>
+                                    @endforeach
+                                </select>
+                            </fieldset>
+                            <hr />
+                            <div class="table-responsive">
+                                <table class="table table-striped" id="table">
+                                    <thead>
+                                        <tr>
+                                            <th width="20%" class="text-center">Kategori</th>
+                                            <th>Judul Dokumen</th>
+                                            <th width="5%" class="text-center">Berkas</th>
+                                            <th width="5%" class="text-center">Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="table_body"></tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </form>
-        </div>
-    </div>
-</section>
-
-<section class="section">
-    <div class="card">
-        <div class="card-header text-right">
-            <h1>Dokumen Administrasi Projek</h1>
-        </div>
-        <div class="card-body">
-            <label><b> Kategori Dokumen : </b></label>
-            <fieldset class="form-group">
-                <select class="form-select" id="category_show">
-                    <option value="#">Pilih Kategori Dokumen</option>
-                    @foreach ($categoryDoc as $cat)
-                    <option value="{{ $cat['id'] }}">{{ $cat['name'] }}</option>
-                    @endforeach
-                </select>
-            </fieldset>
-            <hr>
-            <div class="table-responsive">
-                <table class="table table-striped mb-0" id="table">
-                    <thead>
-                        <tr>
-                            {{-- <th>No</th> --}}
-                            <th>Judul</th>
-                            <th>Kategori</th>
-                            <th>File</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody id="table_body">
-                        {{-- <tr>
-                            <td class="text-bold-500">Michael Right</td>
-                            <td>$15/hr</td>
-                            <td class="text-bold-500">UI/UX</td>
-                            <td>Remote</td>
-                        </tr> --}}
-                    </tbody>
-                </table>
             </div>
-            {{-- <div class="row mb-2" id="data_doc">
-
-            </div> --}}
-        </div>
+        </section>
     </div>
-</section>
+</div>
 
 <div id="modernPDFModal" class="modern-modal" style="display: none">
     <div class="modern-modal-content">
@@ -464,11 +375,10 @@
                 let deleteUrl = `{{ route('project.destroy.doc', ':id') }}`.replace(':id', doc['id']);
                 rows += `
                     <tr>`;
-                        // <td>${index + 1}</td>
                     rows += `<td>${doc['title']}</td>
                         <td>${doc['admin_doc_category_name']}</td>
-                        <td><a onclick="openPDFModal('${url}${ doc.file }')" style="text-decoration: none; color: grey"><i class="fa-solid fa-file-pdf"></i></a></td>
-                        <td>
+                        <td class="text-center"><a onclick="openPDFModal('${url}${ doc.file }')" style="text-decoration: none; color: grey"><i class="fa-solid fa-file-pdf"></i></a></td>
+                        <td class="text-center">
                             <a href="javascript:void(0)" class="btn btn-danger ml-1 btn-sm" onclick="confirmDelete('${deleteUrl}')">
                                 <i class="fa-solid fa-trash"></i>
                             </a>
