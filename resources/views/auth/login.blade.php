@@ -17,32 +17,20 @@
     <div id="auth">
 
         <div class="row h-100">
-            <div class="col-lg-5 col-12">
+            <div class="col-lg-6 col-12">
                 <div id="auth-left">
-                    <div class="auth-logo">
-                        {{-- <div class="row">
-                            <div class="col-md-3 col-3 mt-2">
-                                <a href="index.html"><img src="assets/images/logo/logo.png" alt="Logo"></a>
-                            </div>
-                            <div class="col-md-9 col-9">
-                                <div class="logo-title">PROYEK <br>MANAJEMEN</div>
-                            </div>
-                        </div> --}}
-                    </div>
                     <div class="row mb-0">
-                        <div class="col-md-3 col-3 auth-logo">
-                            <a href="index.html"><img src="assets/images/logo/logo.png" alt="Logo"></a>
+                        <div class="col-md-4 col-4 auth-logo">
+                            <a><img src="assets/images/full-logo.png" alt="Logo"></a>
                         </div>
-                        <div class="col-md-9 col-9">
-                            <h1 class="auth-title mt-1">Login.</h1>
+                        <div class="col-md-8 col-8">
                         </div>
                     </div>
-                    <p class="auth-subtitle mb-5">Log in with your data that you entered during registration.</p>
-
+                    <p class="auth-subtitle mb-5">Aplikasi Internal Manajemen Proyek</p>
                     <form action="{{ route('login.process') }}" method="POST">
                         @csrf
                         <div class="form-group position-relative has-icon-left mb-4">
-                            <input type="text" name="username" class="form-control form-control-xl @error('username') is-invalid @enderror" placeholder="Username">
+                            <input type="text" name="username" class="form-control form-control-xl @error('username') is-invalid @enderror" placeholder="Nama Akun" autocomplete="off" />
                             {{-- <div class="form-control-icon">
                                 <i class="bi bi-person"></i>
                             </div> --}}
@@ -54,7 +42,7 @@
                             @enderror
                         </div>
                         <div class="form-group position-relative has-icon-left mb-4">
-                            <input type="password" name="password" class="form-control form-control-xl @error('password') is-invalid @enderror" placeholder="Password">
+                            <input type="password" name="password" class="form-control form-control-xl @error('password') is-invalid @enderror" placeholder="Kata Sandi" autocomplete="off" />
 
                             {{-- <div class="form-control-icon">
                                 <i class="bi bi-shield-lock"></i>
@@ -72,12 +60,21 @@
                                 Keep me logged in
                             </label>
                         </div> --}}
-                        <button class="btn btn-primary btn-block btn-lg shadow-lg mt-5" type="submit">Log in</button>
+                        <button class="btn btn-primary btn-block btn-lg shadow-lg mt-5" type="submit">Masuk</button>
                     </form>
-
+                    <div class="text-center mt-5 text-lg fs-4">
+                        <div class="footer clearfix mb-0 text-muted">
+                            <div class="float-start">
+                                <p>2025 &copy;</p>
+                            </div>
+                            <div class="float-end">
+                                <p><a href="https://hanatekiondo.com">PT. Hanatekindo Mulia Abadi</a></p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="col-lg-7 d-none d-lg-block">
+            <div class="col-lg-6 d-none d-lg-block">
                 <div id="auth-right" class="d-flex justify-content-center">
                     {{-- <div class="p-lg-5 p-3 text-start">
                         <h1 class="title-right-content">Proyek Manajemen</h1>

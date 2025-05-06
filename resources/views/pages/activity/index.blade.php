@@ -26,7 +26,6 @@
                     @endphp
                     <div class="row">
                         <form method="GET" action="{{ route('activity.index') }}" id="pagination-form" class="col-12 col-lg-1">
-                            <label>Data: </label>
                             <fieldset class="form-group" style="width: 70px">
                                 <select class="form-select" id="entire-page" name="per_page" onchange="document.getElementById('pagination-form').submit();">
                                     <option value="5" {{ $page == 5 ? 'selected' : '' }}>5</option>
@@ -39,27 +38,24 @@
                         <form method="POST" action="{{ route('activity.filter') }}" id="search-form" class="mb-4 col-12 col-lg-11">
                             @csrf
                             <div class="row">
-                                <div class="col-md-3 col-6">
-                                    <label>Tgl Mulai: </label>
+                                <div class="col-lg-3 col-3">
                                     <div class="form-group">
                                         <input type="date" class="form-control" name="start_date" value="{{ session()->has('start_date') ? session('start_date') : '' }}">
                                     </div>
                                 </div>
-                                <div class="col-md-3 col-6">
-                                    <label>Tgl Selesai: </label>
+                                <div class="col-lg-3 col-3">
                                     <div class="form-group">
                                         <input type="date" class="form-control" name="end_date" value="{{ session()->has('end_date') ? session('end_date') : '' }}">
                                     </div>
                                 </div>
-                                <div class="col-lg-5 col-9">
-                                    <label>Filter Nama Aktivitas: </label>
-                                    <div class="input-group mb-3">
+                                <div class="col-lg-5 col-5">
+                                    <div class="input-group">
                                         <input type="text" class="form-control" name="q" value="{{ session()->has('q') ? session('q') : '' }}" placeholder="Ketik Nama Aktivitias & Klik Enter ..." onkeydown="if (event.key === 'Enter') { event.preventDefault(); this.form.submit(); }">
                                         <button class="btn btn-primary" type="submit" id="button-addon1"><i class="fa-solid fa-magnifying-glass"></i></button>
                                     </div>
                                 </div>
-                                <div class="col-lg-1 col-2">
-                                    <a href="{{ route('activity.reset') }}" class="btn btn-secondary mt-4" type="button" id="button-addon2">Reset</a>
+                                <div class="col-lg-1 col-1">
+                                    <a href="{{ route('activity.reset') }}" class="btn btn-secondary" type="button" id="button-addon2">Reset</a>
                                 </div>
                             </div>
                         </form>
@@ -68,23 +64,18 @@
                         <table class="table table-striped" id="table">
                             <thead>
                                 <tr>
-                                {{-- <th>No</th> --}}
-                                    <th width="12%" class="text-center">Tanggal Mulai</th>
-                                    <th width="12%" class="text-center">Tanggal Selesai</th>
+                                    <th width="12%" class="text-center">Mulai</th>
+                                    <th width="12%" class="text-center">Selesai</th>
                                     <th width="20%" class="text-center">Projek</th>
                                     <th class="text-center">Judul Aktivitas</th>
                                     <th width="10%" class="text-center">Status</th>
                                     <th width="15%" class="text-center">Aksi</th>
                                 </tr>
                             </thead>
-                            {{-- @php
-                                $no = is_object($results) && method_exists($results, 'firstItem') ? $results->firstItem() : 0;
-                            @endphp --}}
                             <tbody id="table_body">
                             @if(is_object($results) && method_exists($results, 'firstItem'))
                                 @foreach ($results as $act)
                                 <tr>
-                                {{-- <td>{{ $no++ }}</td> --}}
                                     <td class="text-center">{{ \Carbon\Carbon::parse($act['start_date'])->translatedFormat('d F Y') }}</td>
                                     <td class="text-center">{{ \Carbon\Carbon::parse($act['end_date'])->translatedFormat('d F Y') }}</td>
                                     <td>{{ $act['project_name'] }}</td>

@@ -45,150 +45,131 @@
     }
 </style>
 
-{{-- <div class="page-title">
-    <div class="row">
-        <div class="col-12 col-md-6 order-md-1 order-last">
-            <h3>Data Project</h3>
-            <p class="text-subtitle text-muted">For user to check they list</p>
-        </div>
-        <div class="col-12 col-md-6 order-md-2 order-first">
-            <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Proyek</li>
-                </ol>
-            </nav>
-        </div>
-    </div>
-</div> --}}
-<section class="section">
-    <div class="card">
-        <div class="card-header">
-            <div class="row">
-                <div class="col-sm-8 col-8">
-                    <h1>Daftar Proyek</h1>
-                </div>
-                <div class="col-sm-4 col-4 d-flex justify-content-end align-items-center">
-                    <a href="{{ route('project.create') }}" class="btn btn-success btn-sm">
-                        <i class="fa-solid fa-plus"></i> <span class="d-none d-md-inline-block">Tambah</span>
-                    </a>
-                </div>
-            </div>
-        </div>
-        <div class="card-body">
-            @php
-                $page = $results && $results->perPage() ? $results->perPage() : null;
-            @endphp
-            <div class="row">
-                <form method="GET" action="{{ route('project.index') }}" id="pagination-form" class="col-12 col-lg-1">
-                    <label>Data: </label>
-                    <fieldset class="form-group" style="width: 70px">
-                        <select class="form-select" id="entire-page" name="per_page" onchange="document.getElementById('pagination-form').submit();">
-                            <option value="5" {{ $page == 5 ? 'selected' : '' }}>5</option>
-                            <option value="10" {{ $page == 10 ? 'selected' : '' }}>10</option>
-                            <option value="15" {{ $page == 15 ? 'selected' : '' }}>15</option>
-                            <option value="20" {{ $page == 20 ? 'selected' : '' }}>20</option>
-                        </select>
-                    </fieldset>
-                </form>
-                <form method="POST" action="{{ route('project.filter') }}" id="search-form" class="mb-4 col-12 col-lg-11">
-                    @csrf
+<div class="page-heading">
+    <div class="page-content">
+        <section class="section">
+            <div class="card">
+                <div class="card-header">
                     <div class="row">
-                        <div class="col-md-3 col-6">
-                            <label>Tgl Mulai: </label>
-                            <div class="form-group">
-                                <input type="date" class="form-control" name="start_date" value="{{ session()->has('start_date') ? session('start_date') : '' }}">
-                            </div>
+                        <div class="col-sm-8 col-8">
+                            <h1>Daftar Proyek</h1>
                         </div>
-                        <div class="col-md-3 col-6">
-                            <label>Tgl Selesai: </label>
-                            <div class="form-group">
-                                <input type="date" class="form-control" name="end_date" value="{{ session()->has('end_date') ? session('end_date') : '' }}">
-                            </div>
-                        </div>
-                        <div class="col-lg-5 col-9">
-                            <label>Filter Nama Aktivitas: </label>
-                            <div class="input-group mb-3">
-                                <input type="text" class="form-control" name="q" value="{{ session()->has('q') ? session('q') : '' }}" placeholder="Ketik Nama Project & Klik Enter ..." onkeydown="if (event.key === 'Enter') { event.preventDefault(); this.form.submit(); }">
-                                <button class="btn btn-primary" type="submit" id="button-addon1"><i class="fa-solid fa-magnifying-glass"></i></button>
-                            </div>
-                        </div>
-                        <div class="col-lg-1 col-2">
-                            <a href="{{ route('project.reset') }}" class="btn btn-secondary mt-4" type="button" id="button-addon2">Reset</a>
+                        <div class="col-sm-4 col-4 d-flex justify-content-end align-items-center">
+                            <a href="{{ route('project.create') }}" class="btn btn-success btn-sm">
+                                <i class="fa-solid fa-plus"></i> <span class="d-none d-md-inline-block">Tambah</span>
+                            </a>
                         </div>
                     </div>
-                </form>
-            </div>
-            <div class="table-responsive">
-                <table class="table table-striped" id="table">
-                    <thead>
-                        <tr>
-                            {{-- <th>No</th> --}}
-                            <th width="150">Tanggal Mulai</th>
-                            <th width="170">Tanggal Selesai</th>
-                            <th>Nama Proyek</th>
-                            <th>Nama Perusahaan</th>
-                            <th>Status</th>
-                            <th width="170">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody id="table-body">
-                        {{-- @php
-                            $no = is_object($results) && method_exists($results, 'firstItem') ? $results->firstItem() : 0;
-                        @endphp --}}
-                    @if(is_object($results) && method_exists($results, 'firstItem'))
-                        @foreach ($results as $project)
-                            <tr>
-                                {{-- <td>{{ $no++ }}</td> --}}
-                                <td width="150">{{ \Carbon\Carbon::parse($project['start_date'])->translatedFormat('d F Y') }}</td>
-                                <td width="170">{{ \Carbon\Carbon::parse($project['end_date'])->translatedFormat('d F Y') }}</td>
-                                <td>{{ $project['name'] }}</td>
-                                <td>{{ $project['company_name'] }}</td>
-                                <td>
-                                    {{-- <span class="badge {{ $project['status'] ? 'bg-success' : 'bg-danger'}}"> --}}
-                                    <span class="badge bg-danger">
-                                        {{-- {{$project['status']}} --}}
-                                        Undefined
-                                    </span>
-                                </td>
-                                <td width="170">
-                                    {{-- <a href="{{ route('project.edit', $project['id']) }}" class="btn btn-sm btn-warning rounded-pill" title="Edit">
-                                        <i class="fa-solid fa-pen"></i>
-                                    </a> --}}
-                                    <a onclick="showDetail({{ json_encode($project) }})" class="btn btn-sm btn-warning rounded-pill" data-bs-toggle="modal" data-bs-target="#detailModal">
-                                        <i class="fa-solid fa-ellipsis-vertical"></i>
-                                    </a>
-                                    <a href="{{ route('project.doc', $project['id']) }}" class="btn btn-sm btn-info rounded-pill">
-                                        <i class="fa-solid fa-file"></i>
-                                    </a>
-                                    <a href="{{ route('project.activity', $project['id']) }}" class="btn btn-sm btn-secondary rounded-pill">
-                                        <i class="fa-solid fa-chart-line"></i>
-                                    </a>
-                                    <button type="button" onclick="teamModal({{ $project['id'] }}, `{{ $project['name'] }}`, ``)" class="btn btn-sm btn-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#teamModal">
-                                        <i class="fa-solid fa-user-group"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                        @endforeach
-                    @else
-                            <tr>
-                                <td colspan="7" class="text-center">Tidak ada data</td>
-                            </tr>
-                    @endif
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                            {{-- <td colspan="2">Total <b>{{ $results->firstItem() }}</b> Data</td> --}}
-                            @if (is_object($results) && method_exists($results, 'onEachSide'))
-                                <td colspan="7"><span style="margin-top: 15px;">{{ $results->appends(request()->query())->links() }}</span></td>
+                </div>
+                <div class="card-body">
+                    @php
+                        $page = $results && $results->perPage() ? $results->perPage() : null;
+                    @endphp
+                    <div class="row">
+                        <form method="GET" action="{{ route('project.index') }}" id="pagination-form" class="col-12 col-lg-1">
+                            <fieldset class="form-group" style="width: 70px">
+                                <select class="form-select" id="entire-page" name="per_page" onchange="document.getElementById('pagination-form').submit();">
+                                    <option value="5" {{ $page == 5 ? 'selected' : '' }}>5</option>
+                                    <option value="10" {{ $page == 10 ? 'selected' : '' }}>10</option>
+                                    <option value="15" {{ $page == 15 ? 'selected' : '' }}>15</option>
+                                    <option value="20" {{ $page == 20 ? 'selected' : '' }}>20</option>
+                                </select>
+                            </fieldset>
+                        </form>
+                        <form method="POST" action="{{ route('project.filter') }}" id="search-form" class="mb-4 col-12 col-lg-11">
+                            @csrf
+                            <div class="row">
+                                <div class="col-lg-3 col-3">
+                                    <div class="form-group">
+                                        <input type="date" class="form-control" name="start_date" value="{{ session()->has('start_date') ? session('start_date') : '' }}">
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-3">
+                                    <div class="form-group">
+                                        <input type="date" class="form-control" name="end_date" value="{{ session()->has('end_date') ? session('end_date') : '' }}">
+                                    </div>
+                                </div>
+                                <div class="col-lg-5 col-5">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" name="q" value="{{ session()->has('q') ? session('q') : '' }}" placeholder="Ketik Nama Aktivitias & Klik Enter ..." onkeydown="if (event.key === 'Enter') { event.preventDefault(); this.form.submit(); }">
+                                        <button class="btn btn-primary" type="submit" id="button-addon1"><i class="fa-solid fa-magnifying-glass"></i></button>
+                                    </div>
+                                </div>
+                                <div class="col-lg-1 col-1">
+                                    <a href="{{ route('project.reset') }}" class="btn btn-secondary" type="button" id="button-addon2">Reset</a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-striped" id="table">
+                            <thead>
+                                <tr>
+                                    <th width="13%" class="text-center">Mulai</th>
+                                    <th width="13%" class="text-center">Selesai</th>
+                                    <th>Nama Proyek</th>
+                                    <th width="20%">Nama Perusahaan</th>
+                                    <th width="10%" class="text-center">Status</th>
+                                    <th width="18%" class="text-center">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-body">
+                                {{-- @php
+                                    $no = is_object($results) && method_exists($results, 'firstItem') ? $results->firstItem() : 0;
+                                @endphp --}}
+                            @if(is_object($results) && method_exists($results, 'firstItem'))
+                                @foreach ($results as $project)
+                                    <tr>
+                                        <td class="text-center">{{ \Carbon\Carbon::parse($project['start_date'])->translatedFormat('d F Y') }}</td>
+                                        <td class="text-center">{{ \Carbon\Carbon::parse($project['end_date'])->translatedFormat('d F Y') }}</td>
+                                        <td>{{ $project['name'] }}</td>
+                                        <td>{{ $project['company_name'] }}</td>
+                                        <td class="text-center">
+                                            {{-- <span class="badge {{ $project['status'] ? 'bg-success' : 'bg-danger'}}"> --}}
+                                            <span class="badge bg-danger">
+                                                {{-- {{$project['status']}} --}}
+                                                Undefined
+                                            </span>
+                                        </td>
+                                        <td class="text-center">
+                                            {{-- <a href="{{ route('project.edit', $project['id']) }}" class="btn btn-sm btn-warning rounded-pill" title="Edit">
+                                                <i class="fa-solid fa-pen"></i>
+                                            </a> --}}
+                                            <a onclick="showDetail({{ json_encode($project) }})" class="btn btn-sm btn-warning rounded-pill" data-bs-toggle="modal" data-bs-target="#detailModal">
+                                                <i class="fa-solid fa-ellipsis-vertical"></i>
+                                            </a>
+                                            <a href="{{ route('project.doc', $project['id']) }}" class="btn btn-sm btn-info rounded-pill">
+                                                <i class="fa-solid fa-file"></i>
+                                            </a>
+                                            <a href="{{ route('project.activity', $project['id']) }}" class="btn btn-sm btn-secondary rounded-pill">
+                                                <i class="fa-solid fa-chart-line"></i>
+                                            </a>
+                                            <button type="button" onclick="teamModal({{ $project['id'] }}, `{{ $project['name'] }}`, ``)" class="btn btn-sm btn-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#teamModal">
+                                                <i class="fa-solid fa-user-group"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            @else
+                                    <tr>
+                                        <td colspan="6" class="text-center">Tidak ada data</td>
+                                    </tr>
                             @endif
-                        </tr>
-                    </tfoot>
-                </table>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    @if (is_object($results) && method_exists($results, 'onEachSide'))
+                                        <td colspan="6"><span style="margin-top: 15px;">{{ $results->appends(request()->query())->links() }}</span></td>
+                                    @endif
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
             </div>
-        </div>
+        </section>
     </div>
-</section>
+</div>
 
 <div class="modal fade text-left w-100" id="detailModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel33"
     aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
@@ -634,7 +615,7 @@
         $("#director_phone_detail").text(data.company_director_phone);
         $("#start_project_detail").text(dateFormat(data.start_date));
         $("#end_project_detail").text(dateFormat(data.end_date));
-        $("#editButton").attr("href", "{{ route('project.edit', '') }}/"+data.id);
+        $("#editButton").attr("href", `project/form-edit/${data.id}`);
     }
 
     function dateFormat(dateString) {
