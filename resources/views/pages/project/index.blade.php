@@ -272,7 +272,7 @@
                     <input type="text" id="project_id" hidden>
                     <label><b> Nama Proyek : </b></label>
                     <div class="form-group">
-                        <p class="form-control-static" id="project_name_team">Alpha Build</p>
+                        <p class="form-control-static" id="project_name_team"></p>
                     </div>
                     <hr>
                     <div class="row" id="teamInput" style="display: none">
