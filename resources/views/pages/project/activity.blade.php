@@ -38,16 +38,14 @@
             </div>
         </div>
         <div class="card-body">
-
+            <label><b> Nama Proyek : </b></label>
+            <div class="form-group">
+                <p class="form-control-static" id="project_name_detail">{{ $project['name'] }}</p>
+            </div>
 
             <div class="row">
 
                 <div class="col-sm-8">
-                    <label><b> Nama Proyek : </b></label>
-                    <div class="form-group">
-                        <p class="form-control-static" id="project_name_detail">{{ $project['name'] }}</p>
-                    </div>
-
                     <label><b> Nama Perusahaan : </b></label>
                     <div class="form-group">
                         <p class="form-control-static" id="company_name_detail">{{ $project['company_name'] }}</p>
@@ -62,11 +60,6 @@
                 </div>
 
                 <div class="col-sm-4">
-                    <label><b> Proyek Leader : </b></label>
-                    <div class="form-group">
-                        <p class="form-control-static" id="project_leader_name_detail">{{ $project['project_leader_name'] }}</p>
-                    </div>
-
                     <label><b> Nama Direktur : </b></label>
                     <div class="form-group">
                         <p class="form-control-static" id="director_name_detail">{{ $project['company_director_name'] }}</p>
@@ -128,11 +121,7 @@
                         {{-- @php
                             $no = 1;
                         @endphp --}}
-                        @if($activities = [] || count($activities) == 0)
-                            <tr>
-                                <td colspan="5" class="text-center">Tidak ada data aktivitas</td>
-                            </tr>
-                        @else
+                    @if ($activities !== [])
                         @foreach ($activities as $act)
                         <tr>
                             {{-- <td>{{ $no++ }}</td> --}}
@@ -159,7 +148,11 @@
                             </td>
                         </tr>
                         @endforeach
-                        @endif
+                    @else
+                        <tr>
+                            <td colspan="5" class="text-center">Tidak ada aktivitas</td>
+                        </tr>
+                    @endif
                     </tbody>
                 </table>
             </div>
