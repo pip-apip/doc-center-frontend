@@ -121,8 +121,6 @@ class CategoryActController extends Controller
             'project_id' => $request->input('project_id'),
         ]);
 
-        // dd($response->json()['status']);
-
         if ($response->json()['status'] !== 200) {
             $errors = $response->json()['errors'];
 
