@@ -221,6 +221,7 @@ class ProjectController extends Controller
             'end_date' => date('Y-m-d', strtotime($request->input('end_date'))),
             'start_date' => $request->input('start_date'),
             'end_date' => $request->input('end_date'),
+            'project_leader_id' => $request->input('project_leader_id'),
         ]);
 
         // dd($response->json());
