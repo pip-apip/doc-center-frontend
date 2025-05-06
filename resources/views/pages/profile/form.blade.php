@@ -16,7 +16,7 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('profile.update', $user['id']) }}" method="POST" class="form form-vertical" enctype="multipart/form-data">
+                   <form action="{{ route('profile.update', $user['id']) }}" method="POST" class="form form-vertical" enctype="multipart/form-data">
                     @csrf
                         <div class="row">
                             <div class="col-md-2">

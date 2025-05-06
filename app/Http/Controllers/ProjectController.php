@@ -47,7 +47,7 @@ class ProjectController extends Controller
         ];
 
         if (!empty($q)) {
-            $params[session('user.role') == 'SUPERADMIN' ? 'name' : 'name'] = $q;
+            $params[session('user.role') == 'SUPERADMIN' ? 'title' : 'name'] = $q;
         }
 
         if (!empty($start_date)) {
@@ -186,17 +186,9 @@ class ProjectController extends Controller
             return redirect()->back()->withErrors('Failed to fetch project data.');
         }
 
-        $responseUsers = Http::withToken($accessToken)->get('https://bepm.hanatekindo.com/api/v1/users/?limit=1000');
-
-        if ($responseUsers->failed()) {
-            return redirect()->back()->withErrors('Failed to fetch users data.');
-        }
-
         $companies = $response->json()['data'];
-        $users = $responseUsers->json()['data'];
         $project = [];
-
-        return view('pages.project.form', compact('project', 'companies', 'users'))->with(['title' => 'project', 'status' => 'create']);
+        return view('pages.project.form', compact('project', 'companies'))->with(['title' => 'project', 'status' => 'create']);
     }
 
     /**
@@ -216,16 +208,18 @@ class ProjectController extends Controller
         $response = Http::withToken($accessToken)->post('https://bepm.hanatekindo.com/api/v1/projects', [
             'name' => $request->input('name'),
             'company_id' => $request->input('company_id'),
-            'project_leader_id' => $request->input('project_leader_id'),
             'start_date' => date('Y-m-d', strtotime($request->input('start_date'))),
             'end_date' => date('Y-m-d', strtotime($request->input('end_date'))),
+            'start_date' => $request->input('start_date'),
+            'end_date' => $request->input('end_date'),
         ]);
 
-        dd($response->json());
+        // dd($response->json());
 
-        if ($response->json()['status'] !== 200) {
+        if ($response->json()['status'] == 400) {
             $errors = $response->json()['errors'];
 
+            // Return the errors to the view, keeping old input data
             return redirect()->back()->withInput()->withErrors($errors);
         }
 
@@ -372,17 +366,9 @@ class ProjectController extends Controller
 
         $companies = $responseCompanies->json()['data'];
 
-        $responseUsers = Http::withToken($accessToken)->get('https://bepm.hanatekindo.com/api/v1/users/?limit=1000');
-
-        if ($responseUsers->failed()) {
-            return redirect()->back()->withErrors('Failed to fetch users data.');
-        }
-
-        $users = $responseUsers->json()['data'];
-
         // dd($project);
 
-        return view('pages.project.form', compact('project', 'companies', 'users'))->with(['title' => 'project', 'status' => 'edit']);
+        return view('pages.project.form', compact('project', 'companies'))->with(['title' => 'project', 'status' => 'edit']);
     }
 
     /**
