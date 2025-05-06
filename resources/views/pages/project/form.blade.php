@@ -32,7 +32,7 @@
                                 <label>Nama Proyek <code>*</code></label>
                             </div>
                             <div class="form-group col-md-10">
-                                <input type="text" placeholder="Masukkan Nama Projek" class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name', $project ? $project['name'] : '') }}">
+                                <input type="text" placeholder="Masukkan Nama Proyek" class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name', $project ? $project['name'] : '') }}">
                                 @error('name')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -73,7 +73,7 @@
                             </fieldset>
 
                             <div class="col-md-2">
-                                <label>Tanggal Mulai <code>*</code></label>
+                                <label>Kontrak Mulai <code>*</code></label>
                             </div>
                             <div class="form-group col-md-10">
                                 <input type="date" class="form-control @error('start_date') is-invalid @enderror" name="start_date" value="{{ old('start_date', $project ? $project['start_date'] : '') }}">
@@ -83,7 +83,7 @@
                             </div>
 
                             <div class="col-md-2">
-                                <label>Tanggal Selesai <code>*</code></label>
+                                <label>Kontrak Selesai <code>*</code></label>
                             </div>
                             <div class="form-group col-md-10">
                                 <input type="date" class="form-control @error('end_date') is-invalid @enderror" name="end_date" value="{{ old('end_date', $project ? $project['end_date'] : '') }}">

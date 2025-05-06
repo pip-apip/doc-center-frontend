@@ -182,18 +182,20 @@ class ProjectController extends Controller
         $accessToken = session('user.access_token');
         $responseCompanies = Http::withToken($accessToken)->get('https://bepm.hanatekindo.com/api/v1/companies');
 
-        if ($responseCompanies->failed()) {
-            return redirect()->back()->withErrors('Failed to fetch project data.');
-        }
-
-        $responseUser = Http::withToken($accessToken)->get('https://bepm.hanatekindo.com/api/v1/users');
-
-        if ($responseUser->failed()) {
+        if ($responseCompanies->json()['status'] !== 200) {
             return redirect()->back()->withErrors('Failed to fetch project data.');
         }
 
         $companies = $responseCompanies->json()['data'];
-        $users = $responseUser->json()['data'];
+
+        $responseUser = Http::withToken($accessToken)->get('https://bepm.hanatekindo.com/api/v1/users');
+
+        if ($responseUser->json()['status'] !== 200) {
+            return redirect()->back()->withErrors('Failed to fetch user data.');
+        }
+
+        $users = $responseUser->json()['data'] ?? null;
+        
         $project = [];
         return view('pages.project.form', compact('project', 'companies', 'users'))->with(['title' => 'project', 'status' => 'create']);
     }
@@ -243,7 +245,7 @@ class ProjectController extends Controller
             'file' => 'required|file|mimes:pdf|max:2048',
             'project_id' => 'required',
             'admin_doc_category_id' => 'required',
-    ]);
+        ]);
 
         $accessToken = session('user.access_token');
         $file = $request->file('file');
@@ -371,11 +373,18 @@ class ProjectController extends Controller
             return redirect()->back()->withErrors('Failed to fetch project data.');
         }
 
+        $responseUser = Http::withToken($accessToken)->get('https://bepm.hanatekindo.com/api/v1/users');
+
+        if ($responseUser->json()['status'] !== 200) {
+            return redirect()->back()->withErrors('Failed to fetch user data.');
+        }
+
+        $users = $responseUser->json()['data'] ?? null;
         $companies = $responseCompanies->json()['data'];
 
         // dd($project);
 
-        return view('pages.project.form', compact('project', 'companies'))->with(['title' => 'project', 'status' => 'edit']);
+        return view('pages.project.form', compact('project', 'companies', 'users'))->with(['title' => 'project', 'status' => 'edit']);
     }
 
     /**
@@ -426,7 +435,7 @@ class ProjectController extends Controller
             return redirect()->back()->withInput()->withErrors($errors);
         }
 
-        return redirect()->back()->with('success', 'Data Projek Berhasil di Hapus');
+        return redirect()->back()->with('success', 'Data Proyek Berhasil di Hapus');
     }
 
     /**
@@ -444,6 +453,6 @@ class ProjectController extends Controller
             return redirect()->back()->withInput()->withErrors($errors);
         }
 
-        return redirect()->back()->with('success', 'Dokumen Projek Berhasil di Hapus.');
+        return redirect()->back()->with('success', 'Dokumen Proyek Berhasil di Hapus.');
     }
 }

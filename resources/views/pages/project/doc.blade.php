@@ -228,10 +228,10 @@
                             </fieldset>
 
                             <div class="col-md-2">
-                                <label>Judul Dokumen <code>*</code></label>
+                                <label>Catatan <code>*</code></label>
                             </div>
                             <div class="form-group col-md-10">
-                                <input type="text" placeholder="Masukkan Judul Dokumen Administrasi" class="form-control @error('title') is-invalid @enderror" name="title" id="title">
+                                <input type="text" placeholder="Masukkan Catatan Dokumen Administrasi" class="form-control @error('title') is-invalid @enderror" name="title" id="title">
                                     @error('title')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -296,8 +296,8 @@
                                 <table class="table table-striped" id="table">
                                     <thead>
                                         <tr>
-                                            <th width="20%" class="text-center">Kategori</th>
-                                            <th>Judul Dokumen</th>
+                                            <th width="25%">Kategori</th>
+                                            <th>Catatan</th>
                                             <th width="5%" class="text-center">Berkas</th>
                                             <th width="5%" class="text-center">Aksi</th>
                                         </tr>
@@ -375,8 +375,8 @@
                 let deleteUrl = `{{ route('project.destroy.doc', ':id') }}`.replace(':id', doc['id']);
                 rows += `
                     <tr>`;
-                    rows += `<td>${doc['title']}</td>
-                        <td>${doc['admin_doc_category_name']}</td>
+                    rows += `<td>${doc['admin_doc_category_name']}</td>
+                        <td>${doc['title']}</td>
                         <td class="text-center"><a onclick="openPDFModal('${url}${ doc.file }')" style="text-decoration: none; color: grey"><i class="fa-solid fa-file-pdf"></i></a></td>
                         <td class="text-center">
                             <a href="javascript:void(0)" class="btn btn-danger ml-1 btn-sm" onclick="confirmDelete('${deleteUrl}')">
