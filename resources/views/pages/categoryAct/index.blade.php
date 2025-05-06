@@ -66,9 +66,8 @@
                     <table class="table table-striped" id="table">
                         <thead>
                             <tr>
-                            {{-- <th width="100">No</th> --}}
+                                <th width="70%">Proyek</th>
                                 <th>Nama Kategori</th>
-                                <th>Proyek</th>
                                 <th width="10%" class="text-center">Aksi</th>
                             </tr>
                         </thead>
@@ -80,7 +79,6 @@
                         @if(is_object($results) && method_exists($results, 'firstItem'))
                             @foreach ($results as $category)
                                 <tr>
-                                {{-- <td>{{ $no++ }}</td> --}}
                                     <td>{{ $category['name'] }}</td>
                                     <td>{{ $category['project_name'] ? $category['project_name'] : 'Lain - lain' }}</td>
                                     <td class="text-center">
