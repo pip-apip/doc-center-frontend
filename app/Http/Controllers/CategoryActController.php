@@ -9,19 +9,21 @@ use Session;
 
 class CategoryActController extends Controller
 {
+    private $accessToken;
+
+    public function __construct()
+    {
+        $this->accessToken = session('user.access_token');
+    }
     /**
      * Display a listing of the resource.
      */
-    public function __construct()
-    {
-        //
-
-    }
 
     public function index()
     {
-        if (!request()->has('search')) {
+        if (!request()->has('search') && !request()->has('project_id')) {
             session()->forget('q');
+            session()->forget('project_id');
         }
 
         $q = Session::get('q');
@@ -30,18 +32,24 @@ class CategoryActController extends Controller
         $page = request('page', 1);
         $perPage = request()->has('per_page') ? request('per_page') : 10;
 
-        $accessToken = session('user.access_token');
-
-        $response = Http::withToken($accessToken)->get('https://bepm.hanatekindo.com/api/v1/activity-categories/search', [
+        $response = Http::withToken($this->accessToken)->get('https://bepm.hanatekindo.com/api/v1/activity-categories/search', [
             'name' => $q,
             'limit' => $perPage,
-            'page' => $page
+            'page' => $page,
+            'project_id' => session('project_id'),
         ]);
 
         if ($response->failed()) {
             return redirect()->back()->withErrors('Failed to fetch categories.');
         }
 
+        $responseProject = Http::withToken($this->accessToken)->get('https://bepm.hanatekindo.com/api/v1/projects');
+
+        if ($responseProject->json()['status'] !== 200) {
+            return redirect()->back()->withErrors('Failed to fetch projects.');
+        }
+
+        $projects = $responseProject->json()['data'] ?? null;
         $total = $response->json()['pagination']['total'] ?? null;
         $categories = is_array($response->json()['data'] ?? null) ? $response->json()['data'] : null;
         $results = null;
@@ -57,20 +65,24 @@ class CategoryActController extends Controller
             );
         }
 
-        return view('pages.categoryAct.index', compact('results'))->with(['title' => 'categoryAct']);
+        return view('pages.categoryAct.index', compact('results', 'projects'))->with(['title' => 'categoryAct']);
     }
 
     public function filter(Request $request)
     {
         $q = $request->input('q', '');
+        $project_id = $request->input('project_id', '');
         session(['q' => $q]);
+        session(['project_id' => $project_id]);
+        // dd($request->all());
 
-        return redirect()->route('categoryAct.index', ['search' => $q]);
+        return redirect()->route('categoryAct.index', ['search' => $q, 'project_id' => $project_id]);
     }
 
     public function reset()
     {
         session()->forget('q');
+        session()->forget('project_id');
         return redirect()->route('categoryAct.index');
     }
 
@@ -79,8 +91,16 @@ class CategoryActController extends Controller
      */
     public function create()
     {
+        $response = Http::withToken($this->accessToken)->get('https://bepm.hanatekindo.com/api/v1/projects');
+
+        if ($response->json()['status'] !== 200) {
+            return redirect()->back()->withErrors('Failed to fetch projects.');
+        }
+
+        $projects = $response->json()['data'] ?? null;
+
         $category = [];
-        return view('pages.categoryAct.form', compact('category'))->with(['title' => 'categoryAct', 'status' => 'create']);
+        return view('pages.categoryAct.form', compact('category', 'projects'))->with(['title' => 'categoryAct', 'status' => 'create']);
     }
 
     /**
@@ -88,14 +108,13 @@ class CategoryActController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-        ]);
+        // $request->validate([
+        //     'name' => 'required|string|max:255',
+        // ]);
 
-        $accessToken = session('user.access_token');
-
-        $response = Http::withToken($accessToken)->post('https://bepm.hanatekindo.com/api/v1/activity-categories', [
+        $response = Http::withToken($this->accessToken)->post('https://bepm.hanatekindo.com/api/v1/activity-categories', [
             'name' => $request->input('name'),
+            'project_id' => $request->input('project_id'),
         ]);
 
         // dd($response->json()['status']);
@@ -122,17 +141,22 @@ class CategoryActController extends Controller
      */
     public function edit(string $id)
     {
-        $accessToken = session('user.access_token');
+        $responseCategory = Http::withToken($this->accessToken)->get("https://bepm.hanatekindo.com/api/v1/activity-categories/{$id}");
 
-        $response = Http::withToken($accessToken)->get("https://bepm.hanatekindo.com/api/v1/activity-categories/{$id}");
-
-        if ($response->failed()) {
+        if ($responseCategory->failed()) {
             return redirect()->back()->withErrors('Failed to fetch category details.');
         }
 
-        $category = $response->json()['data'][0];
+        $responseProject = Http::withToken($this->accessToken)->get('https://bepm.hanatekindo.com/api/v1/projects');
 
-        return view('pages.categoryAct.form', compact('category'))->with(['title' => 'categoryAct', 'status' => 'edit']);
+        if ($responseProject->json()['status'] !== 200) {
+            return redirect()->back()->withErrors('Failed to fetch projects.');
+        }
+
+        $projects = $responseProject->json()['data'] ?? null;
+        $category = $responseCategory->json()['data'][0];
+
+        return view('pages.categoryAct.form', compact('category', 'projects'))->with(['title' => 'categoryAct', 'status' => 'edit']);
     }
 
     /**
@@ -140,14 +164,13 @@ class CategoryActController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-        ]);
+        // $request->validate([
+        //     'name' => 'required|string|max:255',
+        // ]);
 
-        $accessToken = session('user.access_token');
-
-        $response = Http::withToken($accessToken)->patch('https://bepm.hanatekindo.com/api/v1/activity-categories/'.$id, [
+        $response = Http::withToken($this->accessToken)->patch('https://bepm.hanatekindo.com/api/v1/activity-categories/'.$id, [
             'name' => $request->input('name'),
+            'project_id' => $request->input('project_id'),
         ]);
 
         if ($response->json()['status'] == 400) {
@@ -164,9 +187,8 @@ class CategoryActController extends Controller
      */
     public function destroy(string $id)
     {
-        $accessToken = session('user.access_token');
 
-        $response = Http::withToken($accessToken)->delete('https://bepm.hanatekindo.com/api/v1/activity-categories/'.$id);
+        $response = Http::withToken($this->accessToken)->delete('https://bepm.hanatekindo.com/api/v1/activity-categories/'.$id);
 
         if ($response->failed()) {
             return redirect()->back()->withErrors('Failed to delete category.');

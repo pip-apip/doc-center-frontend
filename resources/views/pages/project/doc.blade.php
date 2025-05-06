@@ -277,7 +277,7 @@
                 <div class="col-sm-10 col-10">
                     <h1>Form Dokumen <span class="d-none d-md-inline-block">Administrasi Projek</span></h1>
                 </div>
-                <div class="col-sm-4 col-4 d-flex justify-content-end align-items-center">
+                <div class="col-sm-2 col-2 d-flex justify-content-end align-items-center">
                     <a href="{{ route('project.index') }}" class="btn btn-secondary btn-sm">
                         <i class="fa-solid fa-angle-left"></i> <span class="d-none d-md-inline-block">Kembali</span>
                     </a>
@@ -289,20 +289,31 @@
                 @csrf
                 {{-- <input type="text" style="display: none"> --}}
                 <div class="modal-body">
-                    <label><b> Nama Projek : </b></label>
-                    <div class="form-group">
-                        <p class="form-control-static" id="project_name_doc">{{ $project['name'] }}</p>
-                    </div>
-                    <input type="text" name="project_id" id="project_id" value="{{ $project['id'] }}" style="display: none">
-                    <hr>
-                    <label><b> Judul Dokumen : </b></label>
-                    <div class="form-group">
-                        <input type="text" placeholder="Masukkan Judul Dokumen Administrasi" class="form-control @error('title') is-invalid @enderror" name="title" id="title">
-                        @error('title')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
                     <div class="row">
+                        <div class="col-sm-8">
+                            <label><b> Nama Projek : </b></label>
+                            <div class="form-group">
+                                <p class="form-control-static" id="project_name_doc">{{ $project['name'] }}</p>
+                            </div>
+                            <input type="text" name="project_id" id="project_id" value="{{ $project['id'] }}" style="display: none">
+                        </div>
+                        <div class="col-sm-4">
+                            <label><b> Proyek Leader : </b></label>
+                            <div class="form-group">
+                                <p class="form-control-static" id="project_leader_name_doc">{{ $project['project_leader_name'] }}</p>
+                            </div>
+                            <input type="text" name="project_id" id="project_id" value="{{ $project['id'] }}" style="display: none">
+                        </div>
+                        <hr>
+                        <div class="col-sm-12">
+                            <label><b> Judul Dokumen : </b></label>
+                            <div class="form-group">
+                                <input type="text" placeholder="Masukkan Judul Dokumen Administrasi" class="form-control @error('title') is-invalid @enderror" name="title" id="title">
+                                @error('title')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
                         <div class="col-sm-4">
                             <label><b> Kategori Dokumen : </b></label>
                             <fieldset class="form-group">
@@ -338,7 +349,7 @@
                             @enderror
                         </div>
                         <div class="col-sm-2 d-md-flex justify-content-md-center align-items-md-center mt-2 mt-md-0">
-                            <button class="btn btn-success" type="submit" style="margin: 0 auto"><i class="fa-solid fa-plus"></i> Simpan</button>
+                            <button class="btn btn-primary" type="submit" style="margin: 0 auto">Simpan</button>
                         </div>
                     </div>
                 </div>

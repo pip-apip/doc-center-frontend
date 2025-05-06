@@ -389,7 +389,7 @@
                     <label><b>Dokumentasi :</b></label>
                     <table style="width: 100%">
                         <tr>
-                            @if($data['docActivity'] !== [])
+                        @if($data['docActivity'] !== [])
                             @php $url = "https://bepm.hanatekindo.com"; $i = 0; @endphp
                             @foreach ($data['docActivity'][0]['files'] as $doc)
                                 <td style="text-align: center;">
@@ -398,15 +398,15 @@
                                     </a>
                                 </td>
                             @endforeach
-                            @endif
+                        @endif
                         </tr>
                         <tr>
-                            @if($data['docActivity'] !== [])
+                        @if($data['docActivity'] !== [])
                             @foreach ($data['docActivity'][0]['files'] as $doc)
                                 <td style="text-align: center;">Dokumentasi {{ $i+1 }}</td>
                                 @php $i++; @endphp
                             @endforeach
-                            @endif
+                        @endif
                         </tr>
                     </table>
                 </div>

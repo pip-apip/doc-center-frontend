@@ -34,10 +34,10 @@
     }
 
     .scrollable-table thead th input[type="text"]:focus {
-    outline: none;
-    box-shadow: none;
-    border-color: #ccc; /* atau warna border default yang kamu mau */
-}
+        outline: none;
+        box-shadow: none;
+        border-color: #ccc; /* atau warna border default yang kamu mau */
+    }
 
     .modal-body {
         max-height: 70vh;
@@ -164,7 +164,7 @@
                                     <a href="{{ route('project.activity', $project['id']) }}" class="btn btn-sm btn-secondary rounded-pill">
                                         <i class="fa-solid fa-chart-line"></i>
                                     </a>
-                                    <button type="button" onclick="teamModal({{ $project['id'] }}, `{{ $project['name'] }}`, ``)" class="btn btn-sm btn-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#teamModal">
+                                    <button type="button" onclick="teamModal({{ $project['id'] }}, `{{ $project['name'] }}`, {{ $project['project_leader_id'] }}, `{{ $project['project_leader_name'] }}`, ``)" class="btn btn-sm btn-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#teamModal">
                                         <i class="fa-solid fa-user-group"></i>
                                     </button>
                                 </td>
@@ -203,14 +203,14 @@
             <div>
                 <div class="modal-body">
 
-                    <label><b> Nama Proyek : </b></label>
-                    <div class="form-group">
-                        <p class="form-control-static" id="project_name_detail">Alpha Build</p>
-                    </div>
 
                     <div class="row">
-
                         <div class="col-sm-8">
+                            <label><b> Nama Proyek : </b></label>
+                            <div class="form-group">
+                                <p class="form-control-static" id="project_name_detail">Alpha Build</p>
+                            </div>
+
                             <label><b> Nama Perusahaan : </b></label>
                             <div class="form-group">
                                 <p class="form-control-static" id="company_name_detail">Alpha Build</p>
@@ -228,6 +228,11 @@
                         </div>
 
                         <div class="col-sm-4">
+                            <label><b> Proyek Leader : </b></label>
+                            <div class="form-group">
+                                <p class="form-control-static" id="project_leader_name">Alpha Build</p>
+                            </div>
+
                             <label><b> Nama Direktur : </b></label>
                             <div class="form-group">
                                 <p class="form-control-static" id="director_name_detail">John Doe</p>
@@ -282,10 +287,21 @@
             </div>
             <div>
                 <div class="modal-body">
-                    <input type="text" id="project_id" hidden>
-                    <label><b> Nama Proyek : </b></label>
-                    <div class="form-group">
-                        <p class="form-control-static" id="project_name_team">Alpha Build</p>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <input type="text" id="project_id" hidden>
+                            <label><b> Nama Proyek : </b></label>
+                            <div class="form-group">
+                                <p class="form-control-static" id="project_name_team">Alpha Build</p>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <input type="text" id="project_id" hidden>
+                            <label><b> Proyek Leader : </b></label>
+                            <div class="form-group">
+                                <p class="form-control-static" id="project_leader_name_team">Alpha Build</p>
+                            </div>
+                        </div>
                     </div>
                     <hr>
                     <div class="row" id="teamInput" style="display: none">
@@ -418,18 +434,21 @@
         teamFix = [];
     });
 
-    function teamModal(id, projectName, status){
+    function teamModal(id, projectName, projectLeaderId, projectLeader, status){
+        console.log(id, projectName, projectLeaderId, projectLeader, status);
         teams.forEach(function (team) {
             if (team.project_id == id) {
                 teamFix = team.members;
             }
         });
+        userSet = userSet.filter(user => user.id !== projectLeaderId)
         userSet = userSet.filter(user => !teamFix.some(team => team.id === user.id));
         renderTeam();
         renderUser();
 
         $('#project_id').val(id);
         $('#project_name_team').text(projectName);
+        $('#project_leader_name_team').text(projectLeader);
         if(teamFix.length > 0 && status === ""){
             $('#footerTeam').empty();
             let html = '';
@@ -458,7 +477,7 @@
             `;
         }else{
             footerHtml += `
-                <button type="button" class="btn btn-warning ml-1" onclick="teamModal(${id}, '${projectName}', 'input')" id="submitButton">
+                <button type="button" class="btn btn-warning ml-1" onclick="teamModal(${id}, '${projectName}', '${projectLeaderId}', '${projectLeader}', 'input')" id="submitButton">
                         <i class="fa-solid fa-pen"></i>
                         Edit
                 </button>
@@ -628,6 +647,7 @@
     function showDetail(data){
         console.log(data);
         $("#project_name_detail").text(data.name);
+        $("#project_leader_name").text(data.project_leader_name);
         $("#company_name_detail").text(data.company_name);
         $("#company_address_detail").text(data.company_address);
         $("#director_name_detail").text(data.company_director_name);

@@ -70,6 +70,23 @@
                     </fieldset>
 
                     <div class="col-md-2">
+                        <label>Nama Project Leader <code>*</code></label>
+                    </div>
+                    <fieldset class="form-group col-md-10">
+                        <select class="form-select @error('project_leader_id') is-invalid @enderror" id="project_leader_id" name="project_leader_id">
+                            <option value="">Pilih Pengguna</option>
+                            @foreach ($users as $user)
+                            <option value="{{ $user['id'] }}" {{ old('project_leader_id', $project['project_leader_id'] ?? '') == $user['id'] ? 'selected' : '' }}>
+                                {{ $user['name'] }}
+                            </option>
+                            @endforeach
+                        </select>
+                        @error('project_leader_id')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </fieldset>
+
+                    <div class="col-md-2">
                         <label>Tanggal Mulai <code>*</code></label>
                     </div>
                     <div class="form-group col-md-10">
