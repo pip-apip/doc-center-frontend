@@ -50,6 +50,7 @@
                                         {{ $project['name'] }}
                                     </option>
                                     @endforeach
+                                    <option value="0">Lain - lain</option>
                                 </select>
                             </fieldset>
 
