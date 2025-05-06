@@ -219,13 +219,11 @@ class ProjectController extends Controller
             'project_leader_id' => $request->input('project_leader_id'),
             'start_date' => date('Y-m-d', strtotime($request->input('start_date'))),
             'end_date' => date('Y-m-d', strtotime($request->input('end_date'))),
-            'start_date' => $request->input('start_date'),
-            'end_date' => $request->input('end_date'),
         ]);
 
-        // dd($response->json());
+        dd($response->json());
 
-        if ($response->json()['status'] == 400) {
+        if ($response->json()['status'] !== 200) {
             $errors = $response->json()['errors'];
 
             return redirect()->back()->withInput()->withErrors($errors);
