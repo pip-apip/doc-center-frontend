@@ -100,7 +100,7 @@
                     <h1>Aktivitas Proyek</h1>
                 </div>
                 <div class="col-sm-4 col-1 d-flex justify-content-end align-items-center">
-                    <a href="{{ route('activity.create') }}" class="btn btn-success"><i class="fa-solid fa-plus"></i> <span class="d-none d-md-inline-block">Tambah</span></a>
+                    <a href="{{ route('activity.create', ['project_id' => $project['id']]) }}" class="btn btn-success"><i class="fa-solid fa-plus"></i> <span class="d-none d-md-inline-block">Tambah</span></a>
                 </div>
             </div>
         </div>
@@ -121,6 +121,7 @@
                         {{-- @php
                             $no = 1;
                         @endphp --}}
+                    @if ($activities !== [])
                         @foreach ($activities as $act)
                         <tr>
                             {{-- <td>{{ $no++ }}</td> --}}
@@ -147,6 +148,11 @@
                             </td>
                         </tr>
                         @endforeach
+                    @else
+                        <tr>
+                            <td colspan="5" class="text-center">Tidak ada aktivitas</td>
+                        </tr>
+                    @endif
                     </tbody>
                 </table>
             </div>

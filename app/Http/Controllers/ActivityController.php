@@ -125,8 +125,10 @@ class ActivityController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request)
     {
+        $projectId = $request->query('project_id');
+
         $accessToken = session('user.access_token');
         $response;
 
@@ -164,7 +166,7 @@ class ActivityController extends Controller
         $countDocAct = 0;
         $categoryAct = $activityCategory->json()['data'];
 
-        return view('pages.activity.form', compact('activity', 'projects', 'countDocAct', 'categoryAct'))->with(['title' => 'activity', 'status' => 'create', 'lastUrl' => session('lastUrl')]);
+        return view('pages.activity.form', compact('activity', 'projects', 'countDocAct', 'categoryAct', 'projectId'))->with(['title' => 'activity', 'status' => 'create', 'lastUrl' => session('lastUrl')]);
     }
 
     /**

@@ -36,13 +36,15 @@
                                 <label>Nama Projek <code>*</code></label>
                             </div>
                             <fieldset class="form-group col-md-10">
-                                {!! $countDocAct > 0 ? '<input type="text" name="project_id" id="project_id" value="' . $activity['project_id'] . '" hidden>' : '' !!}
+                                @if ($countDocAct > 0)
+                                    <input type="text" name="project_id" id="project_id" value="{{ $activity['project_id'] }}" hidden>
+                                @endif
                                 <select class="form-select @error('project_id') is-invalid @enderror" id="project_id" name="project_id" {{ $countDocAct > 0 ? 'disabled' : '' }}>
                                     <option value="">Pilih Projek</option>
                                     @foreach ($projects as $project)
-                                    <option value="{{ $project['id'] }}" {{ old('project_id', $activity ? $activity['project_id'] : '') == $project['id'] ? 'selected' : '' }}>
-                                        {{ $project['name'] }}
-                                    </option>
+                                        <option value="{{ $project['id'] }}" {{ old('project_id', $projectId ?? $activity['project_id'] ?? '') == $project['id'] ? 'selected' : '' }}>
+                                            {{ $project['name'] }}
+                                        </option>
                                     @endforeach
                                 </select>
                                 @error('project_id')
