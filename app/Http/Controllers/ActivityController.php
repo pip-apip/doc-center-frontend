@@ -156,17 +156,23 @@ class ActivityController extends Controller
 
         $activityCategory = Http::withToken($accessToken)->get('https://bepm.hanatekindo.com/api/v1/activity-categories/search?limit=1000');
 
-
         if ($activityCategory->failed()) {
             return redirect()->back()->withErrors('Failed to fetch doc category of activity data.');
         }
 
+        $responseUser = Http::withToken($accessToken)->get('https://bepm.hanatekindo.com/api/v1/users/search?limit=1000');
+
+        if ($responseUser->failed()) {
+            return redirect()->back()->withErrors('Failed to fetch activity data.');
+        }
+
+        $users = $responseUser->json()['data'];
         $projects = $response->json()['data'];
         $activity = [];
         $countDocAct = 0;
         $categoryAct = $activityCategory->json()['data'];
 
-        return view('pages.activity.form', compact('activity', 'projects', 'countDocAct', 'categoryAct', 'projectId'))->with(['title' => 'activity', 'status' => 'create', 'lastUrl' => session('lastUrl')]);
+        return view('pages.activity.form', compact('activity', 'projects', 'countDocAct', 'categoryAct', 'users', 'projectId'))->with(['title' => 'activity', 'status' => 'create', 'lastUrl' => session('lastUrl')]);
     }
 
     /**
@@ -189,16 +195,16 @@ class ActivityController extends Controller
             'title' => $request->input('title'),
             'activity_category_id' => $request->input('activity_category_id'),
             'start_date' => date('Y-m-d', strtotime($request->input('start_date'))),
-            'end_date' => date('Y-m-d', strtotime($request->input('end_date'))),
+            'end_date' => date('Y-m-d', strtotime($request->input('start_date'))),
+            'author_id' => session('user.id'),
         ]);
 
         $responseIsProcess = Http::withToken($accessToken)->patch('https://bepm.hanatekindo.com/api/v1/users/'. session('user.id'), [
             'is_process' => TRUE,
         ]);
 
-        // dd($response->json(), $responseIsProcess->json());
+        if ($response->json()['status'] !== 200) {
 
-        if ($response->json()['status'] == 400) {
             $errors = $response->json()['errors'];
 
             return redirect()->back()->withInput()->withErrors($errors);
