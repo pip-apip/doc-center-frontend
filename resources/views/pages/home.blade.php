@@ -193,7 +193,7 @@
         $('#aktivitas-perbulan').text(monthly.length + " Aktivitas");
         $('#sedang-bertugas').text(total_is_process + " Karyawan");
         $('#menunggu-tugas').text(total_no_process + " Karyawan");
-        $('#total_paket').text(total_paket + " Paket");
+        $('#total_paket').text(total_paket + " Proyek");
         setChart();
         setRecentActivity();
     });
