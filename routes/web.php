@@ -27,6 +27,8 @@ Route::get('/', function () {
     // return view('maintenance');
 });
 
+echo "Hello World!";
+
 // Auth
 Route::get('login', [AuthController::class, 'login'])->name('login');
 Route::post('login', [AuthController::class, 'doLogin'])->name('login.process');
@@ -44,7 +46,7 @@ Route::middleware([AuthMiddleware::class, RefershTokenMiddleware::class])->group
     Route::post('profile/update/{id}', [ProfileController::class, 'update'])->name('profile.update');
     Route::get('profile/password', [ProfileController::class, 'password'])->name('profile.password');
     Route::post('profile/change/{id}', [ProfileController::class, 'change'])->name('profile.change');
-    
+
 
     // Category Administration
     Route::get('categoryAdm', [CategoryAdmController::class, 'index'])->name('categoryAdm.index')->middleware(['role:SUPERADMIN,ADMIN']);
