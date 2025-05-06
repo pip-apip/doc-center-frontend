@@ -184,14 +184,15 @@
             <div>
                 <div class="modal-body">
 
-                    <label><b> Nama Proyek : </b></label>
-                    <div class="form-group">
-                        <p class="form-control-static" id="project_name_detail">Alpha Build</p>
-                    </div>
 
                     <div class="row">
 
                         <div class="col-sm-8">
+                            <label><b> Nama Proyek : </b></label>
+                            <div class="form-group">
+                                <p class="form-control-static" id="project_name_detail">Alpha Build</p>
+                            </div>
+
                             <label><b> Nama Perusahaan : </b></label>
                             <div class="form-group">
                                 <p class="form-control-static" id="company_name_detail">Alpha Build</p>
@@ -209,6 +210,11 @@
                         </div>
 
                         <div class="col-sm-4">
+                            <label><b> Nama Pimpinan Proyek : </b></label>
+                            <div class="form-group">
+                                <p class="form-control-static" id="project_leader_detail">John Doe</p>
+                            </div>
+
                             <label><b> Nama Direktur : </b></label>
                             <div class="form-group">
                                 <p class="form-control-static" id="director_name_detail">John Doe</p>
@@ -243,7 +249,7 @@
                     <a class="btn btn-warning ml-1" id="editButton">
                         <i class="fa-solid fa-pen"></i> Edit
                     </a>
-                    <button type="button" class="btn btn-danger ml-1" data-bs-dismiss="modal" onclick="deleteProject()">
+                    <button type="button" class="btn btn-danger ml-1" id="deleteButton">
                         <i class="fa-solid fa-trash"></i> Hapus
                     </button>
                 </div>
@@ -608,6 +614,8 @@
 
     function showDetail(data){
         console.log(data);
+        let onclickDelete = `confirmDelete("` + `{{ route('project.destroy', '') }}` + `/${data.id}")`;
+        $("#project_leader_detail").text(data.project_leader_name);
         $("#project_name_detail").text(data.name);
         $("#company_name_detail").text(data.company_name);
         $("#company_address_detail").text(data.company_address);
@@ -616,6 +624,7 @@
         $("#start_project_detail").text(dateFormat(data.start_date));
         $("#end_project_detail").text(dateFormat(data.end_date));
         $("#editButton").attr("href", `project/form-edit/${data.id}`);
+        $("#deleteButton").attr("onclick", onclickDelete);
     }
 
     function dateFormat(dateString) {
