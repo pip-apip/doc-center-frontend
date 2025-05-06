@@ -14,6 +14,7 @@ use App\Http\Controllers\HomeController;
 
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ErrController;
 
 use App\Http\Middleware\AuthMiddleware;
 use App\Http\Middleware\RefershTokenMiddleware;
@@ -32,6 +33,7 @@ Route::post('login', [AuthController::class, 'doLogin'])->name('login.process');
 Route::get('register', [AuthController::class, 'register'])->name('register');
 Route::get('get-token', [AuthController::class, 'refreshAccessToken'])->name('get-token');
 Route::post('logout', [AuthController::class, 'logout'])->name('logout');
+Route::get('err', [ErrController::class, 'index'])->name('err');
 
 Route::middleware([AuthMiddleware::class, RefershTokenMiddleware::class])->group(function () {
     Route::get('home', [HomeController::class, 'index'])->name('home')->middleware(['role:SUPERADMIN,ADMIN,USER']);

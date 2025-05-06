@@ -180,15 +180,22 @@ class ProjectController extends Controller
      */
     public function create(){
         $accessToken = session('user.access_token');
-        $response = Http::withToken($accessToken)->get('https://bepm.hanatekindo.com/api/v1/companies');
+        $responseCompanies = Http::withToken($accessToken)->get('https://bepm.hanatekindo.com/api/v1/companies');
 
-        if ($response->failed()) {
+        if ($responseCompanies->failed()) {
             return redirect()->back()->withErrors('Failed to fetch project data.');
         }
 
-        $companies = $response->json()['data'];
+        $responseUser = Http::withToken($accessToken)->get('https://bepm.hanatekindo.com/api/v1/users');
+
+        if ($responseUser->failed()) {
+            return redirect()->back()->withErrors('Failed to fetch project data.');
+        }
+
+        $companies = $responseCompanies->json()['data'];
+        $users = $responseUser->json()['data'];
         $project = [];
-        return view('pages.project.form', compact('project', 'companies'))->with(['title' => 'project', 'status' => 'create']);
+        return view('pages.project.form', compact('project', 'companies', 'users'))->with(['title' => 'project', 'status' => 'create']);
     }
 
     /**
