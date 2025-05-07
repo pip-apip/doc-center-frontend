@@ -4,6 +4,7 @@
 
 @section('content')
 
+
 <div class="page-heading">
     <div class="page-content">
         <section id="basic-horizontal-layouts">

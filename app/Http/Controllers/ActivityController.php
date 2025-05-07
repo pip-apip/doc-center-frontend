@@ -15,7 +15,8 @@ class ActivityController extends Controller
      */
     public function __construct()
     {
-        //
+        $checkIsProcess = Http::withToken(session('user.access_token'))->get('https://bepm.hanatekindo.com/api/v1/users/'. session('user.id'));
+        $this->isProcess = $checkIsProcess->json()['data'][0]['is_process'] ?? null;
     }
 
     public function index()
@@ -180,7 +181,11 @@ class ActivityController extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request->all());
+        if($this->isProcess){
+            return redirect()->route('activity.index')->with('error', 'Anda memiliki proses aktivitas yang sedang berlangsung. Silakan selesaikan terlebih dahulu.');
+        }
+        $activity_teams = json_decode($request->input('activityTeam'), true);
+        // dd($activity_teams ?? null);
         // $request->validate([
         //     'project_id' => ['required', 'not_in:#'],
         //     'title' => 'required|string|max:255',
@@ -198,17 +203,36 @@ class ActivityController extends Controller
             'end_date' => date('Y-m-d', strtotime($request->input('start_date'))),
             'author_id' => session('user.id'),
         ]);
-
+      
         $responseIsProcess = Http::withToken($accessToken)->patch('https://bepm.hanatekindo.com/api/v1/users/'. session('user.id'), [
             'is_process' => TRUE,
         ]);
 
         if ($response->json()['status'] !== 200) {
-
             $errors = $response->json()['errors'];
-
-            return redirect()->back()->withInput()->withErrors($errors);
+            // return redirect()->back()->withInput()->withErrors($errors);
+            dd($response->json());
         }
+
+        $latestActivity = $response->json()['data']['id'];
+
+        if (is_array($activity_teams)) {
+            foreach ($activity_teams as $team) {
+                $responseTeam = Http::withToken($accessToken)->post('https://bepm.hanatekindo.com/api/v1/activity-teams', [
+                    'activity_id' => $latestActivity,
+                    'user_id' => $team['id'],
+                ]);
+
+                if ($responseTeam->json()['status'] === 400 || $responseTeam->json()['status'] === 500) {
+                    // return redirect()->back()->withErrors('Failed to fetch activity data.');
+                    dd($responseTeam->json());
+                }
+            }
+        }
+
+        $responseIsProcess = Http::withToken($accessToken)->patch('https://bepm.hanatekindo.com/api/v1/users/'. session('user.id'), [
+            'is_process' => TRUE,
+        ]);
 
         return redirect()->route('activity.index')->with('success', 'Project created successfully.');
     }
