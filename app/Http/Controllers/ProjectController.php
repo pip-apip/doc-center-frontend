@@ -80,7 +80,7 @@ class ProjectController extends Controller
 
         $users = $responseUser->json()['data'] ?? null;
 
-        $responseTeam = Http::withToken($accessToken)->get('https://bepm.hanatekindo.com/api/v1/teams?limit=1000');
+        $responseTeam = Http::withToken($accessToken)->get('https://bepm.hanatekindo.com/api/v1/project-teams?limit=1000');
 
         if ($responseTeam->failed()) {
             return redirect()->back()->withErrors('Failed to fetch user data.');
