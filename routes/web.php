@@ -27,8 +27,6 @@ Route::get('/', function () {
     // return view('maintenance');
 });
 
-echo "Hello World!";
-
 // Auth
 Route::get('login', [AuthController::class, 'login'])->name('login');
 Route::post('login', [AuthController::class, 'doLogin'])->name('login.process');
