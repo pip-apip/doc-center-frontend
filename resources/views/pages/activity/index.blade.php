@@ -145,7 +145,7 @@
             title: 'Error!',
             text: '{{ session()->get('error') }}',
             showConfirmButton: false,
-            timer: 1500
+            timer: 2000
         }).then(() => {
             $('#fullPageLoader').hide();
         });

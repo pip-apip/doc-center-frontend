@@ -281,11 +281,11 @@ class ProjectController extends Controller
 
         $accessToken = session('user.access_token');
 
-        $responseDelete = Http::withToken($accessToken)->delete('https://bepm.hanatekindo.com/api/v1/teams/'.$project_id);
+        $responseDelete = Http::withToken($accessToken)->delete('https://bepm.hanatekindo.com/api/v1/project-teams/'.$project_id);
         if ($responseDelete->json()['status'] == 400 || $responseDelete->json()['status'] == 200) {
 
             foreach ($teams as $key => $team) {
-                $response = Http::withToken($accessToken)->post('https://bepm.hanatekindo.com/api/v1/teams', [
+                $response = Http::withToken($accessToken)->post('https://bepm.hanatekindo.com/api/v1/project-teams', [
                     'user_id' => $team['id'],
                     'project_id' => $project_id
                 ]);

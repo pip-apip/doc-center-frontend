@@ -144,7 +144,7 @@
                                             <a href="{{ route('project.activity', $project['id']) }}" class="btn btn-sm btn-secondary rounded-pill">
                                                 <i class="fa-solid fa-chart-line"></i>
                                             </a>
-                                            <button type="button" onclick="teamModal({{ $project['id'] }}, `{{ $project['name'] }}`, ``)" class="btn btn-sm btn-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#teamModal">
+                                            <button type="button" onclick="teamModal({{ $project['id'] }}, `{{ $project['name'] }}`, `{{ $project['project_leader_name'] }}`, {{ $project['project_leader_id'] }}, ``)" class="btn btn-sm btn-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#teamModal">
                                                 <i class="fa-solid fa-user-group"></i>
                                             </button>
                                         </td>
@@ -270,9 +270,19 @@
             <div>
                 <div class="modal-body">
                     <input type="text" id="project_id" hidden>
-                    <label><b> Nama Proyek : </b></label>
-                    <div class="form-group">
-                        <p class="form-control-static" id="project_name_team">Alpha Build</p>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <label><b> Nama Proyek : </b></label>
+                            <div class="form-group">
+                                <p class="form-control-static" id="project_name_team">Alpha Build</p>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label><b> Pimpinan Proyek : </b></label>
+                            <div class="form-group">
+                                <p class="form-control-static" id="project_leader_team">Alpha Build</p>
+                            </div>
+                        </div>
                     </div>
                     <hr>
                     <div class="row" id="teamInput" style="display: none">
@@ -405,18 +415,22 @@
         teamFix = [];
     });
 
-    function teamModal(id, projectName, status){
+    function teamModal(id, projectName, projectLeader, projectLeaderId, status){
         teams.forEach(function (team) {
             if (team.project_id == id) {
                 teamFix = team.members;
             }
         });
+
         userSet = userSet.filter(user => !teamFix.some(team => team.id === user.id));
+        userSet = userSet.filter(user => user.id !== projectLeaderId);
+
         renderTeam();
         renderUser();
 
         $('#project_id').val(id);
         $('#project_name_team').text(projectName);
+        $('#project_leader_team').text(projectLeader);
         if(teamFix.length > 0 && status === ""){
             $('#footerTeam').empty();
             let html = '';
@@ -456,18 +470,47 @@
         $('#teamSearch').val('');
     }
 
-    $('#userSearch').on('keyup', function() {
+    $('#userSearch').on('keyup', function () {
         let value = $(this).val().toLowerCase();
-        $('#table_set tr').filter(function() {
-            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+        let visibleCount = 0;
+
+        $('#table_set tr').each(function () {
+            const isMatch = $(this).text().toLowerCase().indexOf(value) > -1;
+            $(this).toggle(isMatch);
+            if (isMatch) visibleCount++;
         });
+
+        // Hapus pesan kosong sebelumnya
+        $('#table_set .no-result').remove();
+
+        if (visibleCount === 0) {
+            $('#table_set').append(`
+                <tr style="background-color: #F3F3F2;">
+                    <td colspan="2" class="text-center">Tidak Ada User Yang Dicari</td>
+                </tr>
+            `);
+        }
     });
 
-    $('#teamSearch').on('keyup', function() {
+    $('#teamSearch').on('keyup', function () {
         let value = $(this).val().toLowerCase();
-        $('#table_fix tr').filter(function() {
-            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+        let visibleCount = 0;
+
+        $('#table_fix tr').each(function () {
+            const isMatch = $(this).text().toLowerCase().indexOf(value) > -1;
+            $(this).toggle(isMatch);
+            if (isMatch) visibleCount++;
         });
+
+        $('#table_fix .no-result').remove();
+
+        if (visibleCount === 0) {
+            $('#table_fix').append(`
+                <tr style="background-color: #F3F3F2;">
+                    <td colspan="2" class="text-center">Tidak Ada User Yang Dicari</td>
+                </tr>
+            `);
+        }
     });
 
     function saveTeam(){
@@ -593,6 +636,9 @@
 
         renderUser();
         renderTeam();
+
+        $('#userSearch').val('');
+        $('#teamSearch').val('');
     }
 
     function confirmDelete(url) {
