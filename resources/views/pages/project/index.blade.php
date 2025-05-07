@@ -176,7 +176,7 @@
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title" id="myModalLabel33">Detail Projek</h4>
+                <h4 class="modal-title" id="myModalLabel33">Detail Proyek</h4>
                 <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" id="closeDetailModal">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
@@ -616,7 +616,7 @@
         } else {
             rows += `
                 <tr>
-                    <td colspan="2" class="text-center">Tidak Anggota di Projek ini</td>
+                    <td colspan="2" class="text-center">Tidak Anggota di Proyek ini</td>
                 </tr>`;
         }
         $('#table_fix').html(rows);

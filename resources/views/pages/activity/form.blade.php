@@ -50,6 +50,7 @@
     $lastRoute = session()->get('lastRoute');
     $lastRoute = $lastRoute ? explode(',', $lastRoute) : [];
 @endphp
+
 <div class="page-heading">
     <div class="page-content">
         <section id="basic-horizontal-layouts">
@@ -75,14 +76,14 @@
                         @csrf
                         <div class="row">
                             <div class="col-md-2">
-                                <label>Nama Projek <code>*</code></label>
+                                <label>Nama Proyek <code>*</code></label>
                             </div>
                             <fieldset class="form-group col-md-10">
                                 @if ($countDocAct > 0)
                                     <input type="text" name="project_id" id="project_id" value="{{ $activity['project_id'] }}" hidden>
                                 @endif
                                 <select class="form-select @error('project_id') is-invalid @enderror" id="project_id" name="project_id" {{ $countDocAct > 0 ? 'disabled' : '' }}>
-                                    <option value="">Pilih Projek</option>
+                                    <option value="">Pilih Proyek</option>
                                     @foreach ($projects as $project)
                                         <option value="{{ $project['id'] }}" {{ old('project_id', $projectId ?? $activity['project_id'] ?? '') == $project['id'] ? 'selected' : '' }}>
                                             {{ $project['name'] }}
@@ -97,16 +98,7 @@
                                 <input type="text" name="project_id" id="project_id" value="{{ $activity['project']['id'] }}" hidden>
                             @endif --}}
                             <div class="col-md-2">
-                                <label>Judul Aktivitas <code>*</code></label>
-                            </div>
-                            <div class="form-group col-md-10">
-                                <input type="text" placeholder="Masukkan Judul Aktivitas" class="form-control @error('title') is-invalid @enderror" name="title" id="title" value="{{ old('title', $activity ? $activity['title'] : '') }}">
-                                @error('title')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            <div class="col-md-2">
-                                <label>Kategory Aktivitas <code>*</code></label>
+                                <label>Kategori Aktivitas <code>*</code></label>
                             </div>
                             <fieldset class="form-group col-md-10">
                                 <select class="form-select" id="activity_category_id" name="activity_category_id">
@@ -118,6 +110,15 @@
                                     @endforeach
                                 </select>
                             </fieldset>
+                            <div class="col-md-2">
+                                <label>Catatan Aktivitas <code>*</code></label>
+                            </div>
+                            <div class="form-group col-md-10">
+                                <input type="text" placeholder="Masukkan Catatan Aktivitas" class="form-control @error('title') is-invalid @enderror" name="title" id="title" value="{{ old('title', $activity ? $activity['title'] : '') }}">
+                                @error('title')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
                             <div class="col-md-2">
                                 <label>Tanggal Mulai <code>*</code></label>
                             </div>

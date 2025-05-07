@@ -203,8 +203,12 @@ class ActivityController extends Controller
             'end_date' => date('Y-m-d', strtotime($request->input('start_date'))),
             'author_id' => session('user.id'),
         ]);
+      
+        $responseIsProcess = Http::withToken($accessToken)->patch('https://bepm.hanatekindo.com/api/v1/users/'. session('user.id'), [
+            'is_process' => TRUE,
+        ]);
 
-        if ($response->json()['status'] === 400 || $response->json()['status'] === 500) {
+        if ($response->json()['status'] !== 200) {
             $errors = $response->json()['errors'];
             // return redirect()->back()->withInput()->withErrors($errors);
             dd($response->json());

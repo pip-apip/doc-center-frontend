@@ -66,7 +66,7 @@
                                 <tr>
                                     <th width="12%" class="text-center">Mulai</th>
                                     <th width="12%" class="text-center">Selesai</th>
-                                    <th width="20%" class="text-center">Projek</th>
+                                    <th width="20%" class="text-center">Proyek</th>
                                     <th class="text-center">Judul Aktivitas</th>
                                     <th width="10%" class="text-center">Status</th>
                                     <th width="15%" class="text-center">Aksi</th>

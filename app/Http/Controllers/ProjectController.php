@@ -180,11 +180,13 @@ class ProjectController extends Controller
      */
     public function create(){
         $accessToken = session('user.access_token');
-        $response = Http::withToken($accessToken)->get('https://bepm.hanatekindo.com/api/v1/companies');
+        $responseCompanies = Http::withToken($accessToken)->get('https://bepm.hanatekindo.com/api/v1/companies');
 
-        if ($response->json()['status'] !== 200) {
+        if ($responseCompanies->json()['status'] !== 200) {
             return redirect()->back()->withErrors('Failed to fetch project data.');
         }
+
+        $companies = $responseCompanies->json()['data'];
 
         $responseUser = Http::withToken($accessToken)->get('https://bepm.hanatekindo.com/api/v1/users');
 
@@ -193,7 +195,7 @@ class ProjectController extends Controller
         }
 
         $users = $responseUser->json()['data'] ?? null;
-        $companies = $response->json()['data'];
+        
         $project = [];
         return view('pages.project.form', compact('project', 'companies', 'users'))->with(['title' => 'project', 'status' => 'create']);
     }
@@ -434,7 +436,7 @@ class ProjectController extends Controller
             return redirect()->back()->withInput()->withErrors($errors);
         }
 
-        return redirect()->back()->with('success', 'Data Projek Berhasil di Hapus');
+        return redirect()->back()->with('success', 'Data Proyek Berhasil di Hapus');
     }
 
     /**
@@ -452,6 +454,6 @@ class ProjectController extends Controller
             return redirect()->back()->withInput()->withErrors($errors);
         }
 
-        return redirect()->back()->with('success', 'Dokumen Projek Berhasil di Hapus.');
+        return redirect()->back()->with('success', 'Dokumen Proyek Berhasil di Hapus.');
     }
 }
